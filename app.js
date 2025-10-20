@@ -112,33 +112,33 @@ app.get('/', (req, res) => {
 
 // Example: Dynamic route rendering (optional)
 app.get('/fatwa', async (req, res) => {
-  res.render('pages/fatawa');
+  res.render('Pages/fatawa');
 });
 
 
 
 app.get('/Categoryfatawa', async (req, res) => {
-  res.render('pages/Categoryfatawa');
+  res.render('Pages/Categoryfatawa');
 });
 
 
 
 
 app.get('/articles', async (req, res) => {
-  res.render('pages/articles');
+  res.render('Pages/articles');
 });
 
 
 app.get('/about', async (req, res) => {
-  res.render('pages/About');
+  res.render('Pages/About');
 });
 
 app.get('/question', async (req, res) => {
-  res.render('pages/Question');
+  res.render('Pages/Question');
 });
 
 app.get('/book', async (req, res) => {
-  res.render('pages/book');
+  res.render('Pages/book');
 });
 
 
@@ -159,7 +159,7 @@ app.get('/article/:id', async (req, res) => {
       related = rel.data.data || rel.data || [];
     } catch (_) {}
 
-    res.render('pages/articleDetail', {
+    res.render('Pages/articleDetail', {
       article,
       related,
       requestUrl: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
@@ -167,7 +167,7 @@ app.get('/article/:id', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching article:', err.message);
-    res.status(404).render('pages/404', { message: 'مضمون نہیں ملا۔' });
+    res.status(404).render('Pages/404', { message: 'مضمون نہیں ملا۔' });
   }
 });
 
