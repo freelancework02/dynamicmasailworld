@@ -276,7 +276,7 @@
     container.className = "cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 border border-[rgba(174,195,176,0.35)]";
     container.tabIndex = 0; // make focusable
     // navigate on click or Enter
-    function goToDetail(){ window.location.href = `article-detail.html?id=${encodeURIComponent(article.id)}`; }
+    function goToDetail(){ window.location.href = `/article/${encodeURIComponent(article.id)}`; }
 
     container.addEventListener('click', goToDetail);
     container.addEventListener('keypress', (e) => { if (e.key === 'Enter') goToDetail(); });
