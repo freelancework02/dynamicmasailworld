@@ -122,6 +122,8 @@ app.get('/Categoryfatawa', async (req, res) => {
 });
 
 
+
+
 app.get('/articles', async (req, res) => {
   res.render('pages/articles');
 });
