@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <title>مسائل ورلڈ - دار الافتاء اہل سنت</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- PWA Manifest & Service Worker -->
+    <link rel="manifest" href="manifest.json">
+
+
+    <!-- Custome Google Search engine  -->
+    <!-- <script async src="https://cse.google.com/cse.js?cx=a253de728c98d430e">
+    </script> -->
+
+    <style>
+        @font-face {
+            font-family: 'NaatFont';
+            src: url('https://res.cloudinary.com/awescreative/raw/upload/v1749150996/Awes/naatfont.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'NaatFont', serif;
+            font-size: 80%;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-bottom: 70px;
+            /* Space for the bottom navigation bar */
+            padding-top: 56px;
+            /* Space for the new mobile header */
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding-top: 0;
+                /* Remove top padding on desktop */
+            }
+        }
+
+        .hero-section {
+            background-image: linear-gradient(rgba(1, 22, 30, 0.7), rgba(1, 22, 30, 0.7)), url('https://img.freepik.com/free-photo/close-up-islamic-new-year-concept-with-misbaha_23-2148611691.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Custom scrollbar for dropdown and sidebar */
+        #searchDropdown::-webkit-scrollbar,
+        #related-fatawa-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #searchDropdown::-webkit-scrollbar-thumb,
+        #related-fatawa-list::-webkit-scrollbar-thumb {
+            background-color: #598392;
+            border-radius: 4px;
+        }
+
+        #searchDropdown::-webkit-scrollbar-track,
+        #related-fatawa-list::-webkit-scrollbar-track {
+            background: #eff6e0;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeInDown {
+            animation: fadeInDown 0.5s ease-out forwards;
+        }
+
+        .ticker-container {
+            height: auto;
+            overflow: hidden;
+            box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticker-content {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .ticker-item {
+            flex-shrink: 0;
+            display: none;
+            /* Hide all items by default */
+            margin-left: 2rem;
+            animation: none;
+            /* Disable default animation */
+            width: 100%;
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .ticker-item.active {
+            display: block;
+            /* Show the active item */
+        }
+
+        @keyframes ticker-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ticker-item.fade-in {
+            animation: ticker-fade-in 1s ease-out;
+        }
+
+        .ticker-item-hidden {
+            display: none;
+        }
+
+        /* Hero Section Slider Styles */
+        .hero-slider-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .hero-section>.container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ticker content styling */
+        #ticker-content span {
+            display: block;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #ticker-content span.active {
+            opacity: 1;
+        }
+
+        /* New Styles for the horizontal ticker */
+        .horizontal-ticker {
+            display: flex;
+            align-items: center;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .horizontal-ticker-item {
+            animation: move-left 30s linear infinite;
+            font-size: 1.1rem;
+            padding-left: 20px;
+        }
+
+        @keyframes move-left {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .circular-logo {
+            border-radius: 50%;
+        }
+
+
+        input.gsc-input,
+        .gsc-input-box,
+        .gsc-search-button-v2 {
+            border-radius: 9999px !important;
+            /* full rounded */
+            padding: 14px 20px !important;
+            font-size: 1rem !important;
+            border: 2px solid #d1d5db !important;
+            /* Tailwind gray-300 */
+            transition: all 0.3s ease-in-out;
+        }
+
+        input.gsc-input:focus {
+            outline: none !important;
+            border-color: #004d40 !important;
+            /* Tailwind custom midnight_green */
+            box-shadow: 0 0 0 4px rgba(0, 77, 64, 0.2) !important;
+        }
+
+        .gsc-search-button-v2 {
+            background-color: #004d40 !important;
+            /* midnight_green */
+            color: #fff !important;
+            border: none !important;
+            font-weight: 600 !important;
+            border-radius: 9999px !important;
+            padding: 12px 24px !important;
+            margin-left: 10px !important;
+        }
+
+        .gsc-search-button-v2:hover {
+            background-color: #00695c !important;
+            /* slightly lighter green */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rich_black': { DEFAULT: '#01161e', 100: '#000406', 200: '#00090c', 300: '#010d12', 400: '#011118', 500: '#01161e', 600: '#04597b', 700: '#079cd8', 800: '#45c6f9', 900: '#a2e3fc' },
+                        'midnight_green': { DEFAULT: '#124559', 100: '#040e12', 200: '#071c24', 300: '#0b2935', 400: '#0f3747', 500: '#124559', 600: '#20799c', 700: '#36a9d6', 800: '#79c5e4', 900: '#bce2f1' },
+                        'air_force_blue': { DEFAULT: '#598392', 100: '#121a1d', 200: '#24343a', 300: '#354e57', 400: '#476874', 500: '#598392', 600: '#769dab', 700: '#99b6c0', 800: '#bbced5', 900: '#dde7ea' },
+                        'ash_gray': { DEFAULT: '#aec3b0', 100: '#1f2a20', 200: '#3e5441', 300: '#5e7f61', 400: '#83a386', 500: '#aec3b0', 600: '#bdcebf', 700: '#cedbcf', 800: '#dee7df', 900: '#eff3ef' },
+                        'beige': { DEFAULT: '#eff6e0', 100: '#384915', 200: '#71912a', 300: '#a4cc4e', 400: '#c9e197', 500: '#eff6e0', 600: '#f2f8e6', 700: '#f5f9ec', 800: '#f8fbf2', 900: '#fcfdf9' }
+                    }
+                }
+            }
+        }
+    </script>
+
+
+</head>
+
+<body class="bg-beige-600 text-rich_black">
+
+    <!-- Mobile-only Social Media and Ask Link (New) -->
+    <div
+        class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
+        <a href="/question" class="nav-link text-sm text-beige hover:text-ash_gray transition">سوال
+            پوچھیں</a>
+        <div class="flex items-center space-x-4 space-x-reverse">
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i
+                    class="bi bi-facebook"></i></a>
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i
+                    class="bi bi-twitter-x"></i></a>
+            <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition text-base"><i
+                    class="bi bi-youtube"></i></a>
+        </div>
+    </div>
+
+
+    <!-- Header & Navigation for desktop view -->
+    <header id="qs-header"
+        class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
+        <!-- Social Media Links -->
+        <div class="bg-rich_black text-air_force_blue-700 py-2">
+            <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
+                <a href="/question" class="nav-link text-beige hover:text-ash_gray transition">سوال
+                    پوچھیں</a>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i
+                            class="bi bi-facebook"></i></a>
+                    <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i
+                            class="bi bi-twitter-x"></i></a>
+                    <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition"><i
+                            class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- Main Nav -->
+        <nav class="container mx-auto px-4 sm:px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-3xl font-bold text-midnight_green">
+                    <a href="https://masailworld.com" class="nav-link flex items-center space-x-reverse space-x-2">
+                        <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo"
+                            class="h-10 w-10 circular-logo">
+                        <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
+                        <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-reverse space-x-8">
+                    <a href="https://masailworld.com"
+                        class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ
+                        اول</a>
+                    <a href="/fatwa"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+                    <a href="/about"
+                        class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+                    <a href="/articles"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+                    <a href="/Categoryfatawa"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+                    <a href="/book"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی
+                        کتب</a>
+                    <a href="/question"
+                        class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال
+                        پوچھیں</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Pages (as a Single Page App) -->
+    <div id="main-content">
+
+        <!-- Home Page -->
+        <div id="page-home" class="page active">
+            <main>
+                <!-- Hero Section (Enhanced with Slider) -->
+                <section id="qs-hero"
+                    class="hero-section text-white py-24 md:py-40 rounded-b-3xl relative overflow-hidden shadow-xl">
+                    <div class="hero-slider-container">
+                        <div class="hero-slide active"
+                            style="background-image: url('https://img.freepik.com/free-photo/close-up-islamic-new-year-concept-with-misbaha_23-2148611691.jpg');">
+                        </div>
+                        <div class="hero-slide"
+                            style="background-image: url('https://img.freepik.com/free-photo/elegant-quran-with-golden-book-holder_23-2150338779.jpg');">
+                        </div>
+                        <div class="hero-slide"
+                            style="background-image: url('https://img.freepik.com/premium-photo/prayer-beads-candle-near-religious-book_23-2147868974.jpg');">
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-black opacity-50"></div>
+                    <div class="container mx-auto px-6 text-center relative z-10 animate-fadeInDown">
+                        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-snug">علمائے اہلسنت سے مستند
+                            شرعی رہنمائی</h1>
+                        <p class="text-lg md:text-2xl mb-10 max-w-4xl mx-auto text-beige-300">اپنے دینی و شرعی سوالات کے
+                            جوابات علمائے اہلسنت سے براہِ راست پائیں۔ آسان اور مستند رہنمائی کے ساتھ اپنے مسائل حل کریں
+                            اور صحیح اسلامی معلومات حاصل کریں۔</p>
+                        <a href="/question"
+                            class="nav-link bg-beige text-midnight_green font-bold py-3 px-8 rounded-full hover:bg-ash_gray transition text-lg sm:text-2xl shadow-lg transform hover:scale-105">اپنا
+                            سوال پوچھیں</a>
+                    </div>
+                </section>
+
+                <!-- Search Section (Integrated) -->
+                <section id="qs-search-bar" class="bg-beige-600 py-8 relative -mt-16 z-20">
+                    <div class="container mx-auto px-6">
+                        <div class="max-w-3xl mx-auto text-center">
+                            <h2 class="text-3xl md:text-4xl font-bold text-midnight_green mb-6">
+                                آپ کیا تلاش کرنا چاہتے ہیں؟
+                            </h2>
+                            <div class="max-w-2xl mx-auto px-4 relative">
+                                <div
+                                    class="relative flex items-center shadow-lg rounded-full overflow-hidden border-2 border-ash_gray/50 bg-white">
+
+                                    <!-- Search Input -->
+                                    <input id="searchInput" type="text" placeholder="فتویٰ یا مضمون تلاش کریں..."
+                                        class="w-full py-4 pr-12 pl-6 text-right text-gray-700 focus:outline-none focus:ring-4 focus:ring-midnight_green-400 focus:border-midnight_green transition-all duration-300" />
+
+                                    <!-- Search Icon (non-blocking) -->
+                                    <span class="absolute right-4 text-air_force_blue pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                                        </svg>
+                                    </span>
+                                </div>
+
+                                <!-- Dropdown -->
+                                <div id="searchDropdown"
+                                    class="absolute z-50 w-full mt-2 bg-white border border-ash_gray/50 rounded-2xl shadow-xl hidden max-h-64 overflow-y-auto">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- <div class="container mx-auto px-6">
+                        <div class="max-w-3xl mx-auto text-center">
+
+                           
+                            <h2 class="text-3xl md:text-4xl font-bold text-midnight_green mb-6">
+                                آپ کیا تلاش کرنا چاہتے ہیں؟
+                            </h2>
+
+                           
+                            <div class="max-w-3xl mx-auto px-4">
+                                <div class="gcse-search"></div>
+                            </div>
+
+                        </div>
+                    </div> -->
+                    <!-- Ticker Section (New) -->
+                    <!-- <div class="container mx-auto px-6 mt-8">
+                        <div id="latest-fatawa-ticker" class="bg-white p-3 rounded-xl shadow-lg border border-ash_gray/50 horizontal-ticker">
+                          
+                        </div>
+                    </div> -->
+                </section>
+
+                <!-- Fatwa Categories Section -->
+                <section id="qs-fatwa-categories" class="py-20 bg-white">
+                    <div class="container mx-auto px-6">
+                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">فتاویٰ کے
+                            موضوعات</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 text-center">
+                            <a href="Categoryfatawa?tag=عقائد"
+                                class="nav-link block bg-beige-600 p-6 rounded-2xl shadow-lg hover:bg-ash_gray hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <i class="bi bi-gem text-5xl text-midnight_green mb-4 inline-block"></i>
+                                <h3 class="font-bold text-xl text-rich_black">عقائد</h3>
+                            </a>
+                            <a href="Categoryfatawa?tag=عبادات"
+                                class="nav-link block bg-beige-600 p-6 rounded-2xl shadow-lg hover:bg-ash_gray hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <i class="bi bi-moon-stars-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                                <h3 class="font-bold text-xl text-rich_black">عبادات</h3>
+                            </a>
+                            <a href="Categoryfatawa?tag=معاملات"
+                                class="nav-link block bg-beige-600 p-6 rounded-2xl shadow-lg hover:bg-ash_gray hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <i class="bi bi-briefcase-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                                <h3 class="font-bold text-xl text-rich_black">معاملات</h3>
+                            </a>
+                            <a href="Categoryfatawa?tag=نکاح-و-طلاق"
+                                class="nav-link block bg-beige-600 p-6 rounded-2xl shadow-lg hover:bg-ash_gray hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <i class="bi bi-heart-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                                <h3 class="font-bold text-xl text-rich_black">نکاح و طلاق</h3>
+                            </a>
+                            <a href="Categoryfatawa?tag=وراثت"
+                                class="nav-link block bg-beige-600 p-6 rounded-2xl shadow-lg hover:bg-ash_gray hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <i class="bi bi-diagram-3-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                                <h3 class="font-bold text-xl text-rich_black">وراثت</h3>
+                            </a>
+                            <a href="Categoryfatawa?tag=متفرقات"
+                                class="nav-link block bg-beige-600 p-6 rounded-2xl shadow-lg hover:bg-ash_gray hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <i class="bi bi-grid-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                                <h3 class="font-bold text-xl text-rich_black">متفرقات</h3>
+                            </a>
+                        </div>
+
+                        <!-- Button Section -->
+                        <div class="text-center mt-12">
+                            <a href="/Categoryfatawa"
+                                class="inline-block bg-midnight_green text-white font-bold text-lg px-8 py-3 rounded-full shadow-lg hover:bg-rich_black hover:shadow-xl transition-all duration-300">
+                                تمام موضوعات دیکھیں
+                            </a>
+                        </div>
+                    </div>
+                </section>
+                    
+
+
+                <!-- Latest Fatawa Section -->
+                <section id="qs-latest-fatawa" class="py-20 bg-beige-600">
+                    <div class="container mx-auto px-6">
+                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">تازہ ترین
+                            فتاویٰ</h2>
+                        <div class="space-y-8 max-w-5xl mx-auto" id="latest-fatawa-list">
+                            <!-- Fatawa will be dynamically added here -->
+                        </div>
+                        <div class="text-center mt-16">
+                            <a href="/fatwa"
+                                class="nav-link bg-midnight_green text-white py-3 px-8 rounded-full hover:bg-midnight_green-400 transition text-lg sm:text-xl shadow-lg transform hover:scale-105">تمام
+                                فتاویٰ دیکھیں</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recently Viewed Section -->
+                <section id="qs-recently-viewed" class="py-20 bg-white">
+                    <div class="container mx-auto px-6">
+                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">حال ہی میں
+                            دیکھے گئے فتاویٰ</h2>
+                        <div class="space-y-8 max-w-5xl mx-auto" id="recently-viewed-list">
+                            <p class="text-center text-air_force_blue">کوئی فتاویٰ دستیاب نہیں ہیں۔</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Muftis Section -->
+                <section id="qs-muftis" class="py-20 bg-beige-600">
+                    <div class="container mx-auto px-6">
+                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">ہمارے علمائے
+                            اہلسنت</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+                            <div
+                                class="bg-white p-6 rounded-2xl shadow-lg border border-ash_gray transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                                <img src="https://placehold.co/150x150/124559/ffffff?text=MRAK"
+                                    class="w-36 h-36 rounded-full object-cover border-4 border-ash_gray/70 shadow-md">
+                                <h3 class="text-2xl font-bold mt-4 mb-1 text-rich_black">مفتی اعظم ہند مصطفیٰ رضا خان
+                                </h3>
+                                <p class="text-air_force_blue font-semibold text-lg">جانشینِ اعلیٰ حضرت</p>
+                                <p class="text-rich_black-600 mt-2 text-base leading-relaxed">آپ نے اپنی زندگی دینِ
+                                    اسلام کی خدمت اور مسلکِ اعلیٰ حضرت کے فروغ کے لیے وقف کردی۔</p>
+                            </div>
+                            <div
+                                class="bg-white p-6 rounded-2xl shadow-lg border border-ash_gray transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                                <img src="https://placehold.co/150x150/124559/ffffff?text=TARK"
+                                    class="w-36 h-36 rounded-full object-cover border-4 border-ash_gray/70 shadow-md">
+                                <h3 class="text-2xl font-bold mt-4 mb-1 text-rich_black">تاج الشریعہ مفتی اختر رضا خان
+                                </h3>
+                                <p class="text-air_force_blue font-semibold text-lg">قاضی القضاۃ فی الہند</p>
+                                <p class="text-rich_black-600 mt-2 text-base leading-relaxed">آپ اپنے دور کے عظیم فقیہ
+                                    اور مرجع خلائق تھے، آپ کے فتاویٰ دنیا بھر میں مستند مانے جاتے ہیں۔</p>
+                            </div>
+                            <div
+                                class="bg-white p-6 rounded-2xl shadow-lg border border-ash_gray transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                                <img src="https://placehold.co/150x150/124559/ffffff?text=MNR"
+                                    class="w-36 h-36 rounded-full object-cover border-4 border-ash_gray/70 shadow-md">
+                                <h3 class="text-2xl font-bold mt-4 mb-1 text-rich_black">مفتی نظام الدین رضوی</h3>
+                                <p class="text-air_force_blue font-semibold text-lg">جامعہ اشرفیہ، مبارکپور</p>
+                                <p class="text-rich_black-600 mt-2 text-base leading-relaxed">آپ جامعہ اشرفیہ کے شیخ
+                                    الحدیث اور صدر شعبہ افتاء ہیں اور آپ کی علمی خدمات بے شمار ہیں۔</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Fatawa Page -->
+        <div id="page-fatawa" class="page">
+            <main class="py-20 bg-white">
+                <div class="container mx-auto px-6">
+                    <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-12">تمام فتاویٰ</h1>
+                    <div class="max-w-2xl mx-auto mb-12 px-4 relative">
+                        <div
+                            class="relative flex items-center shadow-lg rounded-full overflow-hidden border-2 border-ash_gray/50">
+                            <span class="absolute right-3 text-air_force_blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                                </svg>
+                            </span>
+                            <input id="searchInputFatawa" type="text" placeholder="فتویٰ یا مضمون تلاش کریں..."
+                                class="w-full py-4 pr-12 pl-6 text-right text-gray-700 focus:outline-none focus:ring-4 focus:ring-midnight_green-400 focus:border-midnight_green transition-all duration-300 bg-white" />
+                        </div>
+                        <div id="searchDropdownFatawa"
+                            class="absolute z-50 w-full mt-2 bg-white border border-ash_gray/50 rounded-2xl shadow-xl hidden max-h-64 overflow-y-auto">
+                        </div>
+                    </div>
+                    <div class="space-y-8 max-w-5xl mx-auto" id="all-fatawa-list">
+                        <!-- All Fatawa will be dynamically added here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Fatwa Detail Page -->
+        <div id="page-fatwa-detail" class="page">
+            <main class="py-20 bg-beige-600">
+                <div class="container mx-auto px-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Main Content -->
+                        <div class="lg:col-span-2">
+                            <a href="#fatawa"
+                                class="text-midnight_green-600 hover:text-midnight_green font-bold text-lg mb-8 inline-block transform hover:scale-105 transition">&rarr;
+                                واپس تمام فتاویٰ پر</a>
+                            <div class="bg-white p-8 md:p-12 rounded-2xl shadow-lg border border-ash_gray">
+                                <div class="pb-6 border-b border-ash_gray/50">
+                                    <div
+                                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                                        <div class="flex space-x-4 space-x-reverse mb-4 sm:mb-0">
+                                            <button
+                                                class="bg-air_force_blue text-white p-3 rounded-full hover:bg-air_force_blue-400 transition transform hover:scale-110"
+                                                title="Download Fatwa">
+                                                <i class="bi bi-download text-lg"></i>
+                                            </button>
+                                            <button
+                                                class="bg-air_force_blue text-white p-3 rounded-full hover:bg-air_force_blue-400 transition transform hover:scale-110"
+                                                title="Share Fatwa">
+                                                <i class="bi bi-share text-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <h2 class="text-xl font-bold text-midnight_green-600">سوال:</h2>
+                                    <p class="text-2xl md:text-4xl font-semibold my-2 text-rich_black leading-normal">
+                                        کیا نبی کریم ﷺ اپنی قبر انور میں حیات ہیں اور سلام سنتے ہیں؟</p>
+                                </div>
+                                <div class="py-6 border-b border-ash_gray/50">
+                                    <h2 class="text-xl font-bold text-midnight_green-600">الجواب حامداً ومصلیاً:</h2>
+                                    <div
+                                        class="text-rich_black-600 text-base md:text-xl mt-4 space-y-4 leading-relaxed">
+                                        <p>اہلسنت والجماعت کا یہ متفقہ عقیدہ ہے کہ انبیاء کرام علیہم السلام اپنی قبروں
+                                            میں اسی طرح حیات ہیں جیسے دنیا میں تھے۔ وہ نماز بھی پڑھتے ہیں اور ان پر پیش
+                                            کیا جانے والا درود و سلام خود سنتے اور جواب دیتے ہیں۔ احادیثِ مبارکہ میں اس
+                                            کی صراحت موجود ہے۔ امام جلال الدین سیوطی رحمۃ اللہ علیہ نے اس موضوع پر مستقل
+                                            کتاب "انباء الاذکیاء بحیاۃ الانبیاء" تصنیف فرمائی ہے۔</p>
+                                        <p>اعلیٰ حضرت امام احمد رضا خان فاضلِ بریلوی رحمۃ اللہ علیہ فرماتے ہیں کہ انبیاء
+                                            کی حیات حقیقی، جسمانی اور دنیاوی ہے۔ یہ عقیدہ رکھنا ہر مسلمان کے لیے ضروری
+                                            ہے۔</p>
+                                        <p class="font-bold mt-4 text-midnight_green">واللہ اعلم بالصواب</p>
+                                    </div>
+                                </div>
+                                <div class="pt-6 flex flex-col md:flex-row items-start md:items-center justify-between">
+                                    <div class="mb-4 md:mb-0">
+                                        <p class="font-bold text-midnight_green-600 text-lg">جواب از: دارالافتاء، رضوی
+                                            مرکز</p>
+                                        <p class="text-air_force_blue">بریلی شریف، ہندوستان</p>
+                                    </div>
+                                    <div
+                                        class="flex items-center space-x-6 space-x-reverse text-air_force_blue text-lg">
+                                        <div class="flex items-center"><i class="bi bi-eye-fill ml-2"></i><span
+                                                class="font-sans">3,152</span></div>
+                                        <div class="flex items-center"><i
+                                                class="bi bi-hand-thumbs-up-fill ml-2"></i><span
+                                                class="font-sans">1,840</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar for related content -->
+                        <aside class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-ash_gray">
+                            <h3 class="text-2xl font-bold text-midnight_green mb-6">متعلقہ فتاویٰ</h3>
+                            <div class="space-y-4 max-h-96 overflow-y-auto" id="related-fatawa-list">
+                                <!-- Related fatawa will be dynamically added here -->
+                            </div>
+                            <div class="text-center mt-6">
+                                <a href="#fatawa"
+                                    class="nav-link text-midnight_green-600 hover:text-midnight_green font-bold hover:underline transition">مزید
+                                    فتاویٰ دیکھیں</a>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Introduction Page (formerly about) -->
+        <div id="page-about" class="page">
+            <main class="py-20 bg-beige-600">
+                <div class="container mx-auto px-6 max-w-5xl">
+                    <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-12">ہمارا تعارف</h1>
+                    <div
+                        class="bg-white p-8 md:p-12 rounded-2xl shadow-lg text-base md:text-xl leading-relaxed space-y-6 text-rich_black border border-ash_gray/50">
+                        <p>الحمدللہ، "مسائل ورلڈ" ایک علمی و تحقیقی ادارہ ہے جو مسلکِ اعلیٰ حضرت، امام احمد رضا خان
+                            فاضلِ بریلوی رحمۃ اللہ علیہ کی تعلیمات کے فروغ کے لیے کوشاں ہے۔ ہمارا مقصد قرآن و سنت کی
+                            روشنی میں اور اسلافِ اہلسنت کے طریقے کے مطابق، جدید دور کے مسائل کا حل پیش کرنا ہے۔</p>
+                        <p>ہمارا وژن ایک ایسے معاشرے کا قیام ہے جہاں لوگ اپنی زندگی کے ہر شعبے میں سچی اسلامی تعلیمات پر
+                            عمل پیرا ہوں اور انہیں اپنے مسائل کے حل کے لیے ایک مستند اور قابلِ اعتماد پلیٹ فارم میسر ہو۔
+                        </p>
+                        <h2 class="text-2xl md:text-3xl font-bold text-midnight_green pt-6">ہمارے مقاصد:</h2>
+                        <ul class="list-disc list-inside space-y-3">
+                            <li>عوام الناس کو مسلکِ حق، اہلسنت والجماعت کے مطابق شرعی رہنمائی فراہم کرنا۔</li>
+                            <li>آن لائن فتویٰ کے ذریعے لوگوں کے سوالات کے جوابات دینا۔</li>
+                            <li>علمی و تحقیقی مضامین اور اکابرینِ اہلسنت کی کتابوں کی اشاعت۔</li>
+                            <li>عقائدِ صحیحہ کو جدید ٹیکنالوجی کا استعمال کرتے ہوئے عام کرنا۔</li>
+                        </ul>
+                    </div>
+                    <!-- Muftis Section in About Page -->
+                    <div id="qs-muftis-about" class="mt-20">
+                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">ہمارے علمائے
+                            مفتیان کرام</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+                            <div
+                                class="bg-white p-6 rounded-2xl shadow-lg border border-ash_gray transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                                <img src="https://placehold.co/150x150/124559/ffffff?text=MRAK"
+                                    class="w-36 h-36 rounded-full object-cover border-4 border-ash_gray/70 shadow-md">
+                                <h3 class="text-2xl font-bold mt-4 mb-1 text-rich_black">مفتی اعظم ہند مصطفیٰ رضا خان
+                                </h3>
+                                <p class="text-air_force_blue font-semibold text-lg">جانشینِ اعلیٰ حضرت</p>
+                                <p class="text-rich_black-600 mt-2 text-base leading-relaxed">آپ نے اپنی زندگی دینِ
+                                    اسلام کی خدمت اور مسلکِ اعلیٰ حضرت کے فروغ کے لیے وقف کردی۔</p>
+                            </div>
+                            <div
+                                class="bg-white p-6 rounded-2xl shadow-lg border border-ash_gray transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                                <img src="https://placehold.co/150x150/124559/ffffff?text=TARK"
+                                    class="w-36 h-36 rounded-full object-cover border-4 border-ash_gray/70 shadow-md">
+                                <h3 class="text-2xl font-bold mt-4 mb-1 text-rich_black">تاج الشریعہ مفتی اختر رضا خان
+                                </h3>
+                                <p class="text-air_force_blue font-semibold text-lg">قاضی القضاۃ فی الہند</p>
+                                <p class="text-rich_black-600 mt-2 text-base leading-relaxed">آپ اپنے دور کے عظیم فقیہ
+                                    اور مرجع خلائق تھے، آپ کے فتاویٰ دنیا بھر میں مستند مانے جاتے ہیں۔</p>
+                            </div>
+                            <div
+                                class="bg-white p-6 rounded-2xl shadow-lg border border-ash_gray transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                                <img src="https://placehold.co/150x150/124559/ffffff?text=MNR"
+                                    class="w-36 h-36 rounded-full object-cover border-4 border-ash_gray/70 shadow-md">
+                                <h3 class="text-2xl font-bold mt-4 mb-1 text-rich_black">مفتی نظام الدین رضوی</h3>
+                                <p class="text-air_force_blue font-semibold text-lg">جامعہ اشرفیہ، مبارکپور</p>
+                                <p class="text-rich_black-600 mt-2 text-base leading-relaxed">آپ جامعہ اشرفیہ کے شیخ
+                                    الحدیث اور صدر شعبہ افتاء ہیں اور آپ کی علمی خدمات بے شمار ہیں۔</p>
+                            </div>
+                        </div>
+                    </div>
+                    </section>
+            </main>
+        </div>
+
+        <!-- Articles Page -->
+        <div id="page-articles" class="page">
+            <main class="py-20 bg-beige-600">
+                <div class="container mx-auto px-6">
+                    <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-12">تمام مضامین</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <a href="#article-detail"
+                            class="nav-link block bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 border border-ash_gray/50">
+                            <img src="https://img.freepik.com/premium-photo/islam-holy-book-muslims-quran-is-placed-wooden-stand-light-candles_43780-2100.jpg"
+                                alt="ختم نبوت" class="w-full h-64 object-cover">
+                            <div class="p-8">
+                                <h3 class="text-2xl font-bold mb-3 text-rich_black">عقیدہ ختمِ نبوت اور ہماری ذمہ داریاں
+                                </h3>
+                                <p class="text-rich_black-600 mb-5 text-base leading-relaxed line-clamp-3">ختمِ نبوت
+                                    دینِ اسلام کا بنیادی عقیدہ ہے اور اس کا تحفظ ہر مسلمان کی ذمہ داری ہے۔</p>
+                                <span
+                                    class="text-midnight_green-600 hover:text-midnight_green font-bold text-lg hover:underline transition">مکمل
+                                    مضمون پڑھیں &larr;</span>
+                            </div>
+                        </a>
+                        <a href="#article-detail"
+                            class="nav-link block bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 border border-ash_gray/50">
+                            <img src="https://img.freepik.com/free-photo/prayer-beads-candle-near-religious-book_23-2147868974.jpg"
+                                alt="شان اولیاء" class="w-full h-64 object-cover">
+                            <div class="p-8">
+                                <h3 class="text-2xl font-bold mb-3 text-rich_black">شانِ اولیاء اور ان سے استعانت کا
+                                    مسئلہ</h3>
+                                <p class="text-rich_black-600 mb-5 text-base leading-relaxed line-clamp-3">اولیاء اللہ
+                                    سے مدد مانگنا اور ان کا وسیلہ اختیار کرنا قرآن و حدیث کی روشنی میں جائز و مستحسن ہے۔
+                                </p>
+                                <span
+                                    class="text-midnight_green-600 hover:text-midnight_green font-bold text-lg hover:underline transition">مکمل
+                                    مضمون پڑھیں &larr;</span>
+                            </div>
+                        </a>
+                        <a href="#article-detail"
+                            class="nav-link block bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 border border-ash_gray/50">
+                            <img src="https://img.freepik.com/free-photo/art-lanterns-middle-eastern-background_1203-4887.jpg"
+                                alt="میلاد النبی" class="w-full h-64 object-cover">
+                            <div class="p-8">
+                                <h3 class="text-2xl font-bold mb-3 text-rich_black">میلاد النبی ﷺ منانے کا شرعی حکم</h3>
+                                <p class="text-rich_black-600 mb-5 text-base leading-relaxed line-clamp-3">حضور ﷺ کی
+                                    ولادت کا جشن منانا، جلوس نکالنا اور محافل کا انعقاد کرنا باعثِ اجر و ثواب ہے۔</p>
+                                <span
+                                    class="text-midnight_green-600 hover:text-midnight_green font-bold text-lg hover:underline transition">مکمل
+                                    مضمون پڑھیں &larr;</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Categories Page -->
+        <div id="page-categories" class="page">
+            <main class="py-20 bg-white">
+                <div class="container mx-auto px-6">
+                    <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-12">موضوعات کے فتاویٰ
+                    </h1>
+                    <div class="max-w-5xl mx-auto space-y-8" id="category-fatawa-list">
+                        <!-- Content will be dynamically populated here -->
+                        <a href="#fatwa-detail"
+                            class="nav-link block bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-ash_gray hover:shadow-2xl hover:border-midnight_green-200 transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="flex items-start">
+                                <div
+                                    class="flex-shrink-0 flex items-center justify-center w-14 h-14 bg-midnight_green text-white font-bold text-3xl rounded-xl ml-4 shadow-md">
+                                    1</div>
+                                <div class="flex-grow">
+                                    <h3 class="text-xl sm:text-2xl font-semibold text-rich_black leading-normal">کیا نبی
+                                        کریم ﷺ اپنی قبر انور میں حیات ہیں اور سلام سنتے ہیں؟</h3>
+                                    <p
+                                        class="text-rich_black-600 text-base md:text-lg mt-2 mb-3 leading-relaxed line-clamp-3">
+                                        الجواب: اہلسنت والجماعت کا یہ متفقہ عقیدہ ہے کہ انبیاء کرام علیہم السلام اپنی
+                                        قبروں میں اسی طرح حیات ہیں جیسے دنیا میں تھے۔۔۔</p>
+                                    <div class="flex justify-between items-center mt-4">
+                                        <span
+                                            class="text-midnight_green-600 font-bold text-md md:text-lg hover:underline transition">مکمل
+                                            جواب پڑھیں &larr;</span>
+                                        <div class="flex items-center space-x-4 space-x-reverse text-air_force_blue">
+                                            <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span
+                                                    class="font-sans">3.1k</span></div>
+                                            <span class="hover:text-midnight_green transition-colors"><i
+                                                    class="bi bi-share-fill"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#fatwa-detail"
+                            class="nav-link block bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-ash_gray hover:shadow-2xl hover:border-midnight_green-200 transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="flex items-start">
+                                <div
+                                    class="flex-shrink-0 flex items-center justify-center w-14 h-14 bg-midnight_green text-white font-bold text-3xl rounded-xl ml-4 shadow-md">
+                                    2</div>
+                                <div class="flex-grow">
+                                    <h3 class="text-xl sm:text-2xl font-semibold text-rich_black leading-normal">مزاراتِ
+                                        اولیاء پر چادر چڑھانا اور چراغاں کرنا کیسا ہے؟</h3>
+                                    <p
+                                        class="text-rich_black-600 text-base md:text-lg mt-2 mb-3 leading-relaxed line-clamp-3">
+                                        الجواب: ولی کی قبر پر تعظیم کی نیت سے چادر چڑھانا جائز ہے تاکہ عوام الناس صاحبِ
+                                        مزار کی عزت و تکریم کریں اور ان سے فیض حاصل کریں۔</p>
+                                    <div class="flex justify-between items-center mt-4">
+                                        <span
+                                            class="text-midnight_green-600 font-bold text-md md:text-lg hover:underline transition">مکمل
+                                            جواب پڑھیں &larr;</span>
+                                        <div class="flex items-center space-x-4 space-x-reverse text-air_force_blue">
+                                            <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span
+                                                    class="font-sans">4.2k</span></div>
+                                            <span class="hover:text-midnight_green transition-colors"><i
+                                                    class="bi bi-share-fill"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Ask Page -->
+        <div id="page-ask" class="page">
+            <main class="py-20 bg-beige-600">
+                <div class="container mx-auto px-6 max-w-3xl">
+                    <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-4">اپنا سوال پوچھیں
+                    </h1>
+                    <p class="text-center text-air_force_blue text-base md:text-lg mb-10">براہ کرم اپنا سوال واضح اور
+                        مکمل طور پر لکھیں۔ آپ کا نام اور ای میل خفیہ رکھا جائے گا۔</p>
+                    <form class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-xl font-bold text-midnight_green-600 mb-2">نام
+                                (اختیاری)</label>
+                            <input type="text" id="name"
+                                class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-xl font-bold text-midnight_green-600 mb-2">ای
+                                میل</label>
+                            <input type="email" id="email"
+                                class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg"
+                                required>
+                        </div>
+                        <div>
+                            <label for="subject"
+                                class="block text-xl font-bold text-midnight_green-600 mb-2">موضوع</label>
+                            <select id="subject"
+                                class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg">
+                                <option>عقائد</option>
+                                <option>عبادات (نماز، روزہ)</option>
+                                <option>معاملات (زکوٰۃ، کاروبار)</option>
+                                <option>نکاح و طلاق</option>
+                                <option>متفرقات</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="question" class="block text-xl font-bold text-midnight_green-600 mb-2">سوال کی
+                                تفصیل</label>
+                            <textarea id="question" rows="8"
+                                class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg"
+                                required></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit"
+                                class="bg-midnight_green text-white font-bold py-3 px-8 rounded-full hover:bg-midnight_green-400 transition text-lg sm:text-2xl shadow-lg transform hover:scale-105">سوال
+                                بھیجیں</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+
+        <!-- Books Page (Updated) -->
+        <div id="page-books" class="page">
+            <main class="py-20 bg-beige-600">
+                <div class="container mx-auto px-6">
+                    <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-12">اسلامی کتب</h1>
+
+                    <!-- Search and Filter Section for Books -->
+                    <div class="max-w-3xl mx-auto text-center mb-8">
+                        <div class="max-w-2xl mx-auto px-4 relative">
+                            <div
+                                class="relative flex items-center shadow-lg rounded-full overflow-hidden border-2 border-ash_gray/50 mb-4">
+                                <span class="absolute right-3 text-air_force_blue">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                                    </svg>
+                                </span>
+                                <input id="searchInputBooks" type="text" placeholder="کتاب تلاش کریں..."
+                                    class="w-full py-4 pr-12 pl-6 text-right text-gray-700 focus:outline-none focus:ring-4 focus:ring-midnight_green-400 focus:border-midnight_green transition-all duration-300 bg-white" />
+                            </div>
+                            <div class="flex flex-wrap justify-center space-x-reverse space-x-2 md:space-x-4">
+                                <select
+                                    class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green">
+                                    <option>تمام کیٹیگریز</option>
+                                    <option>فقہ</option>
+                                    <option>حدیث</option>
+                                    <option>عقائد</option>
+                                </select>
+                                <select
+                                    class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green">
+                                    <option>تازہ ترین</option>
+                                    <option>سب سے زیادہ دیکھی گئیں</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">منتخب کتب</h2>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 text-center mb-12">
+                        <a href="#book-detail"
+                            class="nav-link block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <img src="https://placehold.co/150x200/598392/ffffff?text=Fatawa+Razawiyyah"
+                                alt="Fatawa Razawiyyah" class="w-full h-auto object-cover rounded-md mb-2 shadow-md">
+                            <h3 class="text-lg font-bold text-rich_black">فتاویٰ رضویہ</h3>
+                            <div class="text-xs text-air_force_blue my-1">
+                                <span
+                                    class="bg-midnight_green-100 text-midnight_green-600 px-2 py-0.5 rounded-full inline-block">فقہ</span>
+                            </div>
+                            <div
+                                class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-air_force_blue">
+                                <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span>15k</span></div>
+                                <div class="flex items-center"><i class="bi bi-download ml-1"></i><span>8k</span></div>
+                            </div>
+                        </a>
+                        <a href="#book-detail"
+                            class="nav-link block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <img src="https://placehold.co/150x200/598392/ffffff?text=Bahare+Shariat"
+                                alt="Bahare Shariat" class="w-full h-auto object-cover rounded-md mb-2 shadow-md">
+                            <h3 class="text-lg font-bold text-rich_black">بہارِ شریعت</h3>
+                            <div class="text-xs text-air_force_blue my-1">
+                                <span
+                                    class="bg-midnight_green-100 text-midnight_green-600 px-2 py-0.5 rounded-full inline-block">فقہ</span>
+                            </div>
+                            <div
+                                class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-air_force_blue">
+                                <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span>12k</span></div>
+                                <div class="flex items-center"><i class="bi bi-download ml-1"></i><span>7k</span></div>
+                            </div>
+                        </a>
+                        <a href="#book-detail"
+                            class="nav-link block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <img src="https://placehold.co/150x200/598392/ffffff?text=Qanune+Shariat"
+                                alt="Qanune Shariat" class="w-full h-auto object-cover rounded-md mb-2 shadow-md">
+                            <h3 class="text-lg font-bold text-rich_black">قانونِ شریعت</h3>
+                            <div class="text-xs text-air_force_blue my-1">
+                                <span
+                                    class="bg-midnight_green-100 text-midnight_green-600 px-2 py-0.5 rounded-full inline-block">فقہ</span>
+                            </div>
+                            <div
+                                class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-air_force_blue">
+                                <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span>10k</span></div>
+                                <div class="flex items-center"><i class="bi bi-download ml-1"></i><span>6k</span></div>
+                            </div>
+                        </a>
+                        <a href="#book-detail"
+                            class="nav-link block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <img src="https://placehold.co/150x200/598392/ffffff?text=Jaa+al-Haq" alt="Jaa al-Haq"
+                                class="w-full h-auto object-cover rounded-md mb-2 shadow-md">
+                            <h3 class="text-lg font-bold text-rich_black">جاء الحق</h3>
+                            <div class="text-xs text-air_force_blue my-1">
+                                <span
+                                    class="bg-midnight_green-100 text-midnight_green-600 px-2 py-0.5 rounded-full inline-block">عقائد</span>
+                            </div>
+                            <div
+                                class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-air_force_blue">
+                                <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span>18k</span></div>
+                                <div class="flex items-center"><i class="bi bi-download ml-1"></i><span>11k</span></div>
+                            </div>
+                        </a>
+                        <a href="#book-detail"
+                            class="nav-link block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <img src="https://placehold.co/150x200/598392/ffffff?text=Ahkam-e-Shariat"
+                                alt="Ahkam-e-Shariat" class="w-full h-auto object-cover rounded-md mb-2 shadow-md">
+                            <h3 class="text-lg font-bold text-rich_black">احکامِ شریعت</h3>
+                            <div class="text-xs text-air_force_blue my-1">
+                                <span
+                                    class="bg-midnight_green-100 text-midnight_green-600 px-2 py-0.5 rounded-full inline-block">فقہ</span>
+                            </div>
+                            <div
+                                class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-air_force_blue">
+                                <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span>9k</span></div>
+                                <div class="flex items-center"><i class="bi bi-download ml-1"></i><span>5k</span></div>
+                            </div>
+                        </a>
+                        <a href="#book-detail"
+                            class="nav-link block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <img src="https://placehold.co/150x200/598392/ffffff?text=Anwar+al-Hadith"
+                                alt="Anwar al-Hadith" class="w-full h-auto object-cover rounded-md mb-2 shadow-md">
+                            <h3 class="text-lg font-bold text-rich_black">انوار الحدیث</h3>
+                            <div class="text-xs text-air_force_blue my-1">
+                                <span
+                                    class="bg-midnight_green-100 text-midnight_green-600 px-2 py-0.5 rounded-full inline-block">حدیث</span>
+                            </div>
+                            <div
+                                class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-air_force_blue">
+                                <div class="flex items-center"><i class="bi bi-eye-fill ml-1"></i><span>7k</span></div>
+                                <div class="flex items-center"><i class="bi bi-download ml-1"></i><span>4k</span></div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-8">کتاب کیٹیگری</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 text-center mb-12">
+                        <a href="#books-by-category-fiqh"
+                            class="nav-link block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <i class="bi bi-book text-5xl text-midnight_green mb-4 inline-block"></i>
+                            <h3 class="font-bold text-lg text-rich_black">فقہ</h3>
+                        </a>
+                        <a href="#books-by-category-hadith"
+                            class="nav-link block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <i class="bi bi-journal-text text-5xl text-midnight_green mb-4 inline-block"></i>
+                            <h3 class="font-bold text-lg text-rich_black">حدیث</h3>
+                        </a>
+                        <a href="#books-by-category-aqaaid"
+                            class="nav-link block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <i class="bi bi-gem text-5xl text-midnight_green mb-4 inline-block"></i>
+                            <h3 class="font-bold text-lg text-rich_black">عقائد</h3>
+                        </a>
+                        <a href="#books-by-category-seerah"
+                            class="nav-link block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <i class="bi bi-person-lines-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                            <h3 class="font-bold text-lg text-rich_black">سیرت</h3>
+                        </a>
+                        <a href="#books-by-category-tasawwuf"
+                            class="nav-link block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <i class="bi bi-moon-stars-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                            <h3 class="font-bold text-lg text-rich_black">تصوف</h3>
+                        </a>
+                        <a href="#books-by-category-misc"
+                            class="nav-link block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 transform hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                            <i class="bi bi-grid-fill text-5xl text-midnight_green mb-4 inline-block"></i>
+                            <h3 class="font-bold text-lg text-rich_black">متفرقات</h3>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Book Detail Page (New) -->
+        <div id="page-book-detail" class="page">
+            <main class="py-20 bg-beige-600">
+                <div class="container mx-auto px-6 max-w-5xl">
+                    <a href="#books"
+                        class="nav-link text-midnight_green-600 hover:text-midnight_green font-bold text-lg mb-8 inline-block transform hover:scale-105 transition">&rarr;
+                        واپس اسلامی کتب پر</a>
+                    <div class="bg-white p-8 md:p-12 rounded-2xl shadow-lg border border-ash_gray">
+                        <div
+                            class="flex flex-col md:flex-row items-center md:items-start space-y-8 md:space-y-0 md:space-x-8 md:space-x-reverse mb-8">
+                            <img src="https://placehold.co/200x300/598392/ffffff?text=Fatawa+Razawiyyah"
+                                alt="Fatawa Razawiyyah" class="w-full md:w-1/3 object-cover rounded-xl shadow-md">
+                            <div class="md:w-2/3 text-center md:text-right">
+                                <h1 class="text-4xl md:text-5xl font-bold text-rich_black mb-2">فتاویٰ رضویہ</h1>
+                                <p class="text-air_force_blue font-semibold text-xl mb-4">از: امام احمد رضا خان</p>
+                                <span
+                                    class="bg-midnight_green-100 text-midnight_green-600 text-lg font-bold px-4 py-1 rounded-full inline-block mb-6">فقہ</span>
+                                <div class="flex flex-wrap justify-center md:justify-end space-x-4 space-x-reverse">
+                                    <button
+                                        class="bg-midnight_green text-white py-3 px-8 rounded-full hover:bg-midnight_green-400 transition font-semibold text-xl shadow-md">آن
+                                        لائن پڑھیں</button>
+                                    <button
+                                        class="bg-air_force_blue text-white py-3 px-8 rounded-full hover:bg-air_force_blue-400 transition font-semibold text-xl shadow-md"><i
+                                            class="bi bi-download ml-2"></i> ڈاؤن لوڈ</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-8 border-t-2 border-ash_gray/50">
+                        <div>
+                            <h2 class="text-3xl font-bold text-midnight_green mb-4">کتاب کا تعارف</h2>
+                            <p class="text-rich_black-600 text-lg md:text-xl leading-relaxed">فتاویٰ رضویہ امام اہلسنت،
+                                مجدد دین و ملت، الشاہ امام احمد رضا خان بریلوی رحمۃ اللہ علیہ کی فقہی اور علمی تحقیقات
+                                پر مبنی ایک جامع اور مستند کتاب ہے۔ یہ کتاب فقہ حنفی کے مسائل پر مشتمل ہے اور اس میں
+                                جدید و قدیم مسائل کا شرعی حل قرآن و حدیث کی روشنی میں پیش کیا گیا ہے۔ یہ اہل سنت
+                                والجماعت کے لیے ایک بنیادی حوالہ اور فقہی رہنمائی کا بہترین ذریعہ ہے۔</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Article Detail Page -->
+        <div id="page-article-detail" class="page">
+            <main class="py-20 bg-white">
+                <div class="container mx-auto px-6 max-w-4xl">
+                    <a href="#articles"
+                        class="nav-link text-midnight_green-600 hover:text-midnight_green font-bold text-lg mb-8 inline-block transform hover:scale-105 transition">&rarr;
+                        واپس تمام مضامین پر</a>
+                    <article class="as-article-detail">
+                        <h1 class="text-3xl md:text-5xl font-bold mb-4 text-rich_black leading-tight">عقیدہ ختمِ نبوت
+                            اور ہماری ذمہ داریاں</h1>
+                        <div class="flex flex-wrap justify-between items-center border-b border-ash_gray pb-4 mb-8">
+                            <div class="flex items-center text-air_force_blue mb-4 md:mb-0">
+                                <span>تحریر: علامہ ارشد القادری</span>
+                                <span class="mx-2">|</span>
+                                <span>تاریخ اشاعت: 15 جون 2025</span>
+                            </div>
+                            <div class="flex items-center space-x-6 space-x-reverse text-air_force_blue text-lg">
+                                <div class="flex items-center"><i class="bi bi-eye-fill ml-2"></i><span
+                                        class="font-sans">5,210</span></div>
+                                <div class="flex items-center"><i class="bi bi-hand-thumbs-up-fill ml-2"></i><span
+                                        class="font-sans">3,105</span></div>
+                                <a href="#" class="flex items-center hover:text-midnight_green transition-colors"><i
+                                        class="bi bi-share-fill"></i></a>
+                            </div>
+                        </div>
+                        <img src="https://img.freepik.com/premium-photo/islam-holy-book-muslims-quran-is-placed-wooden-stand-light-candles_43780-2100.jpg"
+                            alt="ختم نبوت" class="w-full h-auto object-cover rounded-xl shadow-lg mb-8">
+                        <div class="text-rich_black-600 text-base md:text-xl space-y-6 leading-relaxed">
+                            <p>ختمِ نبوت کا عقیدہ دینِ اسلام کی اساس ہے۔ اس کا مطلب یہ ہے کہ حضرت محمد مصطفیٰ ﷺ اللہ کے
+                                آخری نبی ہیں، آپ کے بعد کوئی نیا نبی نہیں آئے گا۔ یہ عقیدہ قرآن و حدیث اور اجماعِ امت سے
+                                ثابت ہے۔ قرآن کریم میں واضح طور پر ارشاد ہے: "مَا كَانَ مُحَمَّدٌ اَبَاۤ اَحَدٍ مِّنْ
+                                رِّجَالِكُمْ وَ لٰكِنْ رَّسُوْلَ اللّٰهِ وَ خَاتَمَ النَّبِیّٖنَ"۔</p>
+                            <h3 class="text-2xl md:text-3xl font-bold text-rich_black pt-4">ہماری ذمہ داریاں:</h3>
+                            <p>اس عقیدے کا تحفظ ہر مسلمان پر فرض ہے۔ ہمیں چاہیے کہ ہم خود بھی اس عقیدے کو مضبوطی سے
+                                تھامے رکھیں اور اپنی آنے والی نسلوں کو بھی اس کی اہمیت سے آگاہ کریں۔ جھوٹے مدعیانِ نبوت
+                                اور فتنہ پرور گروہوں سے خود بھی بچیں اور دوسروں کو بھی بچائیں۔</p>
+                        </div>
+                    </article>
+                    <div class="mt-16">
+                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">متعلقہ مضامین
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div
+                                class="bg-beige-600 rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 border border-ash_gray/50">
+                                <img src="https://img.freepik.com/free-photo/prayer-beads-candle-near-religious-book_23-2147868974.jpg"
+                                    alt="شان اولیاء" class="w-full h-56 object-cover">
+                                <div class="p-6">
+                                    <h3 class="text-xl md:text-2xl font-bold mb-3 text-rich_black">شانِ اولیاء اور ان سے
+                                        استعانت کا مسئلہ</h3>
+                                    <a href="#article-detail"
+                                        class="nav-link text-midnight_green-600 hover:text-midnight_green font-bold text-lg hover:underline transition">مکمل
+                                        مضمون پڑھیں &larr;</a>
+                                </div>
+                            </div>
+                            <div
+                                class="bg-beige-600 rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 border border-ash_gray/50">
+                                <img src="https://img.freepik.com/free-photo/art-lanterns-middle-eastern-background_1203-4887.jpg"
+                                    alt="میلاد النبی" class="w-full h-56 object-cover">
+                                <div class="p-6">
+                                    <h3 class="text-xl md:text-2xl font-bold mb-3 text-rich_black">میلاد النبی ﷺ منانے
+                                        کا شرعی حکم</h3>
+                                    <a href="#article-detail"
+                                        class="nav-link text-midnight_green-600 hover:text-midnight_green font-bold text-lg hover:underline transition">مکمل
+                                        مضمون پڑھیں &larr;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </article>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile-first Bottom Navigation Bar -->
+    <nav
+        class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
+        <ul class="flex justify-around items-center h-16">
+            <li>
+                <a href="#home"
+                    class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                    <i class="bi bi-house-door-fill text-xl"></i>
+                    <span class="text-sm">صفحہ اول</span>
+                </a>
+            </li>
+            <li>
+                <a href="/fatwa"
+                    class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                    <i class="bi bi-file-text-fill text-xl"></i>
+                    <span class="text-sm">فتاویٰ</span>
+                </a>
+            </li>
+            <li>
+                <a href="/book"
+                    class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                    <i class="bi bi-book-fill text-xl"></i>
+                    <span class="text-sm">اسلامی کتب</span>
+                </a>
+            </li>
+            <li>
+                <a href="/question"
+                    class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                    <i class="bi bi-chat-dots-fill text-xl"></i>
+                    <span class="text-sm">سوال پوچھیں</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Footer for desktop view -->
+    <footer id="qs-footer" class="bg-rich_black text-beige pt-16 rounded-t-2xl">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
+                    <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم جو قرآن و سنت کی
+                        روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے
+                        مطابق رہنمائی کو عام کرنا ہے۔</p>
+                    <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
+                        <a href="https://www.facebook.com/share/1PhWgmvP2g/"
+                            class="text-air_force_blue-700  hover:text-beige transition "><i
+                                class="bi bi-facebook"></i></a>
+                        <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i
+                                class="bi bi-twitter-x"></i></a>
+                        <a href="http://youtube.com/c/AzharAlimi"
+                            class="text-air_force_blue-700 hover:text-beige transition"><i
+                                class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
+                    <ul class="space-y-3 text-lg">
+                        <li><a href="/fatwa"
+                                class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+                        <li><a href="/articles"
+                                class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+                        <li><a href="/question"
+                                class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a>
+                        </li>
+                        <li><a href="/about"
+                                class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
+                    <ul class="space-y-3 text-lg text-air_force_blue-700">
+                        <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
+                        <!-- <li><i class="bi bi-telephone ml-2"></i>+92 300 1234567</li> -->
+                        <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">ہمارے بارے میں</h3>
+                    <p class="text-air_force_blue-700 text-lg leading-relaxed">مسائل ورلڈ ایک آن لائن پلیٹ فارم ہے جو
+                        اہل سنت والجماعت کے مطابق شرعی رہنمائی فراہم کرتا ہے۔</p>
+                    <a href="https://alqalamarts.com/" target="_blank"
+                        class="text-air_force_blue-700 hover:text-beige transition block mt-2 text-sm font-sans">
+                        <button id="install-app-button"
+                            class="bg-air_force_blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-air_force_blue-400 transition text-sm sm:text-md shadow-md mt-4">
+                            <i class="bi bi-plus-circle ml-2"></i> ایپ انسٹال کریں
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
+                <p class="text-lg">© 2025 AlQalamArts.com. All rights reserved. | © 2025 مسائل ورلڈ۔ تمام حقوق محفوظ
+                    ہیں۔</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+
+</body>
+
+</html>

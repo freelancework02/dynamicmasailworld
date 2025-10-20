@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no"/>
+  <title>تمام موضوعات (Tags) — مسائل ورلڈ</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    @font-face {
+      font-family: 'NaatFont';
+      src: url('https://res.cloudinary.com/awescreative/raw/upload/v1749150996/Awes/naatfont.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body {
+      font-family: 'NaatFont', serif;
+      font-size: 80%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: 70px; /* Space for the bottom navigation bar */
+      padding-top: 56px; /* Space for the mobile header */
+    }
+    @media (min-width: 768px) {
+      body { padding-top: 0; }
+    }
+    .circular-logo { border-radius: 50%; }
+    .shadow-top-lg { box-shadow: 0 -6px 16px rgba(0,0,0,.08); }
+
+    /* Skeleton loader */
+    .skeleton {
+      background: linear-gradient(90deg, #f2f8e6 25%, #e6f0d6 37%, #f2f8e6 63%);
+      background-size: 400% 100%;
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'rich_black': { DEFAULT: '#01161e', 100: '#000406', 200: '#00090c', 300: '#010d12', 400: '#011118', 500: '#01161e', 600: '#04597b', 700: '#079cd8', 800: '#45c6f9', 900: '#a2e3fc' },
+            'midnight_green': { DEFAULT: '#124559', 100: '#040e12', 200: '#071c24', 300: '#0b2935', 400: '#0f3747', 500: '#124559', 600: '#20799c', 700: '#36a9d6', 800: '#79c5e4', 900: '#bce2f1' },
+            'air_force_blue': { DEFAULT: '#598392', 100: '#121a1d', 200: '#24343a', 300: '#354e57', 400: '#476874', 500: '#598392', 600: '#769dab', 700: '#99b6c0', 800: '#bbced5', 900: '#dde7ea' },
+            'ash_gray': { DEFAULT: '#aec3b0', 100: '#1f2a20', 200: '#3e5441', 300: '#5e7f61', 400: '#83a386', 500: '#aec3b0', 600: '#bdcebf', 700: '#cedbcf', 800: '#dee7df', 900: '#eff3ef' },
+            'beige': { DEFAULT: '#eff6e0', 100: '#384915', 200: '#71912a', 300: '#a4cc4e', 400: '#c9e197', 500: '#eff6e0', 600: '#f2f8e6', 700: '#f5f9ec', 800: '#f8fbf2', 900: '#fcfdf9' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white">
+
+  <!-- Mobile-only header -->
+  <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
+    <a href="./Pages/Question.html" class="nav-link text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+    <div class="flex items-center space-x-4 space-x-reverse">
+      <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-facebook"></i></a>
+      <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-twitter-x"></i></a>
+      <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition text-base"><i class="bi bi-youtube"></i></a>
+    </div>
+  </div>
+
+  <!-- Desktop header -->
+  <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
+    <div class="bg-rich_black text-air_force_blue-700 py-2">
+      <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
+        <a href="./Pages/Question.html" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+        <div class="flex items-center space-x-4 space-x-reverse">
+          <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-facebook"></i></a>
+          <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+          <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition"><i class="bi bi-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <nav class="container mx-auto px-4 sm:px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="text-3xl font-bold text-midnight_green">
+          <a href="https://masailworld.com" class="nav-link flex items-center space-x-reverse space-x-2">
+            <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo" class="h-10 w-10 circular-logo">
+            <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
+            <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
+          </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-reverse space-x-8">
+          <a href="https://masailworld.com" class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
+          <a href="https://masailworld.com/Pages/fatawa.html" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+          <a href="./Pages/About.html" class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+          <a href="https://masailworld.com/Pages/articles.html" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+          <a href="https://masailworld.com/Pages/Categoryfatawa.html" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+          <a href="https://masailworld.com/Pages/book.html" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
+          <a href="./Pages/Question.html" class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative hero-section">
+    <div class="absolute inset-0 bg-[rgba(1,22,30,0.65)]"></div>
+    <div class="container mx-auto px-6 py-16 relative z-10">
+      <h1 class="text-3xl md:text-5xl font-bold text-beige mb-4">تمام موضوعات</h1>
+      <p class="text-air_force_blue-900 md:text-xl">نیچے دی گئی فہرست میں تمام ٹیگز/موضوعات موجود ہیں۔ کسی بھی موضوع پر کلک کریں۔</p>
+      <div class="mt-6 max-w-2xl">
+        <label for="tagSearch" class="sr-only">موضوع تلاش کریں</label>
+        <input id="tagSearch" type="text" placeholder="موضوع، نام یا سلگ تلاش کریں…"
+               class="w-full rounded-xl border border-ash_gray-400 bg-beige px-4 py-3 text-midnight_green placeholder:air_force_blue-700 focus:outline-none focus:ring-2 focus:ring-midnight_green/40" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Tags Grid -->
+  <main class="container mx-auto px-6 py-12">
+    <!-- Info / counts -->
+    <div id="tagsMeta" class="text-air_force_blue-700 mb-6"></div>
+
+    <!-- Loading skeleton -->
+    <div id="tagsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <!-- Skeleton cards -->
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+      <div class="bg-beige-600 rounded-2xl p-6 shadow-lg skeleton h-36"></div>
+    </div>
+
+    <!-- Error box -->
+    <div id="errorBox" class="hidden mt-6 rounded-xl border border-red-200 bg-red-50 text-red-700 p-4">
+      <div class="flex items-start gap-3">
+        <i class="bi bi-exclamation-triangle-fill text-xl"></i>
+        <p class="leading-relaxed">
+          معذرت! ٹیگز لوڈ نہیں ہو سکے۔ براہِ کرم صفحہ تازہ کریں یا کچھ دیر بعد دوبارہ کوشش کریں۔
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mobile bottom nav -->
+  <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
+    <ul class="flex justify-around items-center h-16">
+      <li>
+        <a href="https://masailworld.com"
+           class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-house-door-fill text-xl"></i>
+          <span class="text-sm">صفحہ اول</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://masailworld.com/Pages/fatawa.html"
+           class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-file-text-fill text-xl"></i>
+          <span class="text-sm">فتاویٰ</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://masailworld.com/Pages/book.html"
+           class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-book-fill text-xl"></i>
+          <span class="text-sm">اسلامی کتب</span>
+        </a>
+      </li>
+      <li>
+        <a href="./Pages/Question.html"
+           class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-chat-dots-fill text-xl"></i>
+          <span class="text-sm">سوال پوچھیں</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Desktop footer -->
+  <footer id="qs-footer" class="bg-rich_black text-beige pt-16 rounded-t-2xl">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="col-span-1 md:col-span-2">
+          <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">
+            ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔
+          </p>
+          <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+            <a href="http://youtube.com/c/AzharAlimi" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
+          <ul class="space-y-3 text-lg">
+            <li><a href="https://masailworld.com/Pages/fatawa.html" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+            <li><a href="https://masailworld.com/Pages/articles.html" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+            <li><a href="./Pages/Question.html" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+            <li><a href="https://masailworld.com#about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
+          <ul class="space-y-3 text-lg text-air_force_blue-700">
+            <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
+            <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہمارے بارے میں</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">مسائل ورلڈ ایک آن لائن پلیٹ فارم ہے جو اہل سنت والجماعت کے مطابق شرعی رہنمائی فراہم کرتا ہے۔</p>
+          <a href="https://alqalamarts.com/" target="_blank" class="text-air_force_blue-700 hover:text-beige transition block mt-2 text-sm font-sans">
+            <button id="install-app-button" class="bg-air_force_blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-air_force_blue-400 transition text-sm sm:text-md shadow-md mt-4">
+              <i class="bi bi-plus-circle ml-2"></i> ایپ انسٹال کریں
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
+        <p class="text-lg">© 2025 AlQalamArts.com. All rights reserved. | © 2025 مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const API_URL = 'https://api.masailworld.com/api/tags?limit=148';
+
+      const grid = document.getElementById('tagsGrid');
+      const errorBox = document.getElementById('errorBox');
+      const meta = document.getElementById('tagsMeta');
+      const searchInput = document.getElementById('tagSearch');
+
+      let allTags = [];
+
+      function norm(s) {
+        return (s ?? '').toString().trim();
+      }
+
+      function tagLink(slug) {
+        // Adjust this target if needed
+        return `https://masailworld.com/Pages/Categoryfatawa.html?tag=${encodeURIComponent(slug || '')}`;
+      }
+
+      function createTagCard(tag) {
+        const name = norm(tag.Name) || '—';
+        const slug = norm(tag.slug) || '';
+        const iconClass = norm(tag.iconClass) || 'bi bi-tag-fill';
+
+        const a = document.createElement('a');
+        a.href = tagLink(slug);
+        a.className = 'block bg-beige-600 p-6 rounded-2xl shadow-lg hover:bg-ash_gray hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center';
+        a.setAttribute('aria-label', name);
+
+        const i = document.createElement('i');
+        i.className = iconClass + ' text-4xl md:text-5xl text-midnight_green mb-4 inline-block';
+        a.appendChild(i);
+
+        const h3 = document.createElement('h3');
+        h3.className = 'font-bold text-lg md:text-xl text-rich_black';
+        h3.textContent = name;
+        a.appendChild(h3);
+
+        if (slug) {
+          const p = document.createElement('p');
+          p.className = 'text-xs text-air_force_blue-700 mt-1 truncate';
+          p.textContent = slug;
+          a.appendChild(p);
+        }
+        return a;
+      }
+
+      function render(tags) {
+        grid.innerHTML = '';
+        if (!tags || !tags.length) {
+          grid.innerHTML = `
+            <div class="col-span-full text-center text-air_force_blue-700 bg-beige-600 rounded-xl p-6">
+              فی الحال کوئی موضوع دستیاب نہیں۔
+            </div>`;
+          meta.textContent = '';
+          return;
+        }
+        const frag = document.createDocumentFragment();
+        tags.forEach(t => frag.appendChild(createTagCard(t)));
+        grid.appendChild(frag);
+        meta.innerHTML = `کل موضوعات: <span class="font-bold text-midnight_green">${tags.length}</span>`;
+      }
+
+      function applyFilter() {
+        const q = norm(searchInput.value).toLowerCase();
+        if (!q) {
+          render(allTags);
+          return;
+        }
+        const filtered = allTags.filter(t => {
+          const n = norm(t.Name).toLowerCase();
+          const s = norm(t.slug).toLowerCase();
+          return n.includes(q) || s.includes(q);
+        });
+        render(filtered);
+      }
+
+      async function loadTags() {
+        try {
+          const res = await fetch(API_URL, { headers: { 'Accept': 'application/json' } });
+          if (!res.ok) throw new Error('Network response was not ok');
+          const json = await res.json();
+
+          // Flexible shape handling
+          let tags = Array.isArray(json) ? json
+                    : Array.isArray(json?.data) ? json.data
+                    : Array.isArray(json?.items) ? json.items
+                    : Array.isArray(json?.tags) ? json.tags
+                    : [];
+
+          // Sort by Name (Urdu-friendly basic sort)
+          tags = tags
+            .filter(t => t && (t.Name || t.slug))
+            .sort((a, b) => norm(a.Name).localeCompare(norm(b.Name), 'ur'));
+
+          allTags = tags;
+          render(allTags);
+        } catch (e) {
+          console.error('Failed to load tags:', e);
+          errorBox.classList.remove('hidden');
+        }
+      }
+
+      // Events
+      searchInput.addEventListener('input', applyFilter);
+
+      // Start
+      loadTags();
+    })();
+  </script>
+</body>
+</html>

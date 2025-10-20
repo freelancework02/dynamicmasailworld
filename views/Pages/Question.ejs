@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <title>مسائل ورلڈ - دار الافتاء اہل سنت</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    @font-face {
+      font-family: 'NaatFont';
+      src: url('https://res.cloudinary.com/awescreative/raw/upload/v1749150996/Awes/naatfont.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'NaatFont', serif;
+      font-size: 80%;
+      padding-bottom: 70px;
+      padding-top: 56px;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding-top: 0;
+      }
+    }
+
+    .circular-logo {
+      border-radius: 50%;
+    }
+
+    /* Loader Styles */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      display: none;
+    }
+
+    .spinner {
+      border: 6px solid #e0e0e0;
+      border-top: 6px solid #124559;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .success-message,
+    .error-message {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .success-message {
+      color: #0d9488;
+    }
+
+    .error-message {
+      color: #dc2626;
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'rich_black': '#01161e',
+            'midnight_green': '#124559',
+            'air_force_blue': '#598392',
+            'ash_gray': '#aec3b0',
+            'beige': '#eff6e0'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-beige text-rich_black">
+
+  <!-- Loader Overlay -->
+  <div id="loader" class="loader-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Mobile-only Social Media and Ask Link (New) -->
+    <div
+        class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
+        <a href="#ask" class="nav-link text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+        <div class="flex items-center space-x-4 space-x-reverse">
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i
+                    class="bi bi-facebook"></i></a>
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i
+                    class="bi bi-twitter-x"></i></a>
+            <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition text-base"><i
+                    class="bi bi-youtube"></i></a>
+        </div>
+    </div>
+
+
+    <!-- Header & Navigation for desktop view -->
+    <header id="qs-header"
+        class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
+        <!-- Social Media Links -->
+        <div class="bg-rich_black text-air_force_blue-700 py-2">
+            <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
+                <a href="#ask" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i
+                            class="bi bi-facebook"></i></a>
+                    <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i
+                            class="bi bi-twitter-x"></i></a>
+                    <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition"><i
+                            class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- Main Nav -->
+        <nav class="container mx-auto px-4 sm:px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-3xl font-bold text-midnight_green">
+                    <a href="https://masailworld.com" class="nav-link flex items-center space-x-reverse space-x-2">
+                        <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo"
+                            class="h-10 w-10 circular-logo">
+                        <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
+                        <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-reverse space-x-8">
+                    <a href="https://masailworld.com"
+                        class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ
+                        اول</a>
+                    <a href="https://masailworld.com/Pages/fatawa.html"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+                    <a href="#about"
+                        class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+                    <a href="https://masailworld.com/Pages/articles.html"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+                    <a href="https://masailworld.com/Pages/Categoryfatawa.html"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+                    <a href="https://masailworld.com/Pages/book.html"
+                        class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی
+                        کتب</a>
+                    <a href="#ask"
+                        class="nav-link text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال
+                        پوچھیں</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+  <!-- Ask Question Section -->
+  <!-- <div id="ask" class="page active">
+    <main class="py-20 bg-beige">
+      <div class="container mx-auto px-6 max-w-3xl">
+        <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-4">اپنا سوال پوچھیں</h1>
+        <p class="text-center text-air_force_blue text-base md:text-lg mb-10">براہ کرم اپنا سوال واضح اور مکمل طور پر لکھیں۔ آپ کا نام اور ای میل خفیہ رکھا جائے گا۔</p>
+
+        <form id="askForm" class="space-y-6">
+          <div>
+            <label for="name" class="block text-xl font-bold text-midnight_green mb-2">نام (اختیاری)</label>
+            <input type="text" id="name" class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg">
+          </div>
+
+          <div>
+            <label for="email" class="block text-xl font-bold text-midnight_green mb-2">ای میل</label>
+            <input type="email" id="email" class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg" required>
+          </div>
+
+          <div>
+            <label for="subject" class="block text-xl font-bold text-midnight_green mb-2">موضوع</label>
+            <select id="subject" class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg">
+              <option>عقائد</option>
+              <option>عبادات (نماز، روزہ)</option>
+              <option>معاملات (زکوٰۃ، کاروبار)</option>
+              <option>نکاح و طلاق</option>
+              <option>متفرقات</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="question" class="block text-xl font-bold text-midnight_green mb-2">سوال کی تفصیل</label>
+            <textarea id="question" rows="8" class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg" required></textarea>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" id="submitBtn" class="bg-midnight_green text-white font-bold py-3 px-8 rounded-full hover:bg-midnight_green-400 transition text-lg sm:text-2xl shadow-lg transform hover:scale-105">
+              سوال بھیجیں
+            </button>
+          </div>
+
+          <div id="successMsg" class="success-message">✅ سوال کامیابی کے ساتھ بھیج دیا گیا!</div>
+          <div id="errorMsg" class="error-message">❌ نیٹ ورک میں خرابی، دوبارہ کوشش کریں۔</div>
+        </form>
+      </div>
+    </main>
+  </div> -->
+
+
+
+
+   <!-- Ask Question Section -->
+  <div id="ask" class="page active">
+    <main class="py-20 bg-beige">
+      <div class="container mx-auto px-6 max-w-3xl">
+        <h1 class="text-4xl md:text-5xl font-bold text-center text-midnight_green mb-4">اپنا سوال پوچھیں</h1>
+        <p class="text-center text-air_force_blue text-base md:text-lg mb-10">براہ کرم اپنا سوال واضح اور مکمل طور پر لکھیں۔ آپ کا نام اور ای میل خفیہ رکھا جائے گا۔</p>
+
+        <form id="askForm" class="space-y-6">
+          <div>
+            <label for="name" class="block text-xl font-bold text-midnight_green mb-2">نام (اختیاری)</label>
+            <input type="text" id="name"
+              class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg">
+          </div>
+
+          <div>
+            <label for="email" class="block text-xl font-bold text-midnight_green mb-2">ای میل</label>
+            <input type="email" id="email"
+              class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg"
+              required>
+          </div>
+
+          <div>
+            <label for="subject" class="block text-xl font-bold text-midnight_green mb-2">موضوع</label>
+            <select id="subject"
+              class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg">
+              <option value="">موضوع منتخب کریں...</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="question" class="block text-xl font-bold text-midnight_green mb-2">سوال کی تفصیل</label>
+            <textarea id="question" rows="8"
+              class="w-full py-3 px-4 border-2 border-ash_gray rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight_green text-rich_black text-lg"
+              required></textarea>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" id="submitBtn"
+              class="bg-midnight_green text-white font-bold py-3 px-8 rounded-full hover:bg-midnight_green-400 transition text-lg sm:text-2xl shadow-lg transform hover:scale-105">
+              سوال بھیجیں
+            </button>
+          </div>
+
+          <div id="successMsg" class="success-message">✅ سوال کامیابی کے ساتھ بھیج دیا گیا!</div>
+          <div id="errorMsg" class="error-message">❌ نیٹ ورک میں خرابی، دوبارہ کوشش کریں۔</div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+   <!-- Footer for desktop view -->
+    <footer id="qs-footer" class="bg-rich_black text-beige pt-16 rounded-t-2xl">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
+                    <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم جو قرآن و سنت کی
+                        روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے
+                        مطابق رہنمائی کو عام کرنا ہے۔</p>
+                    <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
+                        <a href="https://www.facebook.com/share/1PhWgmvP2g/"
+                            class="text-air_force_blue-700  hover:text-beige transition "><i
+                                class="bi bi-facebook"></i></a>
+                        <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i
+                                class="bi bi-twitter-x"></i></a>
+                        <a href="http://youtube.com/c/AzharAlimi"
+                            class="text-air_force_blue-700 hover:text-beige transition"><i
+                                class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
+                    <ul class="space-y-3 text-lg">
+                        <li><a href="https://masailworld.com/Pages/fatawa.html"
+                                class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+                        <li><a href="https://masailworld.com/Pages/articles.html"
+                                class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+                        <li><a href="#ask"
+                                class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a>
+                        </li>
+                        <li><a href="https://masailworld.com#about"
+                                class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
+                    <ul class="space-y-3 text-lg text-air_force_blue-700">
+                        <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
+                        <!-- <li><i class="bi bi-telephone ml-2"></i>+92 300 1234567</li> -->
+                        <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4">ہمارے بارے میں</h3>
+                    <p class="text-air_force_blue-700 text-lg leading-relaxed">مسائل ورلڈ ایک آن لائن پلیٹ فارم ہے جو
+                        اہل سنت والجماعت کے مطابق شرعی رہنمائی فراہم کرتا ہے۔</p>
+                    <a href="https://alqalamarts.com/" target="_blank"
+                        class="text-air_force_blue-700 hover:text-beige transition block mt-2 text-sm font-sans">
+                        <button id="install-app-button"
+                            class="bg-air_force_blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-air_force_blue-400 transition text-sm sm:text-md shadow-md mt-4">
+                            <i class="bi bi-plus-circle ml-2"></i> ایپ انسٹال کریں
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
+                <p class="text-lg">© 2025 AlQalamArts.com. All rights reserved. | © 2025 مسائل ورلڈ۔ تمام حقوق محفوظ
+                    ہیں۔</p>
+            </div>
+        </div>
+    </footer>
+
+  <!-- <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("askForm");
+      const loader = document.getElementById("loader");
+      const successMsg = document.getElementById("successMsg");
+      const errorMsg = document.getElementById("errorMsg");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        successMsg.style.display = "none";
+        errorMsg.style.display = "none";
+        loader.style.display = "flex";
+
+        const questionername = document.getElementById("name").value.trim();
+        const questionaremail = document.getElementById("email").value.trim();
+        const Title = document.getElementById("subject").value;
+        const detailquestion = document.getElementById("question").value.trim();
+        const slug = Title.replace(/\s+/g, "-").toLowerCase() + "-" + Date.now();
+
+        const data = { Title, slug, detailquestion, questionername, questionaremail };
+
+        try {
+          const res = await fetch("https://api.masailworld.com/api/fatwa/website", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          loader.style.display = "none";
+
+          if (res.ok) {
+            successMsg.style.display = "block";
+            form.reset();
+          } else {
+            const result = await res.json();
+            errorMsg.textContent = "❌ خرابی: " + (result.error || "سوال بھیجنے میں ناکامی");
+            errorMsg.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error submitting question:", error);
+          loader.style.display = "none";
+          errorMsg.textContent = "❌ نیٹ ورک میں خرابی، دوبارہ کوشش کریں۔";
+          errorMsg.style.display = "block";
+        }
+      });
+    });
+  </script> -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const form = document.getElementById("askForm");
+      const loader = document.getElementById("loader");
+      const successMsg = document.getElementById("successMsg");
+      const errorMsg = document.getElementById("errorMsg");
+      const subjectSelect = document.getElementById("subject");
+
+      // Helper to safely get name & slug from various API shapes
+      function extractName(tag) {
+        return tag?.Name || tag?.name || tag?.Title || tag?.title || tag?.label || tag?.Label || "";
+      }
+      function extractSlug(tag) {
+        return tag?.slug || tag?.Slug || "";
+      }
+
+      // Fetch tags for dropdown (robust to either array or { data: [...] } response)
+      try {
+        // show loader while loading tags (optional)
+        loader.style.display = "flex";
+
+        const tagRes = await fetch("https://api.masailworld.com/api/tags?limit=100");
+        if (!tagRes.ok) throw new Error("Network response not ok: " + tagRes.status);
+        const tagData = await tagRes.json();
+
+        // hide loader after fetch
+        loader.style.display = "none";
+
+        // Determine array location
+        const tagsArray = Array.isArray(tagData) ? tagData : (Array.isArray(tagData.data) ? tagData.data : []);
+
+        if (!tagsArray || tagsArray.length === 0) {
+          const noOpt = document.createElement("option");
+          noOpt.value = "";
+          noOpt.textContent = "موضوعات دستیاب نہیں ہیں۔";
+          subjectSelect.appendChild(noOpt);
+        } else {
+          // populate
+          tagsArray.forEach(tag => {
+            const name = extractName(tag);
+            if (!name) return; // skip if no name
+            const slugFromApi = extractSlug(tag) || name.replace(/\s+/g, "-").toLowerCase();
+            const option = document.createElement("option");
+            // Keep option.value as the display Title (so Title sent to backend is readable),
+            // store canonical slug on dataset for submission.
+            option.value = name;
+            option.textContent = name;
+            option.dataset.slug = slugFromApi;
+            subjectSelect.appendChild(option);
+          });
+
+          // Optional: auto-select the first real tag (index 1 because index 0 is placeholder).
+          if (subjectSelect.options.length > 1) {
+            subjectSelect.selectedIndex = 1;
+          }
+        }
+      } catch (err) {
+        loader.style.display = "none";
+        console.error("Error fetching tags:", err);
+        const errorOpt = document.createElement("option");
+        errorOpt.value = "";
+        errorOpt.textContent = "موضوعات لوڈ نہیں ہو سکے۔";
+        subjectSelect.appendChild(errorOpt);
+      }
+
+      // Form submission handler
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        successMsg.style.display = "none";
+        errorMsg.style.display = "none";
+        loader.style.display = "flex";
+
+        const questionername = document.getElementById("name").value.trim();
+        const questionaremail = document.getElementById("email").value.trim();
+
+        // Get selected option and its stored slug (if any)
+        const selectedOption = subjectSelect.options[subjectSelect.selectedIndex];
+        const Title = (selectedOption && selectedOption.value) ? selectedOption.value : "";
+        const slugBase = (selectedOption && selectedOption.dataset && selectedOption.dataset.slug) ? selectedOption.dataset.slug : Title;
+        // Keep prior behavior of appending timestamp to avoid collisions
+        const slug = (slugBase || "topic").toString().replace(/\s+/g, "-").toLowerCase() + "-" + Date.now();
+
+        const detailquestion = document.getElementById("question").value.trim();
+
+        const data = { Title, slug, detailquestion, questionername, questionaremail };
+
+        try {
+          const res = await fetch("https://api.masailworld.com/api/fatwa/website", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          loader.style.display = "none";
+
+          if (res.ok) {
+            successMsg.style.display = "block";
+            form.reset();
+            // return to placeholder
+            subjectSelect.selectedIndex = 0;
+          } else {
+            const result = await res.json();
+            errorMsg.textContent = "❌ خرابی: " + (result.error || "سوال بھیجنے میں ناکامی");
+            errorMsg.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error submitting question:", error);
+          loader.style.display = "none";
+          errorMsg.textContent = "❌ نیٹ ورک میں خرابی، دوبارہ کوشش کریں۔";
+          errorMsg.style.display = "block";
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

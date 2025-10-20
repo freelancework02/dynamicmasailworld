@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no">
+  <% /* Page title */ %>
+  <title><%= article.Title ? article.Title + ' — مسائل ورلڈ' : 'مسائل ورلڈ' %></title>
+
+  <% 
+    // safe helpers
+    const safe = str => (str ? String(str) : '');
+    const excerpt = (s, n=160) => {
+      if (!s) return '';
+      const t = s.replace(/(<[^>]+>|\s+)/g, ' ').trim();
+      return t.length <= n ? t : (t.slice(0, n-1).trim() + '…');
+    };
+    const pageUrl = requestUrl; // passed from server (full canonical URL)
+    const img = article.imageUrl || (API_BASE + '/' + encodeURIComponent(article.id) + '/image') || '';
+    const desc = article.seoDescription || article.seo || article.summary || excerpt(article.ArticleText || '', 180);
+  %>
+
+  <!-- Primary Meta -->
+  <meta name="description" content="<%= desc %>">
+  <link rel="canonical" href="<%= pageUrl %>">
+
+  <!-- Preload main image so social crawlers and browsers see it fast -->
+  <% if (img) { %>
+    <link rel="preload" as="image" href="<%= img %>">
+    <link rel="image_src" href="<%= img %>">
+  <% } %>
+
+  <!-- Open Graph / Facebook / WhatsApp preview -->
+  <meta property="og:locale" content="ur_PK">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="<%= safe(article.Title) %>">
+  <meta property="og:description" content="<%= desc %>">
+  <meta property="og:url" content="<%= pageUrl %>">
+  <% if (img) { %>
+    <meta property="og:image" content="<%= img %>">
+    <meta property="og:image:alt" content="<%= safe(article.Title) %>">
+  <% } %>
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="<%= img ? 'summary_large_image' : 'summary' %>">
+  <meta name="twitter:title" content="<%= safe(article.Title) %>">
+  <meta name="twitter:description" content="<%= desc %>">
+  <% if (img) { %><meta name="twitter:image" content="<%= img %>"><% } %>
+
+  <!-- Schema.org JSON-LD (Article) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "<%= pageUrl %>"
+    },
+    "headline": "<%= safe(article.Title) %>",
+    "image": ["<%= img %>"],
+    "datePublished": "<%= article.createdAt ? new Date(article.createdAt).toISOString() : '' %>",
+    "author": {
+      "@type": "Organization",
+      "name": "<%= safe(article.writer || 'ادارہ مسائل ورلڈ') %>"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "مسائل ورلڈ",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://alqalamarts.com/mw/masailworld.png"
+      }
+    },
+    "description": "<%= desc %>"
+  }
+  </script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    /* (re-use your existing styles; trimmed for clarity here) */
+    @font-face {
+      font-family: 'NaatFont';
+      src: url('https://res.cloudinary.com/awescreative/raw/upload/v1749150996/Awes/naatfont.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body { font-family: 'NaatFont', serif; font-size: 80%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; padding-bottom: 70px; padding-top: 56px; background-color: #eff6e0; }
+    @media (min-width: 768px) { body { padding-top: 0; } }
+    .circular-logo { border-radius:50%; }
+    .mw-toast { position: fixed; bottom: 16px; right: 16px; background: #01161e; color: #eff6e0; padding: 8px 12px; border-radius: 10px; z-index: 9999; font-size: 14px; opacity: 0; transition: opacity .2s ease; }
+    .like-btn { transition: transform .12s ease, box-shadow .12s ease; will-change: transform; }
+    .like-btn:active { transform: scale(.98); }
+    .mobile-like-wrap { display: none; }
+    @media (max-width: 767px) { .mobile-like-wrap { display: block; position: fixed; left: 12px; right: 12px; bottom: 82px; z-index: 60; } }
+  </style>
+
+  <script>
+    // Expose a few values for client JS (safe)
+    window.__ARTICLE_PAGE = {
+      id: "<%= article.id %>",
+      apiBase: "<%= API_BASE %>",
+      pageUrl: "<%= pageUrl %>"
+    };
+  </script>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader" class="fixed inset-0 flex items-center justify-center bg-beige z-50">
+    <span class="text-3xl md:text-5xl font-bold text-midnight_green animate-pulse">صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمْ</span>
+  </div>
+
+  <!-- Mobile header -->
+  <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
+    <a href="/Question" class=" text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+    <div class="flex items-center space-x-4 space-x-reverse">
+      <a id="sm-fb-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+      <a id="sm-x-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on X"><i class="bi bi-twitter-x"></i></a>
+      <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition text-base" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+    </div>
+  </div>
+
+  <!-- Header (desktop) -->
+  <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
+    <div class="bg-rich_black text-air_force_blue-700 py-2">
+      <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
+        <a href="/Question" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+        <div class="flex items-center space-x-4 space-x-reverse">
+          <a id="sm-fb-desktop" href="#" class="hover:text-beige transition" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+          <a id="sm-x-desktop" href="#" class="hover:text-beige transition" aria-label="Share on X"><i class="bi bi-twitter-x"></i></a>
+          <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="container mx-auto px-4 sm:px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="text-3xl font-bold text-midnight_green">
+          <a href="/" class=" flex items-center space-x-reverse space-x-2">
+            <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo" class="h-10 w-10 circular-logo">
+            <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
+            <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
+          </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-reverse space-x-8">
+          <a href="/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
+          <a href="/Pages/fatawa.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+          <a href="/#about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+          <a href="/Pages/articles.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+          <a href="/Pages/Categoryfatawa.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+          <a href="/Pages/book.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
+          <a href="/Question" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Article Detail -->
+  <main class="pt-20 md:pt-8">
+    <div class="container mx-auto px-6 max-w-4xl py-12">
+      <a href="/Pages/articles.html" class="inline-block text-midnight_green hover:underline mb-6">&larr; واپس تمام مضامین پر</a>
+
+      <article id="article-root" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-[rgba(174,195,176,0.35)]">
+        <header class="mb-6">
+          <h1 id="article-title" class="text-3xl md:text-4xl font-bold text-midnight_green leading-tight"><%= article.Title || 'بدون عنوان' %></h1>
+
+          <div class="mt-3 flex items-center justify-between space-x-reverse gap-4">
+            <div class="text-sm text-air_force_blue-700">
+              <span id="article-author" class="block">مصنف: <%= article.writer || 'ادارہ مسائل ورلڈ' %></span>
+              <time id="article-date" class="block text-xs text-gray-500 mt-1">تاریخ: <%= article.createdAt ? new Date(article.createdAt).toLocaleDateString('ur-PK') : 'نامعلوم' %></time>
+            </div>
+
+            <!-- Desktop like button -->
+            <div class="hidden sm:flex items-center space-x-3 space-x-reverse">
+              <button id="like-btn" type="button"
+                class="like-btn inline-flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm text-base font-medium
+                       bg-beige text-midnight_green border-air_force_blue-200 hover:shadow-md focus:outline-none"
+                aria-pressed="false"
+                aria-label="پسند کریں">
+                <i id="like-icon" class="bi bi-heart text-xl"></i>
+                <span id="like-text" class="whitespace-nowrap"><%= (article.Likes && article.Likes > 0) ? 'پسند کریں' : 'پسند کریں' %></span>
+                <span id="like-count" class="ml-2 text-sm text-gray-600"><%= article.Likes ?? 0 %></span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <% if (img) { %>
+          <img id="article-main-image" src="<%= img %>" alt="<%= safe(article.Title) %>" class="w-full h-auto object-cover rounded-xl shadow-md mb-8" onerror="this.style.display='none'">
+        <% } %>
+
+        <div id="article-body" class="prose prose-urdu max-w-none mt-6 text-lg leading-relaxed text-gray-800">
+          <%- article.ArticleText || '<p class="text-gray-500 italic">مضمون کا متن دستیاب نہیں ہے۔</p>' %>
+        </div>
+
+      </article>
+
+      <!-- Related Articles (server provided if available) -->
+      <div class="mt-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">متعلقہ مضامین</h2>
+        <div id="related-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <% if (related && related.length) { %>
+            <% related.forEach(function(a){ %>
+              <a class="block p-4 bg-white rounded-xl shadow hover:shadow-md border" href="/article/<%= a.id %>">
+                <h3 class="text-xl font-semibold text-midnight_green"><%= a.Title %></h3>
+                <p class="mt-2 text-sm text-gray-600"><%= a.summary || (a.seo ? excerpt(a.seo,120) : '') %></p>
+              </a>
+            <% }) %>
+          <% } else { %>
+            <p class="text-gray-600 text-center">متعلقہ مضامین دستیاب نہیں۔</p>
+          <% } %>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer (same as your markup) -->
+  <footer id="qs-footer" class="bg-rich_black text-beige pt-16 rounded-t-2xl">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="col-span-1 md:col-span-2">
+          <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔</p>
+          <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
+            <a id="sm-fb-footer" href="#" class="text-air_force_blue-700 hover:text-beige transition" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+            <a id="sm-x-footer" href="#" class="hover:text-beige transition" aria-label="Share on X"><i class="bi bi-twitter-x"></i></a>
+            <a href="https://youtube.com/c/AzharAlimi" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
+          <ul class="space-y-3 text-lg">
+            <li><a href="/Pages/fatawa.html" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+            <li><a href="/Pages/articles.html" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+            <li><a href="/Question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+            <li><a href="/#about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
+          <ul class="space-y-3 text-lg text-air_force_blue-700">
+            <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
+            <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہمارے بارے میں</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">مسائل ورلڈ ایک آن لائن پلیٹ فارم ہے جو اہل سنت والجماعت کے مطابق شرعی رہنمائی فراہم کرتا ہے۔</p>
+          <a href="https://alqalamarts.com/" target="_blank" class="text-air_force_blue-700 hover:text-beige transition block mt-2 text-sm font-sans">
+            <button id="install-app-button" class="bg-air_force_blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-air_force_blue-400 transition text-sm sm:text-md shadow-md mt-4">
+              <i class="bi bi-plus-circle ml-2"></i> ایپ انسٹال کریں
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
+        <p class="text-lg">© <%= (new Date()).getFullYear() %> AlQalamArts.com. All rights reserved. | © <%= (new Date()).getFullYear() %> مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Client script (keeps like/view and share behavior) -->
+  <script src="/js/article-detail.js"></script>
+</body>
+</html>
