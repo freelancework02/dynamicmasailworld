@@ -23,7 +23,8 @@ app.use(cors({
     'http://localhost:5501',
     'http://127.0.0.1:5501',
     'http://localhost:3000',
-    'https://masailworld.com'
+    'https://masailworld.com',
+    'https://dynamicmasailworld.onrender.com/'
   ],
   credentials: true
 }));
@@ -227,7 +228,7 @@ app.get('/fatwa/:id', (req, res) => {
   const API_BASE =
     process.env.FATWA_API_BASE ||
     (process.env.API_BASE /* your original */) ||
-    'http://localhost:5000/api/fatwa';
+    'https://masailworld.onrender.com/api/fatwa';
 
   res.render('Pages/fatwa-detail', {
     pageTitle: 'مسائل ورلڈ - دار الافتاء اہل سنت',
