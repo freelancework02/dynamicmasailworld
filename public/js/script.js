@@ -537,8 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'http://localhost:5000/api/book';
-  const BOOK_COVER_URL = (id) => `http://localhost:5000/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
+const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://masailworld.onrender.com/api/book';
+  const BOOK_COVER_URL = (id) => `https://masailworld.onrender.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
 
   // --- helpers ---
 
@@ -646,7 +646,7 @@ const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'http://localhos
   (function () {
     const FATAWA_API_BASE =
       (window.__MW__ && window.__MW__.FATAWA_API) ||
-      "http://localhost:5000/api/fatwa"; // dev fallback
+      "https://masailworld.onrender.com/api/fatwa"; // dev fallback
 
     // Use your controller's latest endpoint
     const ENDPOINT = `${FATAWA_API_BASE}/latest`;
