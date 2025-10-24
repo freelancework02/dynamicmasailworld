@@ -24,7 +24,7 @@ app.use(cors({
     'http://127.0.0.1:5501',
     'http://localhost:3000',
     'https://masailworld.com',
-    'https://dynamicmasailworld.onrender.com/'
+    'https://dynamicmasailworld.onrender.com'
   ],
   credentials: true
 }));

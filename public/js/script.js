@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", loadFatawa);
 // Other Latest
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await fetch("https://api.masailworld.com/api/fatwa/latest");
+    const res = await fetch("https://masailworld.onrender.com/api/fatwa/latest");
     const fatawa = await res.json();
     console.log("Latest fatawa response:", fatawa);
 
@@ -537,8 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://api.masailworld.com/api/book';
-  const BOOK_COVER_URL = (id) => `https://api.masailworld.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
+const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://masailworld.onrender.com/api/book';
+  const BOOK_COVER_URL = (id) => `https://masailworld.onrender.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
 
   // --- helpers ---
 
@@ -646,7 +646,7 @@ const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://api.mas
   (function () {
     const FATAWA_API_BASE =
       (window.__MW__ && window.__MW__.FATAWA_API) ||
-      "https://api.masailworld.com/api/fatwa"; // dev fallback
+      "https://masailworld.onrender.com/api/fatwa"; // dev fallback
 
     // Use your controller's latest endpoint
     const ENDPOINT = `${FATAWA_API_BASE}/latest`;
