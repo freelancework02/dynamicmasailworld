@@ -537,8 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://masailworld.onrender.com/api/book';
-  const BOOK_COVER_URL = (id) => `https://masailworld.onrender.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
+const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'http://localhost:5000/api/book';
+  const BOOK_COVER_URL = (id) => `http://localhost:5000/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
 
   // --- helpers ---
 
