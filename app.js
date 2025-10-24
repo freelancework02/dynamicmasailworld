@@ -71,13 +71,19 @@ function toIso(dt) {
     return isNaN(d.getTime()) ? undefined : d.toISOString();
   } catch { return undefined; }
 }
+
 function formatUrDate(dt) {
-  try {
-    const d = new Date(dt);
-    return isNaN(d.getTime()) ? 'نامعلوم' :
-      d.toLocaleDateString('ur-PK',{year:'numeric',month:'long',day:'numeric'});
-  } catch { return 'نامعلوم'; }
+  if (!dt) return "نامعلوم";
+  const d = new Date(dt);
+  if (isNaN(d.getTime())) return "نامعلوم";
+  // 17 ستمبر 2025 — simple Urdu-ish month names
+  const months = ["جنوری","فروری","مارچ","اپریل","مئی","جون","جولائی","اگست","ستمبر","اکتوبر","نومبر","دسمبر"];
+  const day = d.getDate();
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
+  return `${day} ${month} ${year}`;
 }
+
 function safeId(obj){
   return obj?.id ?? obj?.ID ?? obj?.Id ?? obj?.articleId ?? obj?.ArticleID ?? null;
 }
@@ -132,26 +138,20 @@ app.get('/article/:id/image', async (req, res) => {
 
     const upstream = await axios.get(url, {
       responseType: 'stream',
-      // withCredentials generally not needed for images, but harmless:
       withCredentials: true,
-      // pass-through UA can help some CDNs:
       headers: { 'User-Agent': req.headers['user-agent'] || 'MW-Server' }
     });
 
-    // Content-Type & length from upstream if provided
     if (upstream.headers['content-type']) {
       res.setHeader('Content-Type', upstream.headers['content-type']);
     }
     if (upstream.headers['content-length']) {
       res.setHeader('Content-Length', upstream.headers['content-length']);
     }
-
-    // Cache 1 day at edge/browsers; tweak as you wish
     res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400');
 
     upstream.data.pipe(res);
   } catch (e) {
-    // On any failure, return a tiny placeholder SVG (never a JSON error to <img>)
     const svg = `
       <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
         <rect width="100%" height="100%" fill="#eff6e0"/>
@@ -165,7 +165,8 @@ app.get('/article/:id/image', async (req, res) => {
 });
 
 /**
- * Article detail with SSR meta. Uses proxied image URL for OG/Twitter/WhatsApp.
+ * Article detail with full SSR meta (WhatsApp/FB/Twitter/Google friendly).
+ * Uses the same-origin image proxy above for og:image/twitter:image.
  */
 app.get('/article/:id', async (req, res) => {
   try {
@@ -175,25 +176,30 @@ app.get('/article/:id', async (req, res) => {
     }
 
     const API_BASE = process.env.API_BASE || 'https://dynamicmasailworld.onrender.com/api/article';
-    const requestUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
-    const { data } = await axios.get(`${API_BASE}/${encodeURIComponent(id)}`, { withCredentials: true });
+    // Use SITE_ORIGIN on prod to avoid localhost canonicals in previews
+    const siteOrigin = process.env.SITE_ORIGIN || `${req.protocol}://${req.get('host')}`;
+    const requestUrl = `${siteOrigin}${req.originalUrl}`;
+
+    // Fetch the article
+    const { data } = await axios.get(`${API_BASE}/${encodeURIComponent(id)}`, { withCredentials: true, timeout: 10000 });
     const article = (data && (data.data || data)) || {};
 
+    // Related (optional, ignore errors)
     let related = [];
     try {
-      const rel = await axios.get(`${API_BASE}?limit=3&excludeId=${encodeURIComponent(id)}`, { withCredentials: true });
+      const rel = await axios.get(`${API_BASE}?limit=3&excludeId=${encodeURIComponent(id)}`, { withCredentials: true, timeout: 8000 });
       related = (rel.data && (rel.data.data || rel.data)) || [];
       if (!Array.isArray(related)) related = [];
     } catch {}
 
-    const rawTitle = article.Title || 'مسائل ورلڈ — مضمون';
+    // Build meta
+    const rawTitle = (article.Title || article.title || 'مسائل ورلڈ — مضمون').trim();
     const rawText  = article.ArticleText || article.seo || '';
-    const description = truncate(stripHtml(rawText), 220) || 'مضمون کا خلاصہ دستیاب نہیں۔';
+    const description = truncate(stripHtml(rawText) || 'مضمون کا خلاصہ دستیاب نہیں۔', 220);
     const author = article.writer || 'ادارہ مسائل ورلڈ';
 
-    // Use same-origin image proxy so scrapers never choke
-    const proxiedImage = `${req.protocol}://${req.get('host')}/article/${encodeURIComponent(id)}/image`;
+    const proxiedImage = `${siteOrigin}/article/${encodeURIComponent(id)}/image`;
 
     const publishedTime = toIso(article.createdAt || article.CreatedAt || article.created_at);
     const modifiedTime  = toIso(article.updatedAt || article.UpdatedAt || article.updated_at);
@@ -203,17 +209,21 @@ app.get('/article/:id', async (req, res) => {
       description,
       author,
       url: requestUrl,
-      image: proxiedImage, // <— IMPORTANT: use proxy here
+      image: proxiedImage,
       publishedTime,
       modifiedTime,
-      publishedDateLabel: formatUrDate(article.createdAt || article.CreatedAt || article.created_at)
+      publishedDateLabel: formatUrDate(article.createdAt || article.CreatedAt || article.created_at),
+
+      // extras used for JSON-LD
+      keywords: article.tags || article.Tags || undefined,
+      siteName: "مسائل ورلڈ",
+      locale: "ur_PK"
     };
 
-    // NOTE: keep view path case as your folder: "Pages/articleDetail"
     res.render('Pages/articleDetail', {
       article,
       related,
-      API_BASE,     // still useful for data calls
+      API_BASE, // if client still fetches anything, keep it available
       meta
     });
   } catch (err) {
@@ -222,6 +232,8 @@ app.get('/article/:id', async (req, res) => {
   }
 });
  
+
+
 /* ------------------- NEW: Fatwa detail route ------------------- */
 /* Renders the EJS page; the page itself fetches details from API_BASE on the client. */
 app.get("/fatwa/:id", async (req, res) => {

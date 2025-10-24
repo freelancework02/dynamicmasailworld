@@ -6,26 +6,63 @@
 
   <title><%= meta && meta.title ? meta.title : 'مسائل ورلڈ — مضمون' %></title>
 
-  <!-- SEO / Social -->
+  <!-- Canonical / robots -->
+  <% if (meta && meta.url) { %>
+    <link rel="canonical" href="<%= meta.url %>">
+  <% } %>
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+
+  <!-- Basic -->
   <% if (meta) { %>
     <meta name="description" content="<%= meta.description %>">
     <meta name="author" content="<%= meta.author %>">
-    <link rel="canonical" href="<%= meta.url %>">
+  <% } %>
 
-    <!-- Open Graph -->
+  <!-- Open Graph (WhatsApp/FB) -->
+  <% if (meta) { %>
     <meta property="og:type" content="article">
+    <meta property="og:site_name" content="مسائل ورلڈ">
+    <meta property="og:locale" content="ur_PK">
     <meta property="og:title" content="<%= meta.title %>">
     <meta property="og:description" content="<%= meta.description %>">
     <meta property="og:url" content="<%= meta.url %>">
     <meta property="og:image" content="<%= meta.image %>">
     <% if (meta.publishedTime) { %><meta property="article:published_time" content="<%= meta.publishedTime %>"><% } %>
     <% if (meta.modifiedTime)  { %><meta property="article:modified_time"  content="<%= meta.modifiedTime  %>"><% } %>
+    <% if (meta.keywords)      { %><meta property="article:tag"            content="<%= meta.keywords %>"><% } %>
+  <% } %>
 
-    <!-- Twitter -->
+  <!-- Twitter -->
+  <% if (meta) { %>
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<%= meta.title %>">
     <meta name="twitter:description" content="<%= meta.description %>">
     <meta name="twitter:image" content="<%= meta.image %>">
+  <% } %>
+
+  <!-- JSON-LD (Article) -->
+  <% if (meta) { %>
+  <script type="application/ld+json">
+  <%- JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "inLanguage": "ur",
+    "url": meta.url,
+    "mainEntityOfPage": meta.url,
+    "author": meta.author ? [{ "@type": "Person", "name": meta.author }] : undefined,
+    "publisher": {
+      "@type": "Organization",
+      "name": "مسائل ورلڈ",
+      "logo": { "@type": "ImageObject", "url": "https://alqalamarts.com/mw/masailworld.png" }
+    },
+    "datePublished": meta.publishedTime || undefined,
+    "dateModified": meta.modifiedTime || undefined,
+    "image": meta.image,
+    "keywords": meta.keywords || undefined,
+    "description": meta.description
+  }) %>
+  </script>
   <% } %>
 
   <!-- Tailwind -->
@@ -65,7 +102,6 @@
       opacity: 0;
       transition: opacity .2s ease;
     }
-
     .circular-logo { border-radius: 50%; }
   </style>
 
@@ -98,20 +134,10 @@
   <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
     <a href="/Pages/Question.html" class="text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
     <div class="flex items-center space-x-4 space-x-reverse">
-      <!-- Share icons (mobile) -->
-      <a id="sm-fb-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on Facebook">
-        <i class="bi bi-facebook"></i>
-      </a>
-      <a id="sm-wa-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on WhatsApp">
-        <i class="bi bi-whatsapp"></i>
-      </a>
-      <a id="sm-x-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on X">
-        <i class="bi bi-twitter-x"></i>
-      </a>
-      <!-- Generic share -->
-      <a id="sm-share-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share">
-        <i class="bi bi-share-fill"></i>
-      </a>
+      <a id="sm-fb-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+      <a id="sm-wa-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+      <a id="sm-x-mobile"  href="#" class="hover:text-beige transition text-base" aria-label="Share on X"><i class="bi bi-twitter-x"></i></a>
+      <a id="sm-share-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share"><i class="bi bi-share-fill"></i></a>
     </div>
   </div>
 
@@ -121,19 +147,10 @@
       <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
         <a href="/Pages/Question.html" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
         <div class="flex items-center space-x-4 space-x-reverse">
-          <!-- Share icons (desktop header) -->
-          <a id="sm-fb-desktop" href="#" class="hover:text-beige transition" aria-label="Share on Facebook">
-            <i class="bi bi-facebook"></i>
-          </a>
-          <a id="sm-wa-desktop" href="#" class="hover:text-beige transition" aria-label="Share on WhatsApp">
-            <i class="bi bi-whatsapp"></i>
-          </a>
-          <a id="sm-x-desktop" href="#" class="hover:text-beige transition" aria-label="Share on X">
-            <i class="bi bi-twitter-x"></i>
-          </a>
-          <a id="sm-share-desktop" href="#" class="hover:text-beige transition" aria-label="Share">
-            <i class="bi bi-share-fill"></i>
-          </a>
+          <a id="sm-fb-desktop" href="#" class="hover:text-beige transition" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+          <a id="sm-wa-desktop" href="#" class="hover:text-beige transition" aria-label="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+          <a id="sm-x-desktop"  href="#" class="hover:text-beige transition" aria-label="Share on X"><i class="bi bi-twitter-x"></i></a>
+          <a id="sm-share-desktop" href="#" class="hover:text-beige transition" aria-label="Share"><i class="bi bi-share-fill"></i></a>
         </div>
       </div>
     </div>
@@ -182,23 +199,16 @@
               </time>
             </div>
 
-            <!-- Views + Share icons (replacing like) -->
+            <!-- Views + Share icons -->
             <div class="flex items-center space-x-4 space-x-reverse text-air_force_blue text-lg">
               <div class="flex items-center">
                 <i class="bi bi-eye-fill ml-2"></i>
                 <span id="viewCount" class="font-sans"><%= Number(article?.Views || article?.views || 0) %></span>
               </div>
 
-              <!-- Article-header share shortcuts -->
-              <a id="ah-fb" href="#" class="hover:text-midnight_green transition-colors" aria-label="Facebook">
-                <i class="bi bi-facebook"></i>
-              </a>
-              <a id="ah-wa" href="#" class="hover:text-midnight_green transition-colors" aria-label="WhatsApp">
-                <i class="bi bi-whatsapp"></i>
-              </a>
-              <a id="ah-x" href="#" class="hover:text-midnight_green transition-colors" aria-label="X">
-                <i class="bi bi-twitter-x"></i>
-              </a>
+              <a id="ah-fb" href="#" class="hover:text-midnight_green transition-colors" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+              <a id="ah-wa" href="#" class="hover:text-midnight_green transition-colors" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+              <a id="ah-x"  href="#" class="hover:text-midnight_green transition-colors" aria-label="X"><i class="bi bi-twitter-x"></i></a>
               <button type="button" id="ah-share" class="flex items-center hover:text-midnight_green transition-colors" aria-label="اس صفحہ کو شیئر کریں">
                 <i class="bi bi-share-fill"></i>
               </button>
@@ -214,7 +224,7 @@
           class="w-full h-auto object-cover rounded-xl shadow-md mb-8"
           onerror="this.style.display='none'">
 
-        <!-- Article body -->
+        <!-- Article body (server-supplied HTML) -->
         <div id="article-body" class="prose max-w-none mt-6 text-lg leading-relaxed text-gray-800 prose-p:mb-4 prose-img:rounded-xl">
           <% if (article && (article.ArticleText || article.seo)) { %>
             <%- (article.ArticleText || article.seo) %>
@@ -248,30 +258,10 @@
   <!-- Bottom Nav (mobile) -->
   <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
     <ul class="flex justify-around items-center h-16">
-      <li>
-        <a href="/" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-          <i class="bi bi-house-door-fill text-xl"></i>
-          <span class="text-sm">صفحہ اول</span>
-        </a>
-      </li>
-      <li>
-        <a href="https://masailworld.com/Pages/fatawa.html" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-          <i class="bi bi-file-text-fill text-xl"></i>
-          <span class="text-sm">فتاویٰ</span>
-        </a>
-      </li>
-      <li>
-        <a href="https://masailworld.com/Pages/book.html" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-          <i class="bi bi-book-fill text-xl"></i>
-          <span class="text-sm">اسلامی کتب</span>
-        </a>
-      </li>
-      <li>
-        <a href="/Pages/Question.html" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-          <i class="bi bi-chat-dots-fill text-xl"></i>
-          <span class="text-sm">سوال پوچھیں</span>
-        </a>
-      </li>
+      <li><a href="/" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-house-door-fill text-xl"></i><span class="text-sm">صفحہ اول</span></a></li>
+      <li><a href="https://masailworld.com/Pages/fatawa.html" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-file-text-fill text-xl"></i><span class="text-sm">فتاویٰ</span></a></li>
+      <li><a href="https://masailworld.com/Pages/book.html" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-book-fill text-xl"></i><span class="text-sm">اسلامی کتب</span></a></li>
+      <li><a href="/Pages/Question.html" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-chat-dots-fill text-xl"></i><span class="text-sm">سوال پوچھیں</span></a></li>
     </ul>
   </nav>
 
@@ -281,22 +271,12 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
         <div class="col-span-1 md:col-span-2">
           <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
-          <p class="text-air_force_blue-700 text-lg leading-relaxed">
-            ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔
-          </p>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔</p>
           <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
-            <a id="sm-fb-footer" href="#" class="text-air_force_blue-700 hover:text-beige transition" aria-label="Share on Facebook">
-              <i class="bi bi-facebook"></i>
-            </a>
-            <a id="sm-wa-footer" href="#" class="text-air_force_blue-700 hover:text-beige transition" aria-label="Share on WhatsApp">
-              <i class="bi bi-whatsapp"></i>
-            </a>
-            <a id="sm-x-footer" href="#" class="hover:text-beige transition" aria-label="Share on X">
-              <i class="bi bi-twitter-x"></i>
-            </a>
-            <a id="sm-share-footer" href="#" class="hover:text-beige transition" aria-label="Share">
-              <i class="bi bi-share-fill"></i>
-            </a>
+            <a id="sm-fb-footer" href="#" class="text-air_force_blue-700 hover:text-beige transition" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+            <a id="sm-wa-footer" href="#" class="text-air_force_blue-700 hover:text-beige transition" aria-label="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            <a id="sm-x-footer"  href="#" class="hover:text-beige transition" aria-label="Share on X"><i class="bi bi-twitter-x"></i></a>
+            <a id="sm-share-footer" href="#" class="hover:text-beige transition" aria-label="Share"><i class="bi bi-share-fill"></i></a>
           </div>
         </div>
         <div>
@@ -326,7 +306,7 @@
         </div>
       </div>
       <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
-        <p class="text-lg">© 2025 AlQalamArts.com. All rights reserved. | © ২০২৫ مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
+        <p class="text-lg"> AlQalamArts.com. All rights reserved. | © 2025 مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
       </div>
     </div>
   </footer>
@@ -335,33 +315,15 @@
   <script>
     "use strict";
 
-    /* ----------------------------
-       SMOOTH SCROLL (optional)
-    -----------------------------*/
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', function (e) {
-        // optional smooth behaviour (commented out)
-        // e.preventDefault();
-        // document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-
-    /* ----------------------------
-       URL / DOM HOOKS
-    -----------------------------*/
+    // DOM hooks
     <% const _id_for_js = (article && (article.id || article.ID || article.articleId)); %>
     const articleId = <%- JSON.stringify(_id_for_js || null) %>;
-    const articleContainer = document.querySelector("article#article-root");
 
-    /* ----------------------------
-       LOADER HELPERS
-    -----------------------------*/
+    // Loader helpers
     function showLoader(){ const l=document.getElementById('loader'); if(l) l.style.display='flex'; }
     function hideLoader(){ const l=document.getElementById('loader'); if(l) l.style.display='none'; }
 
-    /* ----------------------------
-       TOAST
-    -----------------------------*/
+    // Toast
     function showToast(message) {
       const t = document.createElement('div');
       t.className = 'mw-toast';
@@ -369,15 +331,10 @@
       t.textContent = message;
       document.body.appendChild(t);
       requestAnimationFrame(() => t.style.opacity = '1');
-      setTimeout(() => {
-        t.style.opacity = '0';
-        setTimeout(() => t.remove(), 250);
-      }, 1400);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 250); }, 1400);
     }
 
-    /* ----------------------------
-       SHARE HELPERS
-    -----------------------------*/
+    // Share helpers
     function popupCenter(url, title) {
       const w=640,h=560;
       const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
@@ -389,7 +346,6 @@
       const features = `scrollbars=yes,width=${w},height=${h},top=${top},left=${left}`;
       window.open(url, title, features);
     }
-
     function buildShareLinks(url, text) {
       const u = encodeURIComponent(url);
       const t = encodeURIComponent(text || document.title || "مسائل ورلڈ");
@@ -401,108 +357,62 @@
         linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`
       };
     }
-
     async function copyCurrentUrl() {
       const currentUrl = window.location.href;
-      try {
-        await navigator.clipboard.writeText(currentUrl);
-        alert("🔗 لنک کاپی ہوگیا ہے!");
-      } catch (err) {
-        console.error("Clipboard copy failed:", err);
-        alert("⚠️ لنک کاپی کرنے میں مسئلہ آیا۔");
-      }
+      try { await navigator.clipboard.writeText(currentUrl); alert("🔗 لنک کاپی ہوگیا ہے!"); }
+      catch { alert("⚠️ لنک کاپی کرنے میں مسئلہ آیا۔"); }
     }
-
     async function openShare() {
       const url = window.location.href;
       const title = document.title || "مسائل ورلڈ";
       const text = "اس صفحہ کا لنک ملاحظہ کریں:";
-
       if (navigator.share) {
-        try {
-          await navigator.share({ title, text, url });
-          return;
-        } catch (e) {
-          if (e && e.name === "AbortError") return;
-        }
+        try { await navigator.share({ title, text, url }); return; }
+        catch (e) { if (e && e.name === "AbortError") return; }
       }
-
       const links = buildShareLinks(url, title);
       const choice = prompt("شیئر کریں: facebook, x, whatsapp, telegram, linkedin, copy", "facebook");
       if (!choice) return;
       const key = choice.toLowerCase().trim();
       if (key === "copy") return copyCurrentUrl();
-      if (links[key]) {
-        popupCenter(links[key], "Share");
-      } else {
-        alert("ناموزوں انتخاب۔ درج ذیل میں سے ایک لکھیں: facebook, x, whatsapp, telegram, linkedin, copy");
-      }
+      if (links[key]) popupCenter(links[key], "Share");
+      else alert("ناموزوں انتخاب۔ درج ذیل میں سے ایک لکھیں: facebook, x, whatsapp, telegram, linkedin, copy");
     }
-
     function wireSocialShareAnchors() {
       const url = window.location.href;
       const links = buildShareLinks(url, document.title);
-
       const map = {
-        // header mobile
-        "sm-fb-mobile": links.facebook,
-        "sm-wa-mobile": links.whatsapp,
-        "sm-x-mobile":  links.x,
-        "sm-share-mobile": url,
-
-        // header desktop
-        "sm-fb-desktop": links.facebook,
-        "sm-wa-desktop": links.whatsapp,
-        "sm-x-desktop":  links.x,
-        "sm-share-desktop": url,
-
-        // footer
-        "sm-fb-footer": links.facebook,
-        "sm-wa-footer": links.whatsapp,
-        "sm-x-footer":  links.x,
-        "sm-share-footer": url,
-
-        // article header inline
-        "ah-fb": links.facebook,
-        "ah-wa": links.whatsapp,
-        "ah-x":  links.x
+        "sm-fb-mobile": links.facebook, "sm-wa-mobile": links.whatsapp, "sm-x-mobile": links.x, "sm-share-mobile": url,
+        "sm-fb-desktop": links.facebook, "sm-wa-desktop": links.whatsapp, "sm-x-desktop": links.x, "sm-share-desktop": url,
+        "sm-fb-footer": links.facebook, "sm-wa-footer": links.whatsapp, "sm-x-footer": links.x, "sm-share-footer": url,
+        "ah-fb": links.facebook, "ah-wa": links.whatsapp, "ah-x": links.x
       };
-
       Object.keys(map).forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         if (el.tagName === 'A') el.setAttribute('href', map[id]);
         el.addEventListener("click", function (e) {
           e.preventDefault();
-          if (id.includes('share')) {
-            openShare();
-            return;
-          }
+          if (id.includes('share')) { openShare(); return; }
           popupCenter(map[id], "Share");
         });
       });
-
       const ahShareBtn = document.getElementById('ah-share');
       if (ahShareBtn) ahShareBtn.addEventListener('click', openShare);
     }
 
-    /* ----------------------------
-       Views logic
-    -----------------------------*/
+    // Views logic
     function sendViewOnceVisible(id, viewCountEl) {
       if (!id) return;
       const target = document.getElementById('article-root');
       if (!target) return;
-
       let counted = false, timer = null;
-
       const fire = async () => {
         if (counted) return;
         counted = true;
         try {
           const res = await fetch(`https://dynamicmasailworld.onrender.com/api/article/${encodeURIComponent(id)}/view`, {
-            method: 'POST',
-            credentials: 'include'
+            method: 'POST', credentials: 'include'
           });
           if (res.ok) {
             const data = await res.json().catch(() => ({}));
@@ -511,46 +421,25 @@
               viewCountEl.textContent = String(cur + 1);
             }
           }
-        } catch (e) {}
+        } catch {}
       };
-
-      if (!('IntersectionObserver' in window)) {
-        setTimeout(fire, 3000);
-        return;
-      }
-
+      if (!('IntersectionObserver' in window)) { setTimeout(fire, 3000); return; }
       const io = new IntersectionObserver(entries => {
         entries.forEach(e => {
-          if (e.isIntersecting) {
-            timer = setTimeout(fire, 3000);
-          } else if (timer) {
-            clearTimeout(timer);
-          }
+          if (e.isIntersecting) { timer = setTimeout(fire, 3000); }
+          else if (timer) { clearTimeout(timer); }
         });
       }, { threshold: 0.5 });
-
       io.observe(target);
     }
 
-    /* ----------------------------
-       INIT
-    -----------------------------*/
+    // INIT
     document.addEventListener("DOMContentLoaded", () => {
       wireSocialShareAnchors();
-
-      // Hide loader after small delay
-      window.addEventListener('load', () => {
-        setTimeout(() => { hideLoader(); }, 250);
-      });
-
-      // Count a view after visible ~3s
+      window.addEventListener('load', () => { setTimeout(() => { hideLoader(); }, 250); });
       const viewCountEl = document.getElementById('viewCount');
       sendViewOnceVisible(articleId, viewCountEl);
     });
   </script>
-
-  <!-- (Optional) keep your external script reference if you still use it -->
-  <!-- <script src="/js/article_details.js"></script> -->
 </body>
 </html>
- 
