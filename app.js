@@ -292,14 +292,17 @@ app.get(["/Pages/fatwa-detail.html", "/fatwa-detail.html"], (req, res) => {
 
 app.get('/book/:id/cover', async (req, res) => {
   try {
-    const BOOK_API_BASE = process.env.BOOK_API_BASE || 'https://dynamicmasailworld.onrender.com/api/book';
-    // Expected upstream pattern: /api/book/:id/cover
-    const url = `${BOOK_API_BASE}/${encodeURIComponent(req.params.id)}/cover`;
+    const upstreamBase =
+      process.env.BOOK_API_BASE ||
+      process.env.API_BASE ||
+      'https://dynamicmasailworld.onrender.com/api/book';
+    const url = `${upstreamBase}/${encodeURIComponent(req.params.id)}/cover`;
 
     const upstream = await axios.get(url, {
       responseType: 'stream',
       withCredentials: true,
-      headers: { 'User-Agent': req.headers['user-agent'] || 'MW-Server' }
+      headers: { 'User-Agent': req.headers['user-agent'] || 'MW-Server' },
+      timeout: 10000
     });
 
     if (upstream.headers['content-type']) {
@@ -309,10 +312,11 @@ app.get('/book/:id/cover', async (req, res) => {
       res.setHeader('Content-Length', upstream.headers['content-length']);
     }
     res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400');
+
     upstream.data.pipe(res);
   } catch (e) {
     const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
         <rect width="100%" height="100%" fill="#eff6e0"/>
         <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
               font-family="Arial" font-size="36" fill="#598392">No Cover</text>
@@ -323,7 +327,9 @@ app.get('/book/:id/cover', async (req, res) => {
   }
 });
 
-/** SSR: Book detail page with full meta */
+/**
+ * Book detail page with full SSR SEO.
+ */
 app.get('/book/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -331,38 +337,60 @@ app.get('/book/:id', async (req, res) => {
       return res.status(400).render('Pages/404', { message: 'کتاب نہیں ملی (غلط شناخت).' });
     }
 
-    const BOOK_API_BASE = process.env.BOOK_API_BASE || 'https://dynamicmasailworld.onrender.com/api/book';
-    const requestUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    const BOOK_API_BASE =
+      process.env.BOOK_API_BASE ||
+      process.env.API_BASE ||
+      'https://dynamicmasailworld.onrender.com/api/book';
 
-    // Fetch the book
-    const { data } = await axios.get(`${BOOK_API_BASE}/${encodeURIComponent(id)}`, { withCredentials: true });
+    const siteOrigin = process.env.SITE_ORIGIN || `${req.protocol}://${req.get('host')}`;
+    const requestUrl = `${siteOrigin}${req.originalUrl}`;
+
+    // Fetch book
+    const { data } = await axios.get(`${BOOK_API_BASE}/${encodeURIComponent(id)}`, {
+      withCredentials: true,
+      timeout: 10000
+    });
     const book = (data && (data.data || data)) || {};
 
-    // Defensive fields
-    const title  = book.Title || book.title || 'نامعلوم کتاب';
-    const author = book.Author || book.author || 'ادارہ مسائل ورلڈ';
-    const about  = book.Description || book.description || book.seo || book.Summary || '';
-    const tags   = book.tags || book.Tags || '';
-    const createdAt  = book.createdAt || book.CreatedAt || book.created_at;
-    const updatedAt  = book.updatedAt || book.UpdatedAt || book.updated_at;
+    // Build meta
+    const bookName  = (book.BookName || book.title || book.Title || 'کتاب').trim();
+    const writer    = book.BookWriter || book.author || book.Author || 'نامعلوم مصنف';
+    const rawDesc   = book.BookDescription || book.Description || book.Summary || '';
+    const desc      = truncate(stripHtml(rawDesc) || 'کتاب کا خلاصہ دستیاب نہیں۔', 220);
 
-    // Same-origin image proxy for scrapers (WhatsApp/Twitter/FB)
-    const coverImage = `${req.protocol}://${req.get('host')}/book/${encodeURIComponent(id)}/cover`;
+    const coverUrl  = `${siteOrigin}/book/${encodeURIComponent(id)}/cover`;
+
+    const publishedTime = toIso(book.createdAt || book.CreatedAt || book.created_at || book.PublicationDate);
+    const modifiedTime  = toIso(book.updatedAt || book.UpdatedAt || book.updated_at);
+
+    const tagsRaw = book.tags || book.Tags || '';
+    const tags = Array.isArray(tagsRaw)
+      ? tagsRaw
+      : String(tagsRaw || '').split(',').map(t => t.trim()).filter(Boolean);
 
     const meta = {
-      title: `${title} | اسلامی کتب — مسائل ورلڈ`,
-      description: truncate(stripHtml(about), 220) || 'کتاب کی تفصیل دستیاب نہیں۔',
-      author,
+      // page basics
+      title: `${bookName} — کتاب | مسائل ورلڈ`,
+      description: desc,
+      author: writer,
       url: requestUrl,
-      image: coverImage,
-      publishedTime: toIso(createdAt),
-      modifiedTime: toIso(updatedAt),
-      publishedDateLabel: formatUrDate(createdAt),
-      tags
+      image: coverUrl,
+      publishedTime,
+      modifiedTime,
+      publishedDateLabel: formatUrDate(book.createdAt || book.CreatedAt || book.created_at || book.PublicationDate),
+      // OG Book extras
+      bookName,
+      bookAuthor: writer,
+      isbn: book.ISBN || book.isbn || undefined,
+      tags,
+      locale: 'ur',
+      siteName: 'مسائل ورلڈ'
     };
 
-    // Render page
-    res.render('Pages/Book-detail', { book, meta, BOOK_API_BASE });
+    res.render('Pages/Book-detail', {
+      book,
+      meta
+    });
   } catch (err) {
     console.error('Error fetching book:', err?.message || err);
     res.status(404).render('Pages/404', { message: 'کتاب نہیں ملی۔' });
