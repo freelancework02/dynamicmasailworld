@@ -305,8 +305,8 @@
 
     const API_BASE = (window.__MW__ && window.__MW__.API_BASE) ||
       ((location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'http://localhost:5000/api/fatwa'
-        : 'https://api.masailworld.com/api/fatwa');
+        ? 'https://dynamicmasailworld.onrender.com/api/fatwa'
+        : 'https://dynamicmasailworld.onrender.com/api/fatwa');
 
     function sendViewOnceVisible(fatwaId) {
       const target = document.getElementById('fatwa-container');
