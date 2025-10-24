@@ -3,11 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'مسائل ورلڈ - دار الافتاء اہل سنت' %></title>
 
-  <!-- Tailwind CSS CDN -->
+  <%
+  // ---------------- Server-side SEO prep (defensive) ----------------
+  const _fatwa   = (typeof fatwa !== 'undefined' && fatwa) ? fatwa : {};
+  const _fatwaId = (typeof fatwaId !== 'undefined' && fatwaId) ? fatwaId : (_fatwa.id || _fatwa.Id || _fatwa.ID || '');
+
+  const fTitle = String(_fatwa.Title || '').trim() || 'بلا عنوان';
+
+  const strip = (html) => String(html || '')
+    .replace(/<[^>]*>/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+
+  const qText = strip(_fatwa.detailquestion);
+  const aText = strip(_fatwa.Answer);
+
+  // Prefer the question; fallback to answer; final fallback generic
+  const baseDesc = qText || aText || 'مسائل ورلڈ پر معیاری دار الافتاء کے فتاویٰ۔';
+  const rawDesc  = baseDesc.slice(0, 160);
+  const metaDesc = rawDesc.length >= 155 ? (rawDesc.slice(0,157) + '…') : rawDesc;
+
+  const site    = (typeof baseUrl    !== 'undefined' && baseUrl)    ? String(baseUrl).replace(/\/+$/,'') : 'https://masailworld.com';
+  const pageUrl = (typeof requestUrl !== 'undefined' && requestUrl) ? requestUrl : (_fatwaId ? `${site}/fatwa/${encodeURIComponent(_fatwaId)}` : `${site}/fatwa`);
+
+  const ogImage = _fatwa.ogImage || 'https://alqalamarts.com/mw/masailworld.png';
+
+  // Page <title> (provided by route as pageTitle; no self-reference)
+  const headTitle = (typeof pageTitle !== 'undefined' && pageTitle) ? pageTitle : `${fTitle} — مسائل ورلڈ`;
+
+  // Normalize timestamps (your API returns created_at/updated_at)
+  const published = _fatwa.created_at || _fatwa.createdAt || _fatwa.date || null;
+  const modified  = _fatwa.updated_at || _fatwa.updatedAt || published || null;
+
+  const muftiName = _fatwa.muftisahab || 'دار الافتاء اہل سنت';
+  const author    = _fatwa.questionername || 'نامعلوم';
+  %>
+
+  <title><%= headTitle %></title>
+
+  <!-- Canonical / robots -->
+  <link rel="canonical" href="<%= pageUrl %>">
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+  <meta name="description" content="<%= metaDesc %>">
+
+  <!-- Open Graph (WhatsApp/FB) -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="مسائل ورلڈ">
+  <meta property="og:locale" content="ur_PK">
+  <meta property="og:title" content="<%= fTitle %>">
+  <meta property="og:description" content="<%= metaDesc %>">
+  <meta property="og:url" content="<%= pageUrl %>">
+  <meta property="og:image" content="<%= ogImage %>">
+  <meta property="og:image:alt" content="مسائل ورلڈ">
+  <% if (published) { %><meta property="article:published_time" content="<%= new Date(published).toISOString() %>"><% } %>
+  <% if (modified)  { %><meta property="article:modified_time"  content="<%= new Date(modified).toISOString()  %>"><% } %>
+  <% if (_fatwa.tags)  { %><meta property="article:tag" content="<%= String(_fatwa.tags) %>"><% } %>
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= fTitle %>">
+  <meta name="twitter:description" content="<%= metaDesc %>">
+  <meta name="twitter:image" content="<%= ogImage %>">
+
+  <!-- JSON-LD (Article) -->
+  <script type="application/ld+json">
+  <%- JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": fTitle,
+    "inLanguage": "ur",
+    "mainEntityOfPage": pageUrl,
+    "url": pageUrl,
+    "author": author ? [{ "@type": "Person", "name": author }] : undefined,
+    "publisher": {
+      "@type": "Organization",
+      "name": "مسائل ورلڈ",
+      "logo": { "@type": "ImageObject", "url": "https://alqalamarts.com/mw/masailworld.png" }
+    },
+    "about": muftiName,
+    "datePublished": published ? new Date(published).toISOString() : undefined,
+    "dateModified":  modified ? new Date(modified).toISOString()  : undefined,
+    "image": ogImage,
+    "keywords": _fatwa.tags || undefined,
+    "description": metaDesc
+  }) %>
+  </script>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Bootstrap Icons CDN -->
+  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <!-- PWA Manifest -->
@@ -53,26 +138,26 @@
     }
   </script>
 
-  <!-- Helpful server-provided values -->
+  <!-- Values for client JS -->
   <script>
     window.__MW__ = {
-      API_BASE: "<%= API_BASE %>",
-      fatwaId: "<%= typeof fatwaId !== 'undefined' ? fatwaId : '' %>",
-      requestUrl: "<%= typeof requestUrl !== 'undefined' ? requestUrl.replace(/\"/g, '\\\"') : '' %>"
+      API_BASE: "<%= (typeof API_BASE !== 'undefined' && API_BASE) ? API_BASE : 'https://dynamicmasailworld.onrender.com/api/fatwa' %>",
+      fatwaId: "<%= _fatwaId %>",
+      requestUrl: "<%= String(pageUrl).replace(/\"/g, '\\\"') %>"
     };
   </script>
 </head>
 
 <body>
 
-  <!-- ✅ Loader (fullscreen overlay) -->
+  <!-- ✅ Loader -->
   <div id="loader" class="fixed inset-0 flex items-center justify-center bg-beige z-50">
     <span class="text-3xl md:text-5xl font-bold text-midnight_green animate-pulse">
       صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمْ
     </span>
   </div>
 
-  <!-- Mobile-only Social Media and Ask Link (New) -->
+  <!-- Mobile-only Social -->
   <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
     <a href="/question" class=" text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
     <div class="flex items-center space-x-4 space-x-reverse">
@@ -82,9 +167,8 @@
     </div>
   </div>
 
-  <!-- Header & Navigation for desktop view -->
+  <!-- Header & Navigation -->
   <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
-    <!-- Social Media Links -->
     <div class="bg-rich_black text-air_force_blue-700 py-2">
       <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
         <a href="/question" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
@@ -95,7 +179,6 @@
         </div>
       </div>
     </div>
-    <!-- Main Nav -->
     <nav class="container mx-auto px-4 sm:px-6 py-4">
       <div class="flex justify-between items-center">
         <div class="text-3xl font-bold text-midnight_green">
@@ -177,7 +260,7 @@
     </div>
   </footer>
 
-  <!-- Script -->
+  <!-- Script (UI logic unchanged) -->
   <script>
     function showLoader() {
       const loader = document.getElementById("loader");
@@ -210,7 +293,7 @@
           title: document.title,
           text: "فتویٰ دیکھیں:",
           url: currentUrl
-        }).catch(err => console.log("Share cancelled:", err));
+        }).catch(()=>{});
       } else {
         const shareOptions = `
           <div style="padding:10px;">
@@ -351,7 +434,6 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      // Prefer server-provided id (from /fatwa/:id). Fallback to query param (?id=...)
       const urlParams = new URLSearchParams(window.location.search);
       const fatwaId = (window.__MW__ && window.__MW__.fatwaId) || urlParams.get("id");
 

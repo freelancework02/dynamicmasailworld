@@ -28,7 +28,7 @@ app.use(cors({
     'http://localhost:5000'
   ],
   credentials: true
-}));
+})); 
 
 // ------------------- EJS Setup -------------------
 // Set "views" directory for EJS templates
@@ -224,28 +224,55 @@ app.get('/article/:id', async (req, res) => {
  
 /* ------------------- NEW: Fatwa detail route ------------------- */
 /* Renders the EJS page; the page itself fetches details from API_BASE on the client. */
-app.get('/fatwa/:id', (req, res) => {
+app.get("/fatwa/:id", async (req, res) => {
   const { id } = req.params;
+
+  // Your API base (same as before, but we’ll use it to fetch the fatwa)
   const API_BASE =
     process.env.FATWA_API_BASE ||
-    (process.env.API_BASE /* your original */) ||
-    'https://dynamicmasailworld.onrender.com/api/fatwa';
+    process.env.API_BASE ||
+    "https://dynamicmasailworld.onrender.com/api/fatwa";
 
-  res.render('Pages/fatwa-detail', {
-    pageTitle: 'مسائل ورلڈ - دار الافتاء اہل سنت',
+  // Figure out absolute URLs for canonical/OG
+  // In production set SITE_ORIGIN=https://masailworld.com to avoid localhost canonicals
+  const siteOrigin =
+    process.env.SITE_ORIGIN ||
+    `${req.protocol}://${req.get("host")}`;
+  const requestUrl = `${siteOrigin}${req.originalUrl}`;
+
+  let fatwa = null;
+  try {
+    const resp = await axios.get(`${API_BASE}/${encodeURIComponent(id)}`, {
+      // cookies usually don't matter for public GETs, but keeping parity:
+      withCredentials: true,
+      timeout: 10000,
+    });
+    fatwa = resp?.data || null;
+  } catch (err) {
+    console.error("❌ Failed to fetch fatwa for SSR:", err?.message);
+  }
+
+  // Title to show in browser tab
+  const pageTitle = fatwa?.Title
+    ? `${fatwa.Title} — مسائل ورلڈ`
+    : "مسائل ورلڈ - دار الافتاء اہل سنت";
+
+  // Render page with fatwa data (or null on error; EJS is defensive)
+  res.render("Pages/fatwa-detail", {
+    pageTitle,
+    fatwa,                    // <-- important
     fatwaId: id,
     API_BASE,
-    requestUrl: `${req.protocol}://${req.get('host')}${req.originalUrl}`
+    requestUrl,
+    baseUrl: siteOrigin,      // used by EJS for canonical fallback
   });
 });
 
-/* Optional: legacy redirect from old static HTML link to new pretty route
-   e.g., /Pages/fatwa-detail.html?id=2808  ->  /fatwa/2808
-*/
-app.get(['/Pages/fatwa-detail.html', '/fatwa-detail.html'], (req, res) => {
+// Legacy redirect stays as-is
+app.get(["/Pages/fatwa-detail.html", "/fatwa-detail.html"], (req, res) => {
   const id = req.query.id;
   if (id) return res.redirect(301, `/fatwa/${encodeURIComponent(id)}`);
-  return res.redirect(301, '/fatwa');
+  return res.redirect(301, "/fatwa");
 });
 
 
