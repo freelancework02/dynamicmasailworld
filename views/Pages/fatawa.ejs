@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no"/>
-  <title>تمام فتاویٰ — مسائل ورلڈ</title>
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'تمام فتاویٰ — مسائل ورلڈ' %></title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -32,8 +32,7 @@
     [contenteditable="false"] { -webkit-user-modify: read-only; user-select: text; }
     .card-text, .card-title { outline: none; }
 
-
-     .container { max-width:1000px; margin: 24px auto; padding: 0 16px; }
+    .container { max-width:1000px; margin: 24px auto; padding: 0 16px; }
     .card-link { text-decoration:none; }
     .rounded-2xl { border-radius: 16px; }
     .shadow-lg { box-shadow: 0 10px 25px rgba(0,0,0,.08); }
@@ -116,65 +115,72 @@
       }
     }
   </script>
+
+  <!-- Server-provided knobs for client JS (doesn't affect UI) -->
+  <script>
+    window.__MW__ = {
+      FATWA_API_BASE: "<%= typeof FATWA_API_BASE !== 'undefined' ? FATWA_API_BASE : 'https://api.masailworld.com/api/fatwa' %>",
+      FATWA_TAGS_API: "<%= typeof TAGS_API_BASE !== 'undefined' ? TAGS_API_BASE : 'https://api.masailworld.com/api/tags' %>",
+      FATWA_DETAIL_BASE: "<%= typeof FATWA_DETAIL_BASE !== 'undefined' ? FATWA_DETAIL_BASE : '/fatwa' %>"
+    };
+  </script>
 </head>
 <body>
 
-  <!-- Mobile-only Social Media and Ask Link (New) -->
- <div id="loader" class="fixed inset-0 flex items-center justify-center bg-beige z-50">
+  <!-- Full-screen loader (kept as-is) -->
+  <div id="loader" class="fixed inset-0 flex items-center justify-center bg-beige z-50">
     <span class="text-3xl md:text-5xl font-bold text-midnight_green animate-pulse">
       صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمْ
     </span>
   </div>
 
-   <!-- Mobile-only Social Media and Ask Link (New) -->
-    <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
-        <a href="./Question.html" class=" text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
-        <div class="flex items-center space-x-4 space-x-reverse">
-            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-twitter-x"></i></a>
-            <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition text-base"><i class="bi bi-youtube"></i></a>
-        </div>
+  <!-- Mobile-only Social Media and Ask Link (New) -->
+  <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
+    <a href="/question" class=" text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+    <div class="flex items-center space-x-4 space-x-reverse">
+      <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-facebook"></i></a>
+      <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-twitter-x"></i></a>
+      <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition text-base"><i class="bi bi-youtube"></i></a>
     </div>
-    
+  </div>
 
-    <!-- Header & Navigation for desktop view -->
-    <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
-        <!-- Social Media Links -->
-        <div class="bg-rich_black text-air_force_blue-700 py-2">
-            <div class="container2 mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
-                <a href="./Question.html" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <a  href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-facebook"></i></a>
-                    <a href="https://www.facebook.com/share/1PhWgmvP2g/"  class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
-                    <a  href="http://youtube.com/c/AzharAlimi"  class="hover:text-beige transition"><i class="bi bi-youtube"></i></a>
-                </div>
-            </div>
+  <!-- Header & Navigation for desktop view -->
+  <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
+    <!-- Social Media Links -->
+    <div class="bg-rich_black text-air_force_blue-700 py-2">
+      <div class="container2 mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
+        <a href="/question" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+        <div class="flex items-center space-x-4 space-x-reverse">
+          <a  href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-facebook"></i></a>
+          <a href="https://www.facebook.com/share/1PhWgmvP2g/"  class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+          <a  href="http://youtube.com/c/AzharAlimi"  class="hover:text-beige transition"><i class="bi bi-youtube"></i></a>
         </div>
-        <!-- Main Nav -->
-        <nav class="container mx-auto px-4 sm:px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="text-3xl font-bold text-midnight_green">
-                    <a href="https://masailworld.com/" class=" flex items-center space-x-reverse space-x-2">
-                        <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo" class="h-10 w-10 circular-logo">
-                        <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
-                        <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
-                    </a>
-                </div>
-                <div class="hidden md:flex items-center space-x-reverse space-x-8">
-                    <a href="https://masailworld.com/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
-                    <a href="https://masailworld.com/Pages/fatawa.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
-                    <a href="https://masailworld.com#about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
-                    <a href="https://masailworld.com/Pages/articles.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
-                    <a href="https://masailworld.com/Pages/Categoryfatawa.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
-                    <a href="https://masailworld.com/Pages/book.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
-                    <a href="./Question.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
-                </div>
-            </div>
-        </nav>
-    </header>
+      </div>
+    </div>
+    <!-- Main Nav -->
+    <nav class="container mx-auto px-4 sm:px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="text-3xl font-bold text-midnight_green">
+          <a href="/" class=" flex items-center space-x-reverse space-x-2">
+            <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo" class="h-10 w-10 circular-logo">
+            <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
+            <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
+          </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-reverse space-x-8">
+          <a href="/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
+          <a href="/fatwa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+          <a href="/about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+          <a href="/articles" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+          <a href="/Categoryfatawa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+          <a href="/book" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
+          <a href="/question" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
+        </div>
+      </div>
+    </nav>
+  </header>
 
-
- <div class="container">
+  <div class="container">
     <h1 class="text-2xl font-bold mb-6">تمام  فتاویٰ</h1>
 
     <div class="controls mb-6">
@@ -209,6 +215,7 @@
       <div id="inlineLoader" class="pill hidden">لوڈ ہو رہا ہے…</div>
     </div>
 
+    <!-- NOTE: kept as-is, even though id duplicates the full-screen loader -->
     <div id="loader" class="mb-8" style="display:none; align-items:center; justify-content:center;">
       لوڈ ہو رہا ہے…
     </div>
@@ -222,264 +229,86 @@
     </div>
   </div>
 
-
-
   <div id="inlineLoader" class="hidden text-center my-6">
     <span class="text-xl font-bold text-midnight_green animate-pulse">لوڈ ہو رہا ہے...</span>
   </div>
 
-   <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
-        <ul class="flex justify-around items-center h-16">
-            <li>
-                <a href="https://masailworld.com/" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-                    <i class="bi bi-house-door-fill text-xl"></i>
-                    <span class="text-sm">صفحہ اول</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://masailworld.com/Pages/fatawa.html" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-                    <i class="bi bi-file-text-fill text-xl"></i>
-                    <span class="text-sm">فتاویٰ</span>
-                </a>
-            </li>
-            <li>
-                <a href="https://masailworld.com/Pages/book.html" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-                    <i class="bi bi-book-fill text-xl"></i>
-                    <span class="text-sm">اسلامی کتب</span>
-                </a>
-            </li>
-            <li>
-                <a href="./Question.html" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
-                    <i class="bi bi-chat-dots-fill text-xl"></i>
-                    <span class="text-sm">سوال پوچھیں</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+  <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
+    <ul class="flex justify-around items-center h-16">
+      <li>
+        <a href="https://masailworld.com/" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-house-door-fill text-xl"></i>
+          <span class="text-sm">صفحہ اول</span>
+        </a>
+      </li>
+      <li>
+        <a href="/fatwa" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-file-text-fill text-xl"></i>
+          <span class="text-sm">فتاویٰ</span>
+        </a>
+      </li>
+      <li>
+        <a href="/book" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-book-fill text-xl"></i>
+          <span class="text-sm">اسلامی کتب</span>
+        </a>
+      </li>
+      <li>
+        <a href="/question" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-chat-dots-fill text-xl"></i>
+          <span class="text-sm">سوال پوچھیں</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 
   <!-- Footer -->
-   <footer id="qs-footer" class="bg-rich_black text-beige pt-16 rounded-t-2xl">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
-                <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
-                    <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔</p>
-                    <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
-                        <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="text-air_force_blue-700  hover:text-beige transition "><i class="bi bi-facebook"></i></a>
-                        <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
-                        <a href="http://youtube.com/c/AzharAlimi" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-youtube"></i></a>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
-                    <ul class="space-y-3 text-lg">
-                        <li><a href="https://masailworld.com/Pages/fatawa.html" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
-                        <li><a href="https://masailworld.com/Pages/articles.html" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
-                        <li><a href="./Question.html" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
-                        <li><a href="https://masailworld.com#about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
-                    <ul class="space-y-3 text-lg text-air_force_blue-700">
-                        <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
-                        <!-- <li><i class="bi bi-telephone ml-2"></i>+92 300 1234567</li> -->
-                        <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-semibold mb-4">ہمارے بارے میں</h3>
-                    <p class="text-air_force_blue-700 text-lg leading-relaxed">مسائل ورلڈ ایک آن لائن پلیٹ فارم ہے جو اہل سنت والجماعت کے مطابق شرعی رہنمائی فراہم کرتا ہے۔</p>
-                    <a href="https://alqalamarts.com/" target="_blank" class="text-air_force_blue-700 hover:text-beige transition block mt-2 text-sm font-sans">
-                        <button id="install-app-button" class="bg-air_force_blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-air_force_blue-400 transition text-sm sm:text-md shadow-md mt-4">
-                        <i class="bi bi-plus-circle ml-2"></i> ایپ انسٹال کریں
-                    </button>
-                    </a>
-                </div>
-            </div>
-            <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
-                <p class="text-lg">© 2025 AlQalamArts.com. All rights reserved. | © 2025 مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
-            </div>
-        </div>
-    </footer>
-
-
-<!-- <script>
-/* ---------- Guards against accidental edit modes ---------- */
-try { document.designMode = 'off'; } catch (e) {}
-document.body.setAttribute('contenteditable', 'false');
-document.querySelectorAll('input, textarea').forEach(el => el.spellcheck = false);
-
-/* ---------- DOM elements ---------- */
-const listEl = document.getElementById('list');
-const searchInput = document.getElementById('searchInput');
-const loader = document.getElementById('loader');
-const inlineLoader = document.getElementById('inlineLoader');
-const loadMoreBtn = document.getElementById('loadMoreBtn');
-const tagDropdown = document.getElementById('tagDropdown');
-
-/* ---------- Variables ---------- */
-let fatawaData = [];
-let offset = 0;
-const limit = 50;
-let isLoading = false;
-let allLoaded = false;
-let selectedTag = '';
-
-/* ---------- Sanitize HTML from Quill / unsafe input ---------- */
-function sanitizeHtml(unsafeHtml) {
-  if (!unsafeHtml) return '';
-  const tpl = document.createElement('template');
-  tpl.innerHTML = unsafeHtml;
-  tpl.content.querySelectorAll('script,style').forEach(n => n.remove());
-  tpl.content.querySelectorAll('[contenteditable]').forEach(n => n.removeAttribute('contenteditable'));
-  tpl.content.querySelectorAll('*').forEach(el => {
-    const attrs = Array.from(el.attributes || []);
-    attrs.forEach(attr => {
-      const name = attr.name.toLowerCase();
-      const val = String(attr.value || '').toLowerCase();
-      if (name.startsWith('on')) el.removeAttribute(attr.name);
-      else if (val.includes('javascript:')) el.removeAttribute(attr.name);
-    });
-  });
-  const wrapper = tpl.content.querySelector('.ql-editor');
-  return wrapper ? wrapper.innerHTML : tpl.innerHTML;
-}
-
-/* ---------- Safe text escape for titles ---------- */
-function escapeText(s) {
-  if (s === null || s === undefined) return '';
-  return String(s)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-}
-
-/* ---------- Fetch fatawa from API ---------- */
-async function fetchFatawa() {
-  if (isLoading || allLoaded) return;
-  isLoading = true;
-  if (offset === 0) loader.style.display = 'flex';
-  else { inlineLoader.classList.remove('hidden'); loadMoreBtn.disabled = true; }
-
-  try {
-    const res = await fetch(`https://api.masailworld.com/api/fatwa?limit=${limit}&offset=${offset}`);
-    const newData = await res.json();
-
-    if (!newData.length) {
-      allLoaded = true;
-      loadMoreBtn.style.display = 'none';
-    } else {
-      fatawaData = [...fatawaData, ...newData];
-      populateTags(); // ensure dropdown updates
-      applyFilters(); // apply any current filters
-      offset += limit;
-    }
-  } catch (err) {
-    console.error('Failed to fetch fatawa:', err);
-    if (offset === 0) listEl.innerHTML = '<p class="text-center text-red-600">فتاویٰ لوڈ کرنے میں مسئلہ پیش آیا۔</p>';
-  } finally {
-    loader.style.display = 'none';
-    inlineLoader.classList.add('hidden');
-    loadMoreBtn.disabled = false;
-    isLoading = false;
-  }
-}
-
-/* ---------- Populate unique tags ---------- */
-function populateTags() {
-  const tags = new Set();
-  fatawaData.forEach(f => {
-    if (f.tags) {
-      String(f.tags).split(',').forEach(t => tags.add(t.trim()));
-    }
-  });
-  tagDropdown.innerHTML = '<option value="">تمام ٹیگز</option>' +
-    Array.from(tags).map(t => `<option value="${t}">${t}</option>`).join('');
-}
-
-/* ---------- Apply filters (search + tag) ---------- */
-function applyFilters() {
-  const query = searchInput.value.trim().toLowerCase();
-  const filtered = fatawaData.filter(f => {
-    const matchesTag = !selectedTag || (f.tags && f.tags.includes(selectedTag));
-    const matchesSearch =
-      !query ||
-      (f.Title && f.Title.toLowerCase().includes(query)) ||
-      (f.detailquestion && f.detailquestion.toLowerCase().includes(query)) ||
-      (f.details && f.details.toLowerCase().includes(query));
-    return matchesTag && matchesSearch;
-  });
-  renderList(filtered);
-}
-
-/* ---------- Render fatawa list ---------- */
-function renderList(data) {
-  listEl.innerHTML = '';
-  if (!data.length) {
-    listEl.innerHTML = '<p class="text-center text-gray-600">کوئی فتاویٰ دستیاب نہیں۔</p>';
-    return;
-  }
-
-  data.forEach((f, i) => {
-    const idx = i + 1;
-    const a = document.createElement('a');
-    a.href = `fatwa-detail.html?id=${encodeURIComponent(f.id)}`;
-    a.className = 'block bg-white p-6 rounded-2xl shadow-lg border border-gray-200 transition-all duration-200 card-link';
-    a.setAttribute('contenteditable', 'false');
-
-    const title = `<h3 class="text-xl font-semibold mb-2" contenteditable="false">${escapeText(f.Title || f.question || 'بلا عنوان')}</h3>`;
-    const detail = sanitizeHtml(String(f.detailquestion || f.details || ''));
-
-    a.innerHTML = `
-      <div class="flex items-start">
-        <div class="flex-shrink-0 w-14 h-14 ${ (idx % 2) ? 'bg-midnight_green' : 'bg-air_force_blue' } text-white rounded-xl flex items-center justify-center font-bold text-2xl ml-4">${idx}</div>
-        <div class="flex-grow text-right">
-          ${title}
-          <div class="text-gray-700 line-clamp-2" contenteditable="false">${detail}</div>
-          <div class="mt-4 flex justify-between items-center">
-            <span class="text-green-700 font-bold">مکمل جواب پڑھیں ←</span>
-            <div class="flex items-center text-gray-500 space-x-3 space-x-reverse">
-              <span class="flex items-center"><i class="bi bi-eye-fill ml-1"></i> ${Number(f.Views || 0)}</span>
-            </div>
+  <footer id="qs-footer" class="bg-rich_black text-beige pt-16 rounded-t-2xl">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="col-span-1 md:col-span-2">
+          <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔</p>
+          <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="text-air_force_blue-700  hover:text-beige transition "><i class="bi bi-facebook"></i></a>
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+            <a href="http://youtube.com/c/AzharAlimi" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-youtube"></i></a>
           </div>
         </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
+          <ul class="space-y-3 text-lg">
+            <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+            <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+            <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+            <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
+          <ul class="space-y-3 text-lg text-air_force_blue-700">
+            <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
+            <!-- <li><i class="bi bi-telephone ml-2"></i>+92 300 1234567</li> -->
+            <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہمارے بارے میں</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">مسائل ورلڈ ایک آن لائن پلیٹ فارم ہے جو اہل سنت والجماعت کے مطابق شرعی رہنمائی فراہم کرتا ہے۔</p>
+          <a href="https://alqalamarts.com/" target="_blank" class="text-air_force_blue-700 hover:text-beige transition block mt-2 text-sm font-sans">
+            <button id="install-app-button" class="bg-air_force_blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-air_force_blue-400 transition text-sm sm:text-md shadow-md mt-4">
+              <i class="bi bi-plus-circle ml-2"></i> ایپ انسٹال کریں
+            </button>
+          </a>
+        </div>
       </div>
-    `;
+      <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
+        <p class="text-lg">© 2025 AlQalamArts.com. All rights reserved. | © 2025 مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
+      </div>
+    </div>
+  </footer>
 
-    listEl.appendChild(a);
-  });
-}
-
-/* ---------- Event listeners ---------- */
-tagDropdown.addEventListener('change', e => {
-  selectedTag = e.target.value;
-  applyFilters();
-});
-
-searchInput.addEventListener('input', applyFilters);
-loadMoreBtn.addEventListener('click', fetchFatawa);
-
-/* ---------- Initial load ---------- */
-fetchFatawa();
-
-/* ---------- UX guard: prevent caret editing ---------- */
-document.addEventListener('dblclick', function(e) {
-  let el = e.target;
-  while (el && el !== document.body) {
-    if (el.classList && el.classList.contains('card-link')) {
-      el.focus();
-      e.preventDefault();
-      return;
-    }
-    el = el.parentElement;
-  }
-}, true);
-</script> -->
-
-<script>
+  <script>
 /* ---------- Guards against accidental edit modes ---------- */
 try { document.designMode = 'off'; } catch (e) {}
 document.body.setAttribute('contenteditable', 'false');
@@ -505,10 +334,15 @@ const tagPanel = document.getElementById('tagPanel');
 const tagSearchInput = document.getElementById('tagSearchInput');
 const tagOptionsRoot = document.getElementById('tagOptions');
 
+/* Server-configurable bases (do not affect UI) */
+const API_BASE = (window.__MW__ && window.__MW__.FATWA_API_BASE) || 'https://api.masailworld.com/api/fatwa';
+const TAGS_API = (window.__MW__ && window.__MW__.FATWA_TAGS_API) || 'https://api.masailworld.com/api/tags';
+const DETAIL_BASE = (window.__MW__ && window.__MW__.FATWA_DETAIL_BASE) || '/fatwa';
+
 /* ---------- Variables ---------- */
 let fatawaDataPages = [];   // array of pages, each page = items[]
 let currentPage = 1;        // 1-based index
-const pageSize = 20;        // client-visible page size (we’ll fetch server in same step)
+const pageSize = 20;
 let isLoading = false;
 let allLoaded = false;
 
@@ -575,7 +409,7 @@ function toTagArray(raw) {
 /* ---------- Fetch all tags for dropdown ---------- */
 async function loadTags() {
   try {
-    const res = await fetch('https://api.masailworld.com/api/tags?limit=148');
+    const res = await fetch(`${TAGS_API}?limit=148`);
     const payload = await res.json();
     const arr = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : [];
     tagsCatalog = arr
@@ -597,7 +431,6 @@ async function loadTags() {
 
 /* ---------- Server fetch a page ---------- */
 async function fetchServerPage(pageIndex1) {
-  // map 1-based page to server offset
   const offset = (pageIndex1 - 1) * pageSize;
   if (isLoading || (allLoaded && fatawaDataPages[pageIndex1-1])) return;
 
@@ -607,13 +440,12 @@ async function fetchServerPage(pageIndex1) {
 
   try {
     const params = new URLSearchParams({ limit: String(pageSize), offset: String(offset) });
-    const url = `https://api.masailworld.com/api/fatwa?${params.toString()}`;
+    const url = `${API_BASE}?${params.toString()}`;
     const res = await fetch(url);
     const newData = await res.json();
     const items = Array.isArray(newData) ? newData : Array.isArray(newData?.data) ? newData.data : [];
     if (!items.length) {
       allLoaded = true;
-      // still store empty to avoid refetch loops
       fatawaDataPages[pageIndex1-1] = [];
     } else {
       fatawaDataPages[pageIndex1-1] = items;
@@ -738,7 +570,6 @@ function renderList(items) {
 
   const mode = sortMode.value;
   if (mode === 'tag') {
-    // Group by first tag label (by Urdu sort on tag)
     const map = new Map();
     items.forEach(f => {
       const tags = toTagArray(f.tags);
@@ -768,11 +599,16 @@ function renderList(items) {
     return;
   }
 
-  // default mode: sort by title and render
   const sorted = items.slice().sort((a,b)=> urCollator.compare(String(a.Title||a.question||''), String(b.Title||b.question||'')));
   const frag = document.createDocumentFragment();
   sorted.forEach((f, i) => frag.appendChild(buildCard(f, i+1)));
   listEl.appendChild(frag);
+}
+
+/* Build a detail link that goes to /fatwa/:id (no UI change) */
+function makeDetailHref(id){
+  const safeId = encodeURIComponent(String(id));
+  return `${DETAIL_BASE}/${safeId}`;
 }
 
 function buildCard(f, idx){
@@ -801,18 +637,14 @@ function buildCard(f, idx){
 
 /* ---------- Pagination UI ---------- */
 function renderPagination(){
-  // Enable prev/next based on what we’ve loaded & where we are.
   prevPageBtn.disabled = (currentPage <= 1);
-  // If we have not loaded a future page yet and the next known page is empty, disable next.
   const nextPageLoaded = fatawaDataPages[currentPage] !== undefined;
   const nextPageEmpty   = Array.isArray(fatawaDataPages[currentPage]) && fatawaDataPages[currentPage].length === 0;
   nextPageBtn.disabled = (nextPageLoaded && nextPageEmpty);
 
-  // Page buttons only for pages we have attempted/loaded
   pageNumbersEl.innerHTML = '';
   const totalKnownPages = fatawaDataPages.length || currentPage;
   for (let p=1; p<=totalKnownPages; p++){
-    // stop showing trailing empties
     if (Array.isArray(fatawaDataPages[p-1]) && fatawaDataPages[p-1].length===0 && p>currentPage) break;
     const btn = document.createElement('button');
     btn.className = 'page-btn' + (p===currentPage ? ' active' : '');
@@ -841,21 +673,8 @@ nextPageBtn.addEventListener('click', async ()=>{
   renderAndRemember();
 });
 
-/* ---------- Detail link carries ordering context ---------- */
-function makeDetailHref(id){
-  // Store a “session” list of IDs (current filtered+sorted page only) for previous/next on detail page.
-  // We update this on every render.
-  // The actual value is set in renderAndRemember().
-  const href = new URL('fatwa-detail.html', location.href);
-  href.searchParams.set('id', String(id));
-  // Also carry lightweight flags so detail can try to rehydrate context if needed
-  if (selectedTag) href.searchParams.set('tag', selectedTag);
-  return href.toString();
-}
-
-/* ---------- Render + remember order for detail page ---------- */
+/* ---------- Render + remember order for detail page (kept) ---------- */
 function renderAndRemember(){
-  // Ensure current page exists; if not, fetch it first then render.
   const ensure = async () => {
     if (!fatawaDataPages[currentPage-1]) {
       await fetchServerPage(currentPage);
@@ -863,15 +682,10 @@ function renderAndRemember(){
   };
   ensure().then(()=>{
     const flatUpToNow = getAllLoadedItems();
-
-    // Apply filters on *all loaded data so far*, then slice to current client page window.
     const filtered = applyFiltersTo(flatUpToNow);
 
-    // Keep a stable ordering snapshot for detail page (IDs only)
-    // Use the on-screen items of the current page after final sort/grouping:
     let itemsForPage;
     if (sortMode.value === 'tag') {
-      // we still need a concrete order; build by grouping then flattening
       const map = new Map();
       filtered.forEach(f => {
         const tags = toTagArray(f.tags);
@@ -895,7 +709,6 @@ function renderAndRemember(){
       localStorage.setItem('fatawaOrder', JSON.stringify(itemsForPage.map(x=>x.id)));
     }
 
-    // also store a small cache of id->title for nicer prev/next labels on detail
     const tinyMap = {};
     itemsForPage.forEach(item => { tinyMap[item.id] = item.Title || item.question || ''; });
     localStorage.setItem('fatawaTitleCache', JSON.stringify(tinyMap));
@@ -904,11 +717,10 @@ function renderAndRemember(){
   });
 }
 
-/* ---------- Events ---------- */
+/* ---------- Initial load ---------- */
 searchInput.addEventListener('input', ()=>{ currentPage = 1; renderAndRemember(); });
 sortMode.addEventListener('change', ()=>{ currentPage = 1; renderAndRemember(); });
 
-/* ---------- Initial load ---------- */
 loadTags().then(async ()=>{
   await fetchServerPage(1);
   renderAndRemember();
@@ -926,8 +738,7 @@ document.addEventListener('dblclick', function(e) {
     el = el.parentElement;
   }
 }, true);
-</script>
-
+  </script>
 
 </body>
 </html>

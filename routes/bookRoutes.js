@@ -33,6 +33,11 @@ router.put(
   bookController.updateBook
 );
 
+
+
+// Route to increase view count
+router.post('/:id/view', bookController.incrementBookView);
+
 // ✅ Soft delete
 router.delete("/:id", bookController.deleteBook);
 

@@ -3,7 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no"/>
-  <title>اسلامی کتب — مسائل ورلڈ</title>
+
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'اسلامی کتب — مسائل ورلڈ' %></title>
+
+  <!-- SEO: Basic -->
+  <meta name="description" content="مسائل ورلڈ کی اسلامی کتب: فقہ، حدیث، عقائد، سیرت، تصوف اور متفرق موضوعات پر مستند کتب۔ تلاش، کیٹیگری اور ٹیگز کے ذریعے بآسانی اپنی مطلوبہ کتاب پائیں۔" />
+  <meta name="keywords" content="اسلامی کتب, فقہ, حدیث, عقائد, سیرت, تصوف, masailworld books, Islamic books in Urdu, masail world" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="<%= (typeof baseUrl !== 'undefined' ? baseUrl : 'https://masailworld.com') + '/book' %>"/>
+
+  <!-- SEO: Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ur_PK" />
+  <meta property="og:title" content="اسلامی کتب — مسائل ورلڈ" />
+  <meta property="og:description" content="فقہ، حدیث، عقائد، سیرت اور تصوف پر مستند اسلامی کتب۔ تلاش اور ٹیگز سے فوری فلٹر کریں۔" />
+  <meta property="og:url" content="<%= (typeof baseUrl !== 'undefined' ? baseUrl : 'https://masailworld.com') + '/book' %>" />
+  <meta property="og:site_name" content="مسائل ورلڈ" />
+  <meta property="og:image" content="https://alqalamarts.com/mw/masailworld.png" />
+
+  <!-- SEO: Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="اسلامی کتب — مسائل ورلڈ" />
+  <meta name="twitter:description" content="مسائل ورلڈ کی اسلامی کتب — تلاش، کیٹیگری اور ٹیگز سے فلٹر کریں۔" />
+  <meta name="twitter:image" content="https://alqalamarts.com/mw/masailworld.png" />
+
+  <!-- SEO: JSON-LD Breadcrumbs & Page -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "اسلامی کتب — مسائل ورلڈ",
+    "url": "<%= (typeof baseUrl !== 'undefined' ? baseUrl : 'https://masailworld.com') + '/book' %>",
+    "description": "مسائل ورلڈ کی اسلامی کتب: فقہ، حدیث، عقائد، سیرت، تصوف اور متفرق موضوعات پر مستند کتب۔",
+    "inLanguage": "ur-PK",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "صفحہ اول",
+        "item": "<%= (typeof baseUrl !== 'undefined' ? baseUrl : 'https://masailworld.com') %>/"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "اسلامی کتب",
+        "item": "<%= (typeof baseUrl !== 'undefined' ? baseUrl : 'https://masailworld.com') + '/book' %>"
+      }]
+    }
+  }
+  </script>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -26,135 +74,43 @@
             padding-top: 56px; /* Space for the new mobile header */
         }
         @media (min-width: 768px) {
-            body {
-                padding-top: 0; /* Remove top padding on desktop */
-            }
+            body { padding-top: 0; }
         }
         .hero-section {
             background-image: linear-gradient(rgba(1, 22, 30, 0.7), rgba(1, 22, 30, 0.7)), url('https://img.freepik.com/free-photo/close-up-islamic-new-year-concept-with-misbaha_23-2148611691.jpg');
             background-size: cover;
             background-position: center;
         }
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-        }
-        /* Custom scrollbar for dropdown and sidebar */
-        #searchDropdown::-webkit-scrollbar,
-        #related-fatawa-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        #searchDropdown::-webkit-scrollbar-thumb,
-        #related-fatawa-list::-webkit-scrollbar-thumb {
-            background-color: #598392;
-            border-radius: 4px;
-        }
-        #searchDropdown::-webkit-scrollbar-track,
-        #related-fatawa-list::-webkit-scrollbar-track {
-            background: #eff6e0;
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeInDown { animation: fadeInDown 0.5s ease-out forwards; }
-        
-        .ticker-container {
-            height: auto;
-            overflow: hidden;
-            box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .ticker-content {
-            display: flex;
-            align-items: center;
-            height: 100%;
-        }
-        .ticker-item {
-            flex-shrink: 0;
-            display: none; /* Hide all items by default */
-            margin-left: 2rem;
-            animation: none; /* Disable default animation */
-            width: 100%;
-            text-align: center;
-            padding: 0.5rem;
-        }
-        .ticker-item.active {
-            display: block; /* Show the active item */
-        }
-        @keyframes ticker-fade-in {
-            from { opacity: 0; transform: translateY(100%); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .ticker-item.fade-in {
-            animation: ticker-fade-in 1s ease-out;
-        }
-        .ticker-item-hidden {
-            display: none;
-        }
-         /* Hero Section Slider Styles */
-         .hero-slider-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .hero-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
-        }
-        .hero-slide.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        .hero-section > .container {
-            position: relative;
-            z-index: 1;
-        }
-        /* Ticker content styling */
-        #ticker-content span {
-            display: block;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        #ticker-content span.active {
-            opacity: 1;
-        }
-        /* New Styles for the horizontal ticker */
-        .horizontal-ticker {
-            display: flex;
-            align-items: center;
-            height: 40px;
-            overflow: hidden;
-            position: relative;
-            white-space: nowrap;
-        }
-        .horizontal-ticker-item {
-            animation: move-left 30s linear infinite;
-            font-size: 1.1rem;
-            padding-left: 20px;
-        }
-        @keyframes move-left {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .circular-logo {
-            border-radius: 50%;
-        }
+        .page { display: none; }
+        .page.active { display: block; }
 
-        /* Small helper class to force LTR direction for icon+number pairs inside RTL layout */
+        #searchDropdown::-webkit-scrollbar, #related-fatawa-list::-webkit-scrollbar { width: 8px; }
+        #searchDropdown::-webkit-scrollbar-thumb, #related-fatawa-list::-webkit-scrollbar-thumb { background-color: #598392; border-radius: 4px; }
+        #searchDropdown::-webkit-scrollbar-track, #related-fatawa-list::-webkit-scrollbar-track { background: #eff6e0; }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px);} to { opacity: 1; transform: translateY(0);} }
+        .animate-fadeInDown { animation: fadeInDown 0.5s ease-out forwards; }
+
+        .ticker-container { height: auto; overflow: hidden; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1); }
+        .ticker-content { display: flex; align-items: center; height: 100%; }
+        .ticker-item { flex-shrink: 0; display: none; margin-left: 2rem; animation: none; width: 100%; text-align: center; padding: 0.5rem; }
+        .ticker-item.active { display: block; }
+        @keyframes ticker-fade-in { from { opacity: 0; transform: translateY(100%);} to { opacity: 1; transform: translateY(0);} }
+        .ticker-item.fade-in { animation: ticker-fade-in 1s ease-out; }
+
+        .hero-slider-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
+        .hero-slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: translateX(100%); transition: transform 1s ease-in-out, opacity 1s ease-in-out; }
+        .hero-slide.active { opacity: 1; transform: translateX(0); }
+        .hero-section > .container { position: relative; z-index: 1; }
+
+        #ticker-content span { display: block; opacity: 0; transition: opacity 0.5s ease-in-out; }
+        #ticker-content span.active { opacity: 1; }
+
+        .horizontal-ticker { display: flex; align-items: center; height: 40px; overflow: hidden; position: relative; white-space: nowrap; }
+        .horizontal-ticker-item { animation: move-left 30s linear infinite; font-size: 1.1rem; padding-left: 20px; }
+        @keyframes move-left { 0% { transform: translateX(100%);} 100% { transform: translateX(-100%);} }
+
+        .circular-logo { border-radius: 50%; }
         .ltr-counter { direction: ltr; display: inline-flex; align-items: center; gap: 0.35rem; }
     </style>
     <script>
@@ -176,16 +132,16 @@
 
 <body class="bg-beige text-rich_black">
 
-   <!-- Loader (Durood Shareef) -->
+   <!-- Loader (Duroود شریف) -->
  <div id="loader" class="fixed inset-0 flex items-center justify-center bg-beige z-50">
     <span class="text-3xl md:text-5xl font-bold text-midnight_green animate-pulse">
       صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمْ
     </span>
   </div>
 
-   <!-- Mobile-only Social Media and Ask Link (New) -->
+   <!-- Mobile-only Social Media and Ask Link -->
     <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
-        <a href="./Question.html" class=" text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+        <a href="/question" class=" text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
         <div class="flex items-center space-x-4 space-x-reverse">
             <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-facebook"></i></a>
             <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-twitter-x"></i></a>
@@ -196,35 +152,33 @@
 
     <!-- Header & Navigation for desktop view -->
     <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
-        <!-- Social Media Links -->
         <div class="bg-rich_black text-air_force_blue-700 py-2">
             <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
-                <a href="./Question.html" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+                <a href="/question" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
                 <div class="flex items-center space-x-4 space-x-reverse">
-                    <a  href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-facebook"></i></a>
-                    <a href="https://www.facebook.com/share/1PhWgmvP2g/"  class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
-                    <a  href="http://youtube.com/c/AzharAlimi"  class="hover:text-beige transition"><i class="bi bi-youtube"></i></a>
+                    <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-facebook"></i></a>
+                    <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+                    <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition"><i class="bi bi-youtube"></i></a>
                 </div>
             </div>
         </div>
-        <!-- Main Nav -->
         <nav class="container mx-auto px-4 sm:px-6 py-4">
             <div class="flex justify-between items-center">
                 <div class="text-3xl font-bold text-midnight_green">
                     <a href="https://masailworld.com/" class=" flex items-center space-x-reverse space-x-2">
-                        <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo" class="h-10 w-10 circular-logo">
+                        <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo" class="h-10 w-10 circular-logo" loading="lazy">
                         <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
                         <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-reverse space-x-8">
-                    <a href="https://masailworld.com/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
-                    <a href="https://masailworld.com/Pages/fatawa.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
-                    <a href="https://masailworld.com#about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
-                    <a href="https://masailworld.com/Pages/articles.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
-                    <a href="https://masailworld.com/Pages/Categoryfatawa.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
-                    <a href="https://masailworld.com/Pages/book.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
-                    <a href="./Question.html" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
+                    <a href="/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
+                    <a href="/fatwa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+                    <a href="/about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+                    <a href="/articles" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+                    <a href="/Categoryfatawa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+                    <a href="/book" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
+                    <a href="/question" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
                 </div>
             </div>
         </nav>
@@ -242,7 +196,7 @@
         <div class="max-w-2xl mx-auto px-4 relative">
           <div class="relative flex items-center shadow-lg rounded-full overflow-hidden border-2 border-ash_gray/50 mb-4 bg-white">
             <span class="absolute right-3 text-air_force_blue">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
               </svg>
             </span>
@@ -250,58 +204,65 @@
           </div>
 
           <div class="flex flex-wrap justify-center gap-3">
-            <select id="filterCategory" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green">
+            <!-- Category dropdown (still available; independent of tags) -->
+            <!-- <select id="filterCategory" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green" aria-label="کیٹیگری منتخب کریں">
               <option value="">تمام کیٹیگریز</option>
               <option value="فقہ">فقہ</option>
               <option value="حدیث">حدیث</option>
               <option value="عقائد">عقائد</option>
-            </select>
+              <option value="سیرت">سیرت</option>
+              <option value="تصوف">تصوف</option>
+              <option value="متفرقات">متفرقات</option>
+            </select> -->
 
-            <select id="sortBooks" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green">
+            <!-- Sort -->
+            <select id="sortBooks" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green" aria-label="سورٹ کریں">
               <option value="new">تازہ ترین</option>
               <option value="most_viewed">سب سے زیادہ دیکھی گئیں</option>
               <option value="most_downloaded">سب سے زیادہ ڈاؤن لوڈ شدہ</option>
+            </select>
+
+            <!-- Tags dropdown (main tag filter) -->
+            <select id="tagsSelect" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green" aria-label="ٹیگ منتخب کریں">
+              <option value="">تمام ٹیگز</option>
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Featured / Selected Books -->
-      <!--<h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-8">منتخب کتب</h2>-->
-
+      <!-- Books Grid -->
       <div id="booksGrid" class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 text-center mb-12">
-        <!-- Dynamic content will be injected here -->
         <p id="books-loading" class="col-span-full text-center text-air_force_blue">کتابیں لوڈ ہو رہی ہیں...</p>
       </div>
 
-      <!-- Book Categories -->
+      <!-- Book Categories (now also filter by TAG on click) -->
       <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-8">کتاب کیٹیگری</h2>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 text-center mb-12">
-        <a href="./fatawa.html" class="block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <button type="button" data-category-btn data-category="فقہ" class="block w-full bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
           <i class="bi bi-book text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">فقہ</h3>
-        </a>
-        <a href="./fatawa.html" class="block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        </button>
+        <button type="button" data-category-btn data-category="حدیث" class="block w-full bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
           <i class="bi bi-journal-text text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">حدیث</h3>
-        </a>
-        <a href="./fatawa.html" class="block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        </button>
+        <button type="button" data-category-btn data-category="عقائد" class="block w-full bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
           <i class="bi bi-gem text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">عقائد</h3>
-        </a>
-        <a href="books-seerah.html" class="block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        </button>
+        <button type="button" data-category-btn data-category="سیرت" class="block w-full bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
           <i class="bi bi-person-lines-fill text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">سیرت</h3>
-        </a>
-        <a href="./fatawa.html" class="block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        </button>
+        <button type="button" data-category-btn data-category="تصوف" class="block w-full bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
           <i class="bi bi-moon-stars-fill text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">تصوف</h3>
-        </a>
-        <a href="./fatawa.html" class="block bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        </button>
+        <button type="button" data-category-btn data-category="متفرقات" class="block w-full bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
           <i class="bi bi-grid-fill text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">متفرقات</h3>
-        </a>
+        </button>
       </div>
 
     </div>
@@ -322,18 +283,17 @@
                 </div>
                 <div>
                     <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
-                    <ul class="space-y-3 text-lg">
-                        <li><a href="https://masailworld.com/Pages/fatawa.html" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
-                        <li><a href="https://masailworld.com/Pages/articles.html" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
-                        <li><a href="./Question.html" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
-                        <li><a href="https://masailworld.com#about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+                   <ul class="space-y-3 text-lg">
+                        <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+                        <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+                        <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+                        <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
                     <ul class="space-y-3 text-lg text-air_force_blue-700">
                         <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
-                        <!-- <li><i class="bi bi-telephone ml-2"></i>+92 300 1234567</li> -->
                         <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
                     </ul>
                 </div>
@@ -348,7 +308,7 @@
                 </div>
             </div>
             <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
-                <p class="text-lg">© 2025 AlQalamArts.com. All rights reserved. | © 2025 مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
+                <p class="text-lg">© <%= new Date().getFullYear() %> AlQalamArts.com. All rights reserved. | © <%= new Date().getFullYear() %> مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
             </div>
         </div>
     </footer>
@@ -357,35 +317,35 @@
     <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
         <ul class="flex justify-around items-center h-16">
             <li>
-                <a href="../index.html" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                <a href="/" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
                     <i class="bi bi-house-door-fill text-xl"></i>
                     <span class="text-sm">صفحہ اول</span>
                 </a>
             </li>
             <li>
-                <a href="https://masailworld.com/Pages/fatawa.html" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                <a href="/fatwa" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
                     <i class="bi bi-file-text-fill text-xl"></i>
                     <span class="text-sm">فتاویٰ</span>
                 </a>
             </li>
             <li>
-                <a href="https://masailworld.com/Pages/book.html" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                <a href="/book" class=" flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
                     <i class="bi bi-book-fill text-xl"></i>
                     <span class="text-sm">اسلامی کتب</span>
                 </a>
             </li>
             <li>
-                <a href="./Question.html" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+                <a href="/question" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
                     <i class="bi bi-chat-dots-fill text-xl"></i>
                     <span class="text-sm">سوال پوچھیں</span>
                 </a>
             </li>
         </ul>
     </nav>
-  <!-- Scripts: dynamic loading + filter/sort -->
-  <script>
 
-// ✅ Loader utilities
+  <!-- Scripts: dynamic loading + filter/sort (+ TAG dropdown & category tiles) -->
+  <script>
+/* ---------- Loader utilities ---------- */
 function showLoader() {
   const loader = document.getElementById("loader");
   if (loader) loader.style.display = "flex";
@@ -395,189 +355,223 @@ function hideLoader() {
   if (loader) loader.style.display = "none";
 }
 
-    const API_BASE = "https://masailworld.onrender.com/api"; // اگر آپ کا API کسی اور domain/port پر ہے تو یہاں تبدیل کریں
+/* ---------- Config ---------- */
+const API_BASE = "http://localhost:5000/api";
 
-    const booksGrid = document.getElementById('booksGrid');
-    const booksLoading = document.getElementById('books-loading');
-    const searchInput = document.getElementById('searchBooks');
-    const filterCategory = document.getElementById('filterCategory');
-    const sortBooks = document.getElementById('sortBooks');
+/* ---------- DOM refs ---------- */
+const booksGrid = document.getElementById('booksGrid');
+const searchInput = document.getElementById('searchBooks');
+const filterCategory = document.getElementById('filterCategory');
+const sortBooks = document.getElementById('sortBooks');
+const tagsSelect = document.getElementById('tagsSelect');
 
-    // store loaded books for client-side filtering/sorting
-    let allBooks = [];
+/* ---------- State ---------- */
+let allBooks = [];
+let activeTag = ""; // selected tag from dropdown OR category tile
 
-    function createBookCard(book) {
-      // safe fallbacks
-      const coverUrl = book.coverUrl || `${API_BASE}/book/${book.id}/cover` || 'https://placehold.co/150x200/598392/ffffff?text=No+Cover';
-      const pdfUrl = book.pdfUrl || `${API_BASE}/book/${book.id}/pdf` || '#';
-      const title = escapeHtml(book.BookName || book.bookName || "نامعلوم کتاب");
-      const writer = escapeHtml(book.BookWriter || book.author || "نامعلوم مصنف");
-      const desc = escapeHtml(book.BookDescription || book.description || "");
-      const views = Number(book.Views || book.views || 0);
-      const downloads = Number(book.Downloads || book.downloads || 0);
-      const category = book.Category || book.category || "";
-      const Redirecturl = `./Book-detail.html?id=${book.id}` 
+/* ---------- Helpers ---------- */
+function abbreviateNumber(num) {
+  if (num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1_000) return (num/1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return num.toString();
+}
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+function normalizeTags(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.map(t => String(t).trim()).filter(Boolean);
+  // split on English comma, Urdu comma (،), pipe, or |
+  return String(raw).split(/[,\|،]+/g).map(t => t.trim()).filter(Boolean);
+}
 
-      // Return a DOM element instead of string to avoid injection issues
-      const a = document.createElement('a');
-      a.href = Redirecturl;
-      a.target = "_blank";
-      a.className = "block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300";
+/* ---------- Rendering ---------- */
+function createBookCard(book) {
+  const coverUrl = book.coverUrl || `${API_BASE}/book/${book.id}/cover` || 'https://placehold.co/150x200/598392/ffffff?text=No+Cover';
+  const title = escapeHtml(book.BookName || "نامعلوم کتاب");
+  const writer = escapeHtml(book.BookWriter || "نامعلوم مصنف");
+  const views = Number(book.Views || 0);
+  const downloads = Number(book.Downloads || 0);
+  const Redirecturl = `/book/${book.id}`;
 
-      a.innerHTML = `
-        <img src="${coverUrl}" alt="${title}" class="w-full h-48 object-cover rounded-md mb-2 shadow-md" />
-        <h3 class="text-lg font-bold text-rich_black mb-1">${title}</h3>
-        <p class="text-sm text-air_force_blue mb-2">${writer}</p>
-       
-        <div class="flex justify-center items-center gap-3 text-sm text-air_force_blue">
-          <div class="ltr-counter"><i class="bi bi-eye-fill"></i><span>${abbreviateNumber(views)}</span></div>
-          <div class="ltr-counter"><i class="bi bi-download"></i><span>${abbreviateNumber(downloads)}</span></div>
-        </div>
-      `;
+  const a = document.createElement('a');
+  a.href = Redirecturl;
+  a.target = "_blank";
+  a.className = "block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300";
 
-      // attach meta attributes for filtering (so we can filter easily)
-      a.dataset.title = (book.BookName || book.bookName || "").toString().toLowerCase();
-      a.dataset.category = (category || "").toString();
+  a.innerHTML = `
+    <img src="${coverUrl}" alt="${title}" class="w-full h-48 object-cover rounded-md mb-2 shadow-md" />
+    <h3 class="text-lg font-bold text-rich_black mb-1">${title}</h3>
+    <p class="text-sm text-air_force_blue mb-2">${writer}</p>
+    <div class="flex justify-center items-center gap-3 text-sm text-air_force_blue">
+      <div class="ltr-counter"><i class="bi bi-eye-fill"></i><span>${abbreviateNumber(views)}</span></div>
+      <div class="ltr-counter"><i class="bi bi-download"></i><span>${abbreviateNumber(downloads)}</span></div>
+    </div>
+  `;
 
-      return a;
+  a.dataset.title = (book.BookName || "").toString().toLowerCase();
+  a.dataset.category = (book.Category || "").toString();
+  a.dataset.tags = JSON.stringify(book.Tags || []);
+  return a;
+}
+
+function renderBooks(list) {
+  booksGrid.innerHTML = '';
+  if (!list || list.length === 0) {
+    const p = document.createElement('p');
+    p.className = 'col-span-full text-center text-air_force_blue';
+    p.textContent = 'فی الحال کوئی کتاب دستیاب نہیں ہے۔';
+    booksGrid.appendChild(p);
+    return;
+  }
+  const fragment = document.createDocumentFragment();
+  list.forEach(b => fragment.appendChild(createBookCard(b)));
+  booksGrid.appendChild(fragment);
+}
+
+/* Populate only the dropdown with unique tags */
+function populateTagsDropdown(uniqueTags) {
+  const current = tagsSelect.value;
+  tagsSelect.innerHTML = '<option value="">تمام ٹیگز</option>';
+  uniqueTags.forEach(tag => {
+    const opt = document.createElement('option');
+    opt.value = tag;
+    opt.textContent = tag;
+    tagsSelect.appendChild(opt);
+  });
+  // keep previous selection if still present
+  if (current && uniqueTags.includes(current)) {
+    tagsSelect.value = current;
+  } else if (activeTag) {
+    tagsSelect.value = activeTag;
+  } else {
+    tagsSelect.value = "";
+  }
+}
+
+/* ---------- Filtering & Sorting ---------- */
+function applyFiltersAndSort() {
+  const q = (searchInput?.value || '').trim().toLowerCase();
+  const category = (filterCategory?.value || '').trim();
+  const sortBy = sortBooks?.value || 'new';
+
+  let filtered = allBooks.slice();
+
+  // Category dropdown filter (optional, independent of tags)
+  if (category) {
+    filtered = filtered.filter(b => (b.Category || '').toString() === category);
+  }
+
+  // Search by title or writer
+  if (q) {
+    filtered = filtered.filter(b => {
+      const title = (b.BookName || '').toString().toLowerCase();
+      const writer = (b.BookWriter || '').toString().toLowerCase();
+      return title.includes(q) || writer.includes(q);
+    });
+  }
+
+  // Tag filter (via dropdown or category tiles)
+  if (activeTag) {
+    filtered = filtered.filter(b => (b.Tags || []).some(t => String(t) === activeTag));
+  }
+
+  // Sort
+  if (sortBy === 'most_viewed') {
+    filtered.sort((a,b) => (Number(b.Views||0) - Number(a.Views||0)));
+  } else if (sortBy === 'most_downloaded') {
+    filtered.sort((a,b) => (Number(b.Downloads||0) - Number(a.Downloads||0)));
+  } else {
+    // "new" (prefer createdAt; fallback to id)
+    if (filtered.some(x => x.createdAt)) {
+      filtered.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    } else {
+      filtered.sort((a,b) => (Number(b.id || 0) - Number(a.id || 0)));
     }
+  }
 
-    function abbreviateNumber(num) {
-      // simple abbreviation: 1200 -> 1.2k
-      if (num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
-      if (num >= 1_000) return (num/1_000).toFixed(1).replace(/\.0$/, '') + 'k';
-      return num.toString();
-    }
+  renderBooks(filtered);
+}
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
+/* ---------- Data Load ---------- */
+async function loadBooksFromApi(limit = 100, offset = 0) {
+  showLoader();
+  try {
+    const resp = await fetch(`${API_BASE}/book?limit=${limit}&offset=${offset}`);
+    if (!resp.ok) throw new Error(`API responded with ${resp.status}`);
+    const data = await resp.json();
 
-    function renderBooks(list) {
-      booksGrid.innerHTML = '';
-      if (!list || list.length === 0) {
-        const p = document.createElement('p');
-        p.className = 'col-span-full text-center text-air_force_blue';
-        p.textContent = 'فی الحال کوئی کتاب دستیاب نہیں ہے۔';
-        booksGrid.appendChild(p);
-        return;
-      }
+    let items = [];
+    if (Array.isArray(data)) items = data;
+    else if (Array.isArray(data.items)) items = data.items;
+    else if (Array.isArray(data.data)) items = data.data;
 
-      // append cards
-      const fragment = document.createDocumentFragment();
-      list.forEach(b => {
-        fragment.appendChild(createBookCard(b));
-      });
-      booksGrid.appendChild(fragment);
-    }
-
-    function applyFiltersAndSort() {
-      const q = (searchInput.value || '').trim().toLowerCase();
-      const category = (filterCategory.value || '').trim();
-      const sortBy = sortBooks.value || 'new';
-
-      let filtered = allBooks.slice();
-
-      if (category) {
-        filtered = filtered.filter(b => {
-          const cat = (b.Category || b.category || '').toString();
-          return cat === category;
-        });
-      }
-
-      if (q) {
-        filtered = filtered.filter(b => {
-          const title = (b.BookName || b.bookName || '').toString().toLowerCase();
-          const writer = (b.BookWriter || b.author || '').toString().toLowerCase();
-          return title.includes(q) || writer.includes(q);
-        });
-      }
-
-      // sorting (best-effort, depends on fields existing)
-      if (sortBy === 'most_viewed') {
-        filtered.sort((a,b) => (Number(b.Views||b.views||0) - Number(a.Views||a.views||0)));
-      } else if (sortBy === 'most_downloaded') {
-        filtered.sort((a,b) => (Number(b.Downloads||b.downloads||0) - Number(a.Downloads||a.downloads||0)));
-      } else {
-        // 'new' - try by createdAt or id (descending)
-        if (filtered.every(x => x.createdAt)) {
-          filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-        } else {
-          filtered.sort((a,b) => (Number(b.id || b.ID || 0) - Number(a.id || a.ID || 0)));
-        }
-      }
-
-      renderBooks(filtered);
-    }
-
-    async function loadBooksFromApi(limit = 100, offset = 0) {
-      showLoader()
-      try {
-        // booksLoading && (booksLoading.textContent = 'کتابیں لوڈ ہو رہی ہیں...');
-        // Example endpoint: GET /api/book?limit=20&offset=0
-        const resp = await fetch(`${API_BASE}/book?limit=${limit}&offset=${offset}`);
-        if (!resp.ok) throw new Error(`API responded with ${resp.status}`);
-        const data = await resp.json();
-
-        // Expecting an array. If API returns object with items property, adapt:
-        let items = [];
-        if (Array.isArray(data)) items = data;
-        else if (Array.isArray(data.items)) items = data.items;
-        else if (Array.isArray(data.data)) items = data.data;
-        else {
-          // try to coerce single item or empty
-          if (data) items = Array.isArray(data) ? data : (data.items || data.data || []);
-        }
-
-        allBooks = items.map(item => {
-          // normalize minimal fields to be safe when different property names used
-          return {
-            id: item.id ?? item.ID ?? item.bookId ?? item.BookId,
-            BookName: item.BookName ?? item.bookName ?? item.title ?? item.Title,
-            BookWriter: item.BookWriter ?? item.author ?? item.Author,
-            BookDescription: item.BookDescription ?? item.description ?? item.Description,
-            Views: item.Views ?? item.views ?? item.viewCount ?? 0,
-            Downloads: item.Downloads ?? item.downloads ?? item.downloadCount ?? 0,
-            Category: item.Category ?? item.category ?? item.categoryName ?? '',
-            coverUrl: item.coverUrl ?? item.cover ?? item.image ?? null,
-            pdfUrl: item.pdfUrl ?? item.pdf ?? item.file ?? null,
-            createdAt: item.createdAt ?? item.created_at ?? item.CreatedAt ?? null
-          };
-        });
-
-        applyFiltersAndSort();
-      } catch (err) {
-        console.error("Error loading books:", err);
-        booksGrid.innerHTML = `<p class="col-span-full text-center text-air_force_blue">کتب لوڈ کرنے میں مسئلہ آیا۔ براہِ کرم بعد میں دوبارہ کوشش کریں۔</p>`;
-      } finally {
-        // if (booksLoading) booksLoading.remove();
-        hideLoader();
-      }
-    }
-
-    // Attach event listeners
-    document.addEventListener('DOMContentLoaded', () => {
-      // initial load
-      loadBooksFromApi(100, 0);
-
-      // filters
-      searchInput && searchInput.addEventListener('input', () => {
-        applyFiltersAndSort();
-      });
-      filterCategory && filterCategory.addEventListener('change', () => {
-        applyFiltersAndSort();
-      });
-      sortBooks && sortBooks.addEventListener('change', () => {
-        applyFiltersAndSort();
-      });
+    allBooks = items.map(item => {
+      const id = item.id ?? item.ID ?? item.bookId ?? item.BookId;
+      const tags = normalizeTags(item.Tags ?? item.tags ?? item.tagList ?? "");
+      return {
+        id,
+        BookName: item.BookName ?? item.bookName ?? item.title ?? item.Title,
+        BookWriter: item.BookWriter ?? item.author ?? item.Author,
+        BookDescription: item.BookDescription ?? item.description ?? item.Description,
+        Views: Number(item.Views ?? item.views ?? item.viewCount ?? 0),
+        Downloads: Number(item.Downloads ?? item.downloads ?? item.downloadCount ?? 0),
+        Category: item.Category ?? item.category ?? item.categoryName ?? '',
+        coverUrl: item.coverUrl ?? item.cover ?? item.image ?? null,
+        pdfUrl: item.pdfUrl ?? item.pdf ?? item.file ?? null,
+        createdAt: item.createdAt ?? item.created_at ?? item.CreatedAt ?? null,
+        Tags: tags
+      };
     });
 
+    // Unique tags for dropdown
+    const tagSet = new Set();
+    allBooks.forEach(b => (b.Tags || []).forEach(t => tagSet.add(String(t))));
+    populateTagsDropdown(Array.from(tagSet));
+
+    applyFiltersAndSort();
+  } catch (err) {
+    console.error("Error loading books:", err);
+    booksGrid.innerHTML = `<p class="col-span-full text-center text-air_force_blue">کتب لوڈ کرنے میں مسئلہ آیا۔ براہِ کرم بعد میں دوبارہ کوشش کریں۔</p>`;
+  } finally {
+    hideLoader();
+  }
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  loadBooksFromApi(100, 0);
+
+  searchInput && searchInput.addEventListener('input', applyFiltersAndSort);
+  filterCategory && filterCategory.addEventListener('change', applyFiltersAndSort);
+  sortBooks && sortBooks.addEventListener('change', applyFiltersAndSort);
+
+  // Tags dropdown -> set activeTag + sort/filter
+  tagsSelect && tagsSelect.addEventListener('change', (e) => {
+    activeTag = e.target.value || "";
+    applyFiltersAndSort();
+    booksGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // Category tiles -> act as TAG filters too (plus keep category dropdown optional)
+  document.querySelectorAll('[data-category-btn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.getAttribute('data-category') || '';
+      // Set the activeTag from tile label
+      activeTag = tag;
+      // Reflect in tags dropdown UI
+      if (tagsSelect) tagsSelect.value = tag;
+      // You can also optionally sync category dropdown to same value:
+      // filterCategory.value = tag; // uncomment if you want category=tag too
+      applyFiltersAndSort();
+      booksGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+});
   </script>
 </body>
 </html>

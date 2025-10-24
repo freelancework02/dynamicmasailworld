@@ -162,82 +162,10 @@ document.addEventListener("DOMContentLoaded", loadFatawa);
 
 
 
-//Other Latest
-// document.addEventListener("DOMContentLoaded", async () => {
-//   try {
-//     const res = await fetch("https://masailworld.onrender.com/api/fatwa/latest");
-//     const fatawa = await res.json();
-//     console.log("Latest fatawa response:", fatawa);
-
-//     const list = document.getElementById("latest-fatawa-list");
-//     list.innerHTML = ""; // clear placeholder
-
-//     // Always make fatawa an array
-//     const fatawaList = Array.isArray(fatawa) ? fatawa : [fatawa];
-
-//     fatawaList.forEach((fatwa, index) => {
-//       const fatwaCard = document.createElement("div");
-//       fatwaCard.classList.add(
-//         "bg-white",
-//         "p-6",
-//         "rounded-xl",
-//         "shadow-lg",
-//         "border",
-//         "border-ash_gray/50",
-//         "hover:shadow-xl",
-//         "transition"
-//       );
-
-//       // Use slug if available, else ID
-//  const link = fatwa.id ? `./Pages/fatwa-detail.html/${fatwa.id}` : `./Pages/fatwa-detail.html/${fatwa.id}`;
-
-//       // Fallbacks if views or details not in DB yet
-//       const views = fatwa.Views || 0;
-//       const details = fatwa.detailquestion
-//         ? fatwa.detailquestion.slice(0, 180) + "..."
-//         : "";
-
-//       fatwaCard.innerHTML = `
-//         <div class="flex items-start">
-//           <div class="flex-shrink-0 flex items-center justify-center w-14 h-14 bg-midnight_green text-white font-bold text-3xl rounded-xl ml-4 shadow-md">
-//             ${index + 1}
-//           </div>
-//           <div class="flex-grow">
-//             <h3 class="text-xl sm:text-2xl font-semibold text-rich_black leading-normal">
-//               <a href="./Pages/fatwa-detail.html?id=${fatwa.id}" class="hover:underline">${fatwa.Title}</a>
-//             </h3>
-//             <p class="text-rich_black-600 text-base md:text-lg mt-2 mb-3 leading-relaxed line-clamp-3">
-//               ${details}
-//             </p>
-//             <div class="flex justify-between items-center mt-4">
-//               <a href="./Pages/fatwa-detail.html?id=${fatwa.id}" class="text-midnight_green-600 font-bold text-md md:text-lg hover:underline transition">
-//                 مکمل جواب پڑھیں &larr;
-//               </a>
-//               <div class="flex items-center space-x-4 space-x-reverse text-air_force_blue">
-//                 <div class="flex items-center">
-//                   <i class="bi bi-eye-fill ml-1"></i>
-//                   <span class="font-sans">${views}</span>
-//                 </div>
-//                 <span class="hover:text-midnight_green transition-colors cursor-pointer">
-//                   <i class="bi bi-share-fill"></i>
-//                 </span>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       `;
-
-//       list.appendChild(fatwaCard);
-//     });
-//   } catch (err) {
-//     console.error("❌ Error loading latest fatawa:", err);
-//   }
-// });
-
-
+// Other Latest
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await fetch("https://api.masailworld.com/api/fatwa/latest");
+    const res = await fetch("https://masailworld.onrender.com/api/fatwa/latest");
     const fatawa = await res.json();
     console.log("Latest fatawa response:", fatawa);
 
@@ -259,6 +187,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         "hover:shadow-xl",
         "transition"
       );
+
+      // Use slug if available, else ID
+ const link = fatwa.id ? `./Pages/fatwa-detail.html/${fatwa.id}` : `./Pages/fatwa-detail.html/${fatwa.id}`;
 
       // Fallbacks if views or details not in DB yet
       const views = fatwa.Views || 0;
@@ -298,16 +229,85 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       list.appendChild(fatwaCard);
     });
-
-    // 🚫 Stop editing in all Quill editors
-    document.querySelectorAll(".ql-editor").forEach(el => {
-      el.setAttribute("contenteditable", "false");
-    });
-
   } catch (err) {
     console.error("❌ Error loading latest fatawa:", err);
   }
 });
+
+
+// document.addEventListener("DOMContentLoaded", async () => {
+//   try {
+//     const res = await fetch("https://api.masailworld.com/api/fatwa/latest");
+//     const fatawa = await res.json();
+//     console.log("Latest fatawa response:", fatawa);
+
+//     const list = document.getElementById("latest-fatawa-list");
+//     list.innerHTML = ""; // clear placeholder
+
+//     // Always make fatawa an array
+//     const fatawaList = Array.isArray(fatawa) ? fatawa : [fatawa];
+
+//     fatawaList.forEach((fatwa, index) => {
+//       const fatwaCard = document.createElement("div");
+//       fatwaCard.classList.add(
+//         "bg-white",
+//         "p-6",
+//         "rounded-xl",
+//         "shadow-lg",
+//         "border",
+//         "border-ash_gray/50",
+//         "hover:shadow-xl",
+//         "transition"
+//       );
+
+//       // Fallbacks if views or details not in DB yet
+//       const views = fatwa.Views || 0;
+//       const details = fatwa.detailquestion
+//         ? fatwa.detailquestion.slice(0, 180) + "..."
+//         : "";
+
+//       fatwaCard.innerHTML = `
+//         <div class="flex items-start">
+//           <div class="flex-shrink-0 flex items-center justify-center w-14 h-14 bg-midnight_green text-white font-bold text-3xl rounded-xl ml-4 shadow-md">
+//             ${index + 1}
+//           </div>
+//           <div class="flex-grow">
+//             <h3 class="text-xl sm:text-2xl font-semibold text-rich_black leading-normal">
+//               <a href="./Pages/fatwa-detail.html?id=${fatwa.id}" class="hover:underline">${fatwa.Title}</a>
+//             </h3>
+//             <p class="text-rich_black-600 text-base md:text-lg mt-2 mb-3 leading-relaxed line-clamp-3">
+//               ${details}
+//             </p>
+//             <div class="flex justify-between items-center mt-4">
+//               <a href="./Pages/fatwa-detail.html?id=${fatwa.id}" class="text-midnight_green-600 font-bold text-md md:text-lg hover:underline transition">
+//                 مکمل جواب پڑھیں &larr;
+//               </a>
+//               <div class="flex items-center space-x-4 space-x-reverse text-air_force_blue">
+//                 <div class="flex items-center">
+//                   <i class="bi bi-eye-fill ml-1"></i>
+//                   <span class="font-sans">${views}</span>
+//                 </div>
+//                 <span class="hover:text-midnight_green transition-colors cursor-pointer">
+//                   <i class="bi bi-share-fill"></i>
+//                 </span>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       `;
+
+//       list.appendChild(fatwaCard);
+//     });
+
+//     // 🚫 Stop editing in all Quill editors
+//     document.querySelectorAll(".ql-editor").forEach(el => {
+//       el.setAttribute("contenteditable", "false");
+//     });
+
+//   } catch (err) {
+//     console.error("❌ Error loading latest fatawa:", err);
+//   }
+// });
 
 
 
@@ -535,3 +535,241 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
+
+const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'http://localhost:5000/api/book';
+  const BOOK_COVER_URL = (id) => `http://localhost:5000/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
+
+  // --- helpers ---
+
+
+  // keep only plain text for the one-liner
+  function plainOneLine(s, max = 110) {
+    if (!s) return '';
+    const text = String(s).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    return text.length > max ? text.slice(0, max - 1) + '…' : text;
+  }
+
+  // -------- Card renderer --------
+  function renderBookCard(b) {
+    const id =
+      b.id ?? b.ID ?? b.Id ?? b.bookId ?? b.BookID ?? b.BookId ?? b.BookID;
+
+    // If no id, skip rendering a clickable card
+    if (!id) {
+      return '';
+    }
+
+    const title = escapeText(b.BookName || b.title || b.Name || b.name || 'بلا عنوان');
+    const about = plainOneLine(b.BookDescription || b.about || b.details || b.Summary || b.summary || '');
+
+    const imgSrc = BOOK_COVER_URL(id);
+    const fallback =
+      "this.onerror=null;this.src='https://dummyimage.com/640x900/eef2f7/8892a6.jpg&text=%DA%A9%D8%AA%D8%A7%D8%A8'";
+
+    // IMPORTANT: build the real detail link
+    const detailHref = `/book/${encodeURIComponent(id)}`;
+
+    return `
+      <a href="${detailHref}" class="block group">
+        <div class="bg-white rounded-2xl shadow-lg border overflow-hidden h-full flex flex-col">
+          <div class="relative aspect-[3/4] overflow-hidden bg-[#f6f7fb]">
+            <img src="${imgSrc}" alt="${title}"
+                 class="w-full h-full object-cover group-hover:scale-[1.03] transition"
+                 loading="lazy" onerror="${fallback}">
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-rich_black text-lg font-bold line-clamp-2">${title}</h3>
+            <p class="text-gray-600 text-sm line-clamp-2">${escapeText(about)}</p>
+          </div>
+        </div>
+      </a>
+    `;
+  }
+
+  // -------- Main loader --------
+  async function loadKitabe(limit = 4) {
+    const grid = document.getElementById('kitabe-grid');
+    const loader = document.getElementById('kitabe-loader');
+    if (!grid) return;
+
+    try {
+      loader && loader.classList.remove('hidden');
+
+      const res = await fetch(BOOKS_API, { credentials: 'include' });
+      const payload = await res.json();
+
+      // accept either raw array or {data:[...]}
+      const books = Array.isArray(payload) ? payload
+                   : (Array.isArray(payload?.data) ? payload.data : []);
+
+      const items = books.slice(0, limit);
+      if (!items.length) {
+        grid.innerHTML = `<div class="col-span-full text-center text-gray-600">کوئی کتاب دستیاب نہیں۔</div>`;
+        return;
+      }
+
+      const html = items.map(renderBookCard).filter(Boolean).join('');
+      grid.innerHTML = html || `<div class="col-span-full text-center text-gray-600">کوئی کتاب دستیاب نہیں۔</div>`;
+    } catch (err) {
+      console.error('loadKitabe error:', err);
+      if (grid) grid.innerHTML = `<div class="col-span-full text-center text-red-600">کتابیں لوڈ کرنے میں مسئلہ ہوا۔</div>`;
+    } finally {
+      loader && loader.classList.add('hidden');
+    }
+  }
+
+  // Tailwind line-clamp fallback (in case plugin isn't active)
+  (function ensureClamp() {
+    if (!document.getElementById('ms-lineclamp')) {
+      const style = document.createElement('style');
+      style.id = 'ms-lineclamp';
+      style.textContent = `
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }`;
+      document.head.appendChild(style);
+    }
+  })();
+
+  // Auto-init on ready (safe repeat)
+  document.addEventListener('DOMContentLoaded', () => {
+    loadKitabe(4);
+  });
+
+
+
+
+  (function () {
+    const FATAWA_API_BASE =
+      (window.__MW__ && window.__MW__.FATAWA_API) ||
+      "http://localhost:5000/api/fatwa"; // dev fallback
+
+    // Use your controller's latest endpoint
+    const ENDPOINT = `${FATAWA_API_BASE}/latest`;
+
+    // Build your detail page URL (you’re using /fatwa/:id)
+    const fatwaDetailUrl = (id /*, slug */) =>
+      `/fatwa/${encodeURIComponent(id)}`;
+
+    // ---------- Utils ----------
+    function escapeText(s) {
+      return String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/'/g, "nbsp&;");
+    }
+
+    function stripHtmlToOneLine(html, max = 120) {
+      const text = String(html ?? "")
+        .replace(/<[^>]+>/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      return text.length > max ? text.slice(0, max - 1) + "…" : text;
+    }
+
+    function timeAgo(dateStr) {
+      try {
+        const d = new Date(dateStr);
+        const diffSec = Math.floor((Date.now() - d.getTime()) / 1000);
+
+        const rtf = new Intl.RelativeTimeFormat("ur", { numeric: "auto" });
+        const units = [
+          ["year", 31536000],
+          ["month", 2592000],
+          ["week", 604800],
+          ["day", 86400],
+          ["hour", 3600],
+          ["minute", 60],
+          ["second", 1],
+        ];
+        for (const [unit, sec] of units) {
+          const val = Math.floor(diffSec / sec);
+          if (val >= 1) return rtf.format(-val, unit);
+        }
+        return rtf.format(0, "second");
+      } catch {
+        return "";
+      }
+    }
+
+    function numLabel(n) {
+      return Number(n || 0).toLocaleString("ur-IN");
+    }
+
+    // ---------- Rendering ----------
+    // /latest returns array: [{ id, Title, slug, detailquestion, created_at, Likes, Views }, ...]
+    function renderCard(row) {
+      const id = row.id;
+      const title = escapeText(row.Title || "بلا عنوان");
+      const desc = escapeText(stripHtmlToOneLine(row.detailquestion || ""));
+      const views = `${numLabel(row.Views)} مشاہدات`;
+      const likes = `${numLabel(row.Likes)} پسند`;
+      const when = timeAgo(row.created_at);
+
+      return `
+        <article
+          class="group bg-white rounded-2xl border border-ash_gray/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-5"
+          role="button"
+          tabindex="0"
+          onclick="location.href='${fatwaDetailUrl(id)}'"
+          onkeydown="if(event.key==='Enter'){ location.href='${fatwaDetailUrl(id)}'}"
+          aria-label="${title}"
+        >
+          <h3 class="text-xl font-bold text-rich_black mb-2 leading-snug group-hover:text-midnight_green">
+            ${title}
+          </h3>
+          <p class="text-air_force_blue/90 mb-5">${desc}</p>
+          <div class="flex items-center justify-between text-sm text-air_force_blue">
+            <span class="inline-flex items-center gap-2">
+              <i class="bi bi-eye"></i>${views}
+            </span>
+            <span class="inline-flex items-center gap-2">
+              <i class="bi bi-hand-thumbs-up"></i>${likes}
+            </span>
+          </div>
+          <div class="mt-3 text-xs text-air_force_blue/80 flex items-center gap-2">
+            <i class="bi bi-clock-history"></i>${escapeText(when)}
+          </div>
+        </article>
+      `;
+    }
+
+    function show(el) { el.classList.remove("hidden"); }
+    function hide(el) { el.classList.add("hidden"); }
+
+    // ---------- Fetch + Init ----------
+    async function loadLatestFatwa() {
+      const list = document.getElementById("latest-list");
+      const skeleton = document.getElementById("latest-skeleton");
+      const emptyMsg = document.getElementById("latest-empty");
+
+      show(skeleton); hide(list); hide(emptyMsg);
+
+      try {
+        const res = await fetch(ENDPOINT, { credentials: "include" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const rows = await res.json(); // controller sends array
+
+        if (!Array.isArray(rows) || rows.length === 0) {
+          hide(skeleton); show(emptyMsg); return;
+        }
+
+        list.innerHTML = rows.map(renderCard).join("");
+        hide(skeleton); show(list);
+      } catch (err) {
+        console.error("latest-fatawa fetch error:", err);
+        hide(skeleton);
+        emptyMsg.textContent = "کچھ مسئلہ ہوا۔ براہِ کرم بعد میں دوبارہ کوشش کریں۔";
+        show(emptyMsg);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadLatestFatwa);
+  })();

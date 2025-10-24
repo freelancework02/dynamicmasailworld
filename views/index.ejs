@@ -478,7 +478,7 @@
                         </div>
                     </div>
                 </section>
-                    
+
 
 
                 <!-- Latest Fatawa Section -->
@@ -490,7 +490,7 @@
                             <!-- Fatawa will be dynamically added here -->
                         </div>
                         <div class="text-center mt-16">
-                            <a href="/fatwa"
+                            <a href="https://masailworld.com/Pages/fatawa.html"
                                 class="nav-link bg-midnight_green text-white py-3 px-8 rounded-full hover:bg-midnight_green-400 transition text-lg sm:text-xl shadow-lg transform hover:scale-105">تمام
                                 فتاویٰ دیکھیں</a>
                         </div>
@@ -498,18 +498,85 @@
                 </section>
 
                 <!-- Recently Viewed Section -->
-                <section id="qs-recently-viewed" class="py-20 bg-white">
+                <section id="qs-latest-fatawa" class="py-20 bg-white">
                     <div class="container mx-auto px-6">
-                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">حال ہی میں
-                            دیکھے گئے فتاویٰ</h2>
-                        <div class="space-y-8 max-w-5xl mx-auto" id="recently-viewed-list">
-                            <p class="text-center text-air_force_blue">کوئی فتاویٰ دستیاب نہیں ہیں۔</p>
+                        <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">
+                          حال ہی میں دیکھے گئے فتاویٰ
+                        </h2>
+
+                        <!-- Loading skeletons -->
+                        <div id="latest-skeleton" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                            <div class="animate-pulse bg-white rounded-2xl border border-ash_gray/40 shadow-sm p-5">
+                                <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                                <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                                <div class="h-4 bg-gray-200 rounded w-5/6 mb-6"></div>
+                                <div class="flex items-center justify-between">
+                                    <div class="h-4 bg-gray-200 rounded w-20"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-24"></div>
+                                </div>
+                            </div>
+                            <div class="animate-pulse bg-white rounded-2xl border border-ash_gray/40 shadow-sm p-5">
+                                <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                                <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                                <div class="h-4 bg-gray-200 rounded w-5/6 mb-6"></div>
+                                <div class="flex items-center justify-between">
+                                    <div class="h-4 bg-gray-200 rounded w-20"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-24"></div>
+                                </div>
+                            </div>
+                            <div class="animate-pulse bg-white rounded-2xl border border-ash_gray/40 shadow-sm p-5">
+                                <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                                <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                                <div class="h-4 bg-gray-200 rounded w-5/6 mb-6"></div>
+                                <div class="flex items-center justify-between">
+                                    <div class="h-4 bg-gray-200 rounded w-20"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-24"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div id="latest-list" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto hidden">
+                        </div>
+
+                        <!-- Empty / error -->
+                        <p id="latest-empty" class="text-center text-air_force_blue mt-6 hidden">
+                            کوئی فتاویٰ دستیاب نہیں ہیں۔
+                        </p>
+                    </div>
+                </section>
+
+
+
+                <!-- ====== Kitabe Section ====== -->
+                <section id="kitabe" class="container mx-auto px-6 py-10 max-w-5xl" dir="rtl">
+                    <div class="bg-beige rounded-2xl shadow-lg border border-[rgba(0,0,0,.08)]">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between px-6 pt-6">
+                            <h2 class="text-3xl font-bold text-midnight_green">کتابیں</h2>
+                            <!-- small inline loader -->
+                            <span id="kitabe-loader" class="text-sm text-air_force_blue hidden">لوڈ ہو رہا ہے…</span>
+                        </div>
+
+                        <!-- Cards grid -->
+                        <!-- 2 cols on small/tablet, 4 on desktop -->
+                        <div id="kitabe-grid" class="grid gap-6 p-6 pt-4 grid-cols-2 lg:grid-cols-4">
+                            <!-- JS injects up to 4 cards here -->
+                        </div>
+
+                        <!-- Footer / CTA -->
+                        <div class="px-6 pb-6 pt-0">
+                            <a href="/book" class="inline-flex items-center justify-center w-full md:w-auto px-5 py-2.5 rounded-xl
+                bg-air_force_blue hover:bg-air_force_blue/80 text-white font-semibold shadow-md transition">
+                                کل کتابیں دیکھیں
+                                <i class="bi bi-arrow-left-short text-xl mr-1"></i>
+                            </a>
                         </div>
                     </div>
                 </section>
 
                 <!-- Muftis Section -->
-                <section id="qs-muftis" class="py-20 bg-beige-600">
+                <!-- <section id="qs-muftis" class="py-20 bg-beige-600">
                     <div class="container mx-auto px-6">
                         <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-12">ہمارے علمائے
                             اہلسنت</h2>
@@ -545,7 +612,7 @@
                             </div>
                         </div>
                     </div>
-                </section>
+                </section> -->
             </main>
         </div>
 
@@ -1232,15 +1299,14 @@
                 <div>
                     <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
                     <ul class="space-y-3 text-lg">
-                        <li><a href="/fatwa"
-                                class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
-                        <li><a href="/articles"
-                                class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+                        <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+                        <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a>
+                        </li>
                         <li><a href="/question"
                                 class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a>
                         </li>
-                        <li><a href="/about"
-                                class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a>
+                        <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے
+                                بارے میں</a>
                         </li>
                     </ul>
                 </div>

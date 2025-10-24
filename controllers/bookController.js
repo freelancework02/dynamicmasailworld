@@ -43,7 +43,7 @@ exports.getAllBooks = async (req, res) => {
     const offset = parseInt(req.query.offset) || 0;
 
     const sql = `
-      SELECT id, BookName, BookWriter, BookDescription, isActive
+      SELECT id, BookName, BookWriter, BookDescription, Tags, isActive
       FROM Books
       WHERE isActive = 1
       LIMIT ? OFFSET ?
@@ -63,7 +63,7 @@ exports.getBookById = async (req, res) => {
     const { id } = req.params;
 
     const sql = `
-      SELECT id, BookName, BookWriter, BookDescription, isActive
+      SELECT id, BookName, BookWriter, BookDescription, Tags, isActive
       FROM Books
       WHERE id = ? AND isActive = 1
     `;
@@ -162,28 +162,28 @@ exports.updateBook = async (req, res) => {
     if (coverBuffer && pdfBuffer) {
       sql = `
         UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookCoverImg = ?, BookCoverType = ?, BookPDF = ?
+        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookCoverImg = ?, BookCoverType = ?, BookPDF = ?, Tags = ?
         WHERE id = ? AND isActive = 1
       `;
-      params = [BookName, BookWriter, BookDescription, coverBuffer, coverType, pdfBuffer, id];
+      params = [BookName, BookWriter, BookDescription, coverBuffer, coverType, pdfBuffer, Tags, id];
     } else if (coverBuffer) {
       sql = `
         UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookCoverImg = ?, BookCoverType = ?
+        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookCoverImg = ?, BookCoverType = ?, Tags = ?
         WHERE id = ? AND isActive = 1
       `;
-      params = [BookName, BookWriter, BookDescription, coverBuffer, coverType, id];
+      params = [BookName, BookWriter, BookDescription, coverBuffer, coverType, Tags, id];
     } else if (pdfBuffer) {
       sql = `
         UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookPDF = ?
+        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookPDF = ?, Tags = ?
         WHERE id = ? AND isActive = 1
       `;
       params = [BookName, BookWriter, BookDescription, pdfBuffer, id];
     } else {
       sql = `
         UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?
+        SET BookName = ?, BookWriter = ?, BookDescription = ?, Tags = ?
         WHERE id = ? AND isActive = 1
       `;
       params = [BookName, BookWriter, BookDescription, id];
@@ -214,5 +214,44 @@ exports.deleteBook = async (req, res) => {
   } catch (error) {
     console.error("❌ Error deleting book:", error);
     res.status(500).json({ error: "Failed to delete book" });
+  }
+};
+
+
+
+
+
+
+exports.incrementBookView = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+
+    if (!bookId) {
+      return res.status(400).json({ message: 'Book ID is required' });
+    }
+
+    // Ensure a session object exists (requires express-session or similar middleware)
+    if (!req.session) {
+      return res.status(500).json({ message: 'Session not initialized' });
+    }
+
+    // Track views per session to avoid duplicate counts
+    if (!req.session.viewedBooks) req.session.viewedBooks = [];
+
+    if (req.session.viewedBooks.includes(bookId)) {
+      return res.status(200).json({ message: 'View already counted for this session' });
+    }
+
+    // Increment the view count in the database
+    await db.query('UPDATE Book SET views = views + 1 WHERE id = ?', [bookId]);
+
+    // Mark this book as viewed for this session
+    req.session.viewedBooks.push(bookId);
+
+    res.status(200).json({ message: 'View count incremented successfully' });
+
+  } catch (error) {
+    console.error('Error updating book view count:', error);
+    res.status(500).json({ message: 'Server error', error });
   }
 };
