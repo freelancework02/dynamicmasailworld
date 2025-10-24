@@ -44,7 +44,7 @@
 
 async function loadLatestFatawa() {
     try {
-        const response = await fetch("https://api.masailworld.com/api/fatwa/latest");
+        const response = await fetch("https://dynamicmasailworld.onrender.com/api/fatwa/latest");
         const fatawa = await response.json();
 
         // صرف 3 فتاویٰ لیں
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", loadLatestFatawa);
 
 async function loadFatawa() {
     try {
-        const response = await fetch("https://api.masailworld.com/api/fatwa/latest");
+        const response = await fetch("https://dynamicmasailworld.onrender.com/api/fatwa/latest");
         const fatawa = await response.json();
         console.log("the loadfatawa", fatawa);
 
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", loadFatawa);
 // Other Latest
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await fetch("https://masailworld.onrender.com/api/fatwa/latest");
+    const res = await fetch("https://dynamicmasailworld.onrender.com/api/fatwa/latest");
     const fatawa = await res.json();
     console.log("Latest fatawa response:", fatawa);
 
@@ -351,7 +351,7 @@ const debounce = (fn, ms=250) => {
  * Adjust endpoints/params if your backend differs.
  */
 async function searchFatawaServer(query, limit = 10) {
-  const base = 'https://api.masailworld.com/api/fatwa';
+  const base = 'https://dynamicmasailworld.onrender.com/api/fatwa';
   const urls = [
     `${base}?search=${encodeURIComponent(query)}&limit=${limit}&offset=0`,
     `${base}/search?query=${encodeURIComponent(query)}&limit=${limit}&offset=0`,
@@ -537,8 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'http://localhost:5000/api/book';
-  const BOOK_COVER_URL = (id) => `http://localhost:5000/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
+const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://dynamicmasailworld.onrender.com/api/book';
+  const BOOK_COVER_URL = (id) => `https://dynamicmasailworld.onrender.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
 
   // --- helpers ---
 
@@ -646,7 +646,7 @@ const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'http://localhos
   (function () {
     const FATAWA_API_BASE =
       (window.__MW__ && window.__MW__.FATAWA_API) ||
-      "https://masailworld.onrender.com/api/fatwa"; // dev fallback
+      "https://dynamicmasailworld.onrender.com/api/fatwa"; // dev fallback
 
     // Use your controller's latest endpoint
     const ENDPOINT = `${FATAWA_API_BASE}/latest`;
