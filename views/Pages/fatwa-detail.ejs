@@ -318,7 +318,7 @@
         if (counted) return;
         counted = true;
         try {
-          const res = await fetch(`https://masailworld.onrender.com/api/fatwa/${encodeURIComponent(fatwaId)}/view`, {
+          const res = await fetch(`https://dynamicmasailworld.onrender.com/api/fatwa/${encodeURIComponent(fatwaId)}/view`, {
             method: 'POST',
             credentials: 'include'
           });

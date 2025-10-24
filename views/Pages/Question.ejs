@@ -393,7 +393,7 @@
         // show loader while loading tags (optional)
         loader.style.display = "flex";
 
-        const tagRes = await fetch("https://api.masailworld.com/api/tags?limit=100");
+        const tagRes = await fetch("https://dynamicmasailworld.onrender.com/api/tags?limit=100");
         if (!tagRes.ok) throw new Error("Network response not ok: " + tagRes.status);
         const tagData = await tagRes.json();
 
@@ -459,7 +459,7 @@
         const data = { Title, slug, detailquestion, questionername, questionaremail };
 
         try {
-          const res = await fetch("https://api.masailworld.com/api/fatwa/website", {
+          const res = await fetch("https://dynamicmasailworld.onrender.com/api/fatwa/website", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),

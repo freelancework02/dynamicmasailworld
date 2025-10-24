@@ -119,8 +119,8 @@
   <!-- Server-provided knobs for client JS (doesn't affect UI) -->
   <script>
     window.__MW__ = {
-      FATWA_API_BASE: "<%= typeof FATWA_API_BASE !== 'undefined' ? FATWA_API_BASE : 'https://api.masailworld.com/api/fatwa' %>",
-      FATWA_TAGS_API: "<%= typeof TAGS_API_BASE !== 'undefined' ? TAGS_API_BASE : 'https://api.masailworld.com/api/tags' %>",
+      FATWA_API_BASE: "<%= typeof FATWA_API_BASE !== 'undefined' ? FATWA_API_BASE : 'https://dynamicmasailworld.onrender.com/api/fatwa' %>",
+      FATWA_TAGS_API: "<%= typeof TAGS_API_BASE !== 'undefined' ? TAGS_API_BASE : 'https://dynamicmasailworld.onrender.com/api/tags' %>",
       FATWA_DETAIL_BASE: "<%= typeof FATWA_DETAIL_BASE !== 'undefined' ? FATWA_DETAIL_BASE : '/fatwa' %>"
     };
   </script>
@@ -335,8 +335,8 @@ const tagSearchInput = document.getElementById('tagSearchInput');
 const tagOptionsRoot = document.getElementById('tagOptions');
 
 /* Server-configurable bases (do not affect UI) */
-const API_BASE = (window.__MW__ && window.__MW__.FATWA_API_BASE) || 'https://api.masailworld.com/api/fatwa';
-const TAGS_API = (window.__MW__ && window.__MW__.FATWA_TAGS_API) || 'https://api.masailworld.com/api/tags';
+const API_BASE = (window.__MW__ && window.__MW__.FATWA_API_BASE) || 'https://dynamicmasailworld.onrender.com/api/fatwa';
+const TAGS_API = (window.__MW__ && window.__MW__.FATWA_TAGS_API) || 'https://dynamicmasailworld.onrender.com/api/tags';
 const DETAIL_BASE = (window.__MW__ && window.__MW__.FATWA_DETAIL_BASE) || '/fatwa';
 
 /* ---------- Variables ---------- */

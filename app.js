@@ -126,7 +126,7 @@ app.get('/book', async (req, res) => {
 
 app.get('/article/:id/image', async (req, res) => {
   try {
-    const upstreamBase = process.env.API_BASE || 'https://masailworld.onrender.com/api/article';
+    const upstreamBase = process.env.API_BASE || 'https://dynamicmasailworld.onrender.com/api/article';
     const url = `${upstreamBase}/${encodeURIComponent(req.params.id)}/image`;
 
     const upstream = await axios.get(url, {
@@ -173,7 +173,7 @@ app.get('/article/:id', async (req, res) => {
       return res.status(400).render('Pages/404', { message: 'مضمون نہیں ملا (غلط شناخت).' });
     }
 
-    const API_BASE = process.env.API_BASE || 'https://masailworld.onrender.com/api/article';
+    const API_BASE = process.env.API_BASE || 'https://dynamicmasailworld.onrender.com/api/article';
     const requestUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
     const { data } = await axios.get(`${API_BASE}/${encodeURIComponent(id)}`, { withCredentials: true });
@@ -228,7 +228,7 @@ app.get('/fatwa/:id', (req, res) => {
   const API_BASE =
     process.env.FATWA_API_BASE ||
     (process.env.API_BASE /* your original */) ||
-    'https://masailworld.onrender.com/api/fatwa';
+    'https://dynamicmasailworld.onrender.com/api/fatwa';
 
   res.render('Pages/fatwa-detail', {
     pageTitle: 'مسائل ورلڈ - دار الافتاء اہل سنت',
@@ -252,7 +252,7 @@ app.get(['/Pages/fatwa-detail.html', '/fatwa-detail.html'], (req, res) => {
 
 app.get('/book/:id/cover', async (req, res) => {
   try {
-    const BOOK_API_BASE = process.env.BOOK_API_BASE || 'https://api.masailworld.com/api/book';
+    const BOOK_API_BASE = process.env.BOOK_API_BASE || 'https://dynamicmasailworld.onrender.com/api/book';
     // Expected upstream pattern: /api/book/:id/cover
     const url = `${BOOK_API_BASE}/${encodeURIComponent(req.params.id)}/cover`;
 
@@ -291,7 +291,7 @@ app.get('/book/:id', async (req, res) => {
       return res.status(400).render('Pages/404', { message: 'کتاب نہیں ملی (غلط شناخت).' });
     }
 
-    const BOOK_API_BASE = process.env.BOOK_API_BASE || 'https://api.masailworld.com/api/book';
+    const BOOK_API_BASE = process.env.BOOK_API_BASE || 'https://dynamicmasailworld.onrender.com/api/book';
     const requestUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
     // Fetch the book
