@@ -233,7 +233,7 @@
 
   <script>
     (function() {
-      const API_URL = 'https://api.masailworld.com/api/tags?limit=148';
+      const API_URL = 'https://dynamicmasailworld.onrender.com/api/tags?limit=200';
 
       const grid = document.getElementById('tagsGrid');
       const errorBox = document.getElementById('errorBox');
@@ -248,7 +248,7 @@
 
       function tagLink(slug) {
         // Adjust this target if needed
-        return `/Categoryfatawatag=${encodeURIComponent(slug || '')}`;
+        return `/Categoryfatawa?tag=${encodeURIComponent(slug || '')}`;
       }
 
       function createTagCard(tag) {

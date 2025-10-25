@@ -110,6 +110,11 @@ app.get('/Categoryfatawa', async (req, res) => {
 });
 
 
+app.get('/categories', async (req, res) => {
+  res.render('Pages/categories');
+});
+
+
 
 
 app.get('/articles', async (req, res) => {
