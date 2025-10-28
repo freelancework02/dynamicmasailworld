@@ -7,7 +7,7 @@
 // Other Latest
 document.addEventListener("DOMContentLoaded", async () => {
   const LIST_ID = "latest-fatawa-list";
-  const API = "https://dynamicmasailworld.onrender.com/api/fatwa/latest";
+  const API = "https://masailworld.com/api/fatwa/latest";
 
   // ---- helpers ----
   const byId = (id) => document.getElementById(id);
@@ -149,7 +149,7 @@ const debounce = (fn, ms=250) => {
  * Adjust endpoints/params if your backend differs.
  */
 async function searchFatawaServer(query, limit = 10) {
-  const base = 'https://dynamicmasailworld.onrender.com/api/fatwa';
+  const base = 'https://masailworld.com/api/fatwa';
   const urls = [
     `${base}?search=${encodeURIComponent(query)}&limit=${limit}&offset=0`,
     `${base}/search?query=${encodeURIComponent(query)}&limit=${limit}&offset=0`,
@@ -338,11 +338,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Homepage book section
 
-const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://dynamicmasailworld.onrender.com/api/book';
-const BOOK_COVER_URL = (id) => `https://dynamicmasailworld.onrender.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
+const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://masailworld.com/api/book';
+const BOOK_COVER_URL = (id) => `https://masailworld.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
 
 /* --- NEW: views endpoint base --- */
-const VIEW_API = (window.__MW__ && window.__MW__.VIEW_API) || 'http://localhost:5000/api/book';
+const VIEW_API = (window.__MW__ && window.__MW__.VIEW_API) || 'https://masailworld.com/api/book';
 
 /* --- helpers --- */
 
@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
   (function () {
     const FATAWA_API_BASE =
       (window.__MW__ && window.__MW__.FATAWA_API) ||
-      "https://dynamicmasailworld.onrender.com/api/fatwa"; // dev fallback
+      "https://masailworld.com/api/fatwa"; // dev fallback
 
     // Use your controller's latest endpoint
     const ENDPOINT = `${FATAWA_API_BASE}/latest`;
