@@ -145,7 +145,7 @@ app.get('/search', async (req, res) => {
 
 app.get('/article/:id/image', async (req, res) => {
   try {
-    const upstreamBase = process.env.API_BASE || 'https://dynamicmasailworld.onrender.com/api/article';
+    const upstreamBase = process.env.API_BASE || 'https://masailworld.com/api/article';
     const url = `${upstreamBase}/${encodeURIComponent(req.params.id)}/image`;
 
     const upstream = await axios.get(url, {
@@ -187,7 +187,7 @@ app.get('/article/:id', async (req, res) => {
       return res.status(400).render('Pages/404', { message: 'مضمون نہیں ملا (غلط شناخت).' });
     }
 
-    const API_BASE = process.env.API_BASE || 'https://dynamicmasailworld.onrender.com/api/article';
+    const API_BASE = process.env.API_BASE || 'https://masailworld.com/api/article';
 
     // Use SITE_ORIGIN on prod to avoid localhost canonicals in previews
     const siteOrigin = process.env.SITE_ORIGIN || `${req.protocol}://${req.get('host')}`;
@@ -255,7 +255,7 @@ app.get("/fatwa/:id", async (req, res) => {
   const API_BASE =
     process.env.FATWA_API_BASE ||
     process.env.API_BASE ||
-    "https://dynamicmasailworld.onrender.com/api/fatwa";
+    "https://masailworld.com/api/fatwa";
 
   // Figure out absolute URLs for canonical/OG
   // In production set SITE_ORIGIN=https://masailworld.com to avoid localhost canonicals
@@ -307,7 +307,7 @@ app.get('/book/:id/cover', async (req, res) => {
     const upstreamBase =
       process.env.BOOK_API_BASE ||
       process.env.API_BASE ||
-      'https://dynamicmasailworld.onrender.com/api/book';
+      'https://masailworld.com/api/book';
     const url = `${upstreamBase}/${encodeURIComponent(req.params.id)}/cover`;
 
     const upstream = await axios.get(url, {
@@ -352,7 +352,7 @@ app.get('/book/:id', async (req, res) => {
     const BOOK_API_BASE =
       process.env.BOOK_API_BASE ||
       process.env.API_BASE ||
-      'https://dynamicmasailworld.onrender.com/api/book';
+      'https://masailworld.com/api/book';
 
     const siteOrigin = process.env.SITE_ORIGIN || `${req.protocol}://${req.get('host')}`;
     const requestUrl = `${siteOrigin}${req.originalUrl}`;
