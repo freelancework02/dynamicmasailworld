@@ -28,7 +28,9 @@ app.use(cors({
     'http://localhost:5000',
     'http://127.0.0.1:5500'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
 })); 
 
 // ------------------- EJS Setup -------------------
@@ -133,6 +135,10 @@ app.get('/question', async (req, res) => {
 
 app.get('/book', async (req, res) => {
   res.render('Pages/book');
+});
+
+app.get('/search', async (req, res) => {
+  res.render('Pages/Search');
 });
 
 

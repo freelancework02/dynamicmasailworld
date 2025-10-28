@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no"/>
+
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'تلاش — مسائل ورلڈ' %></title>
+
+  <!-- Basic SEO -->
+  <meta name="description" content="مسائل ورلڈ میں کتب، فتاویٰ اور مضامین تلاش کریں۔" />
+  <meta name="robots" content="index,follow" />
+
+  <!-- Tailwind CSS + Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    @font-face {
+      font-family: 'NaatFont';
+      src: url('https://res.cloudinary.com/awescreative/raw/upload/v1749150996/Awes/naatfont.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body {
+      font-family: 'NaatFont', serif;
+      font-size: 80%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: 70px; /* mobile bottom nav space */
+      padding-top: 56px;    /* mobile header space */
+      background: #f5f8ee;  /* light beige tint */
+    }
+    @media (min-width: 768px) { body { padding-top: 0; } }
+
+    /* Hero backdrop */
+    .hero-section {
+      background-image: linear-gradient(rgba(1,22,30,.75), rgba(1,22,30,.75)), url('https://img.freepik.com/free-photo/close-up-islamic-new-year-concept-with-misbaha_23-2148611691.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .circular-logo { border-radius: 50%; }
+
+    /* Google results tidy + RTL */
+    .gsc-control-wrapper-cse { direction: rtl; }
+    .gsc-result .gs-title, .gsc-result .gs-snippet { text-align: right; }
+    .gsc-webResult.gsc-result, .gsc-imageResult { border-radius: 14px; padding: 12px 14px; }
+    .gsc-above-wrapper-area, .gsc-orderby-container { text-align: right; }
+    .gsc-table-result, .gsc-thumbnail-inside, .gsc-url-top { direction: rtl; }
+    .gs-webResult div.gs-visibleUrl-short { direction: ltr; text-align: left; } /* keep URLs readable */
+
+    /* Card shell for results */
+    .mw-results-card {
+      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(174,195,176,.55);
+      border-radius: 20px;
+      box-shadow:
+        0 8px 24px rgba(1,22,30,.08),
+        0 2px 6px rgba(0,0,0,.05);
+    }
+
+    /* "Google-like" single search bar */
+    .mw-search-wrap {
+      border-radius: 9999px;
+      background: #fff;
+      border: 2px solid rgba(174,195,176,.55);
+      box-shadow:
+        0 1px 2px rgba(0,0,0,.04),
+        0 8px 24px rgba(1,22,30,.08);
+      transition: box-shadow .2s ease, border-color .2s ease, transform .08s ease;
+    }
+    .mw-search-wrap:focus-within {
+      border-color: #124559; /* midnight_green */
+      box-shadow:
+        0 2px 8px rgba(0,0,0,.06),
+        0 16px 36px rgba(18,69,89,.15),
+        0 0 0 4px rgba(18,69,89,.10);
+      transform: translateY(-1px);
+    }
+    .mw-input {
+      font-size: 1.15rem;
+      line-height: 1.4;
+    }
+    .mw-search-btn {
+      border-radius: 9999px;
+      background: #124559;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .9rem 1.25rem;
+      transition: transform .08s ease, background .2s ease, box-shadow .2s ease;
+      box-shadow: 0 6px 18px rgba(18,69,89,.25);
+    }
+    .mw-search-btn:hover { background: #0f3747; }
+    .mw-search-btn:active { transform: translateY(1px) scale(.98); }
+    .mw-icon-right {
+      position: absolute; inset-inline-end: .9rem; top: 50%; transform: translateY(-50%);
+      color: #598392; /* air_force_blue */
+      pointer-events: none;
+      font-size: 1.1rem;
+    }
+
+    /* Back to top FAB */
+    .mw-top-btn {
+      position: fixed; inset-inline-end: 1rem; bottom: 5.5rem; /* above mobile nav */
+      z-index: 60;
+      opacity: 0; visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity .2s ease, transform .2s ease, visibility .2s;
+    }
+    .mw-top-btn.show {
+      opacity: 1; visibility: visible; transform: translateY(0);
+    }
+    @media (min-width:768px){
+      .mw-top-btn { bottom: 1.25rem; } /* desktop lower */
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'rich_black': { DEFAULT: '#01161e', 100: '#000406', 200: '#00090c', 300: '#010d12', 400: '#011118', 500: '#01161e', 600: '#04597b', 700: '#079cd8', 800: '#45c6f9', 900: '#a2e3fc' },
+            'midnight_green': { DEFAULT: '#124559', 100: '#040e12', 200: '#071c24', 300: '#0b2935', 400: '#0f3747', 500: '#124559', 600: '#20799c', 700: '#36a9d6', 800: '#79c5e4', 900: '#bce2f1' },
+            'air_force_blue': { DEFAULT: '#598392', 100: '#121a1d', 200: '#24343a', 300: '#354e57', 400: '#476874', 500: '#598392', 600: '#769dab', 700: '#99b6c0', 800: '#bbced5', 900: '#dde7ea' },
+            'ash_gray': { DEFAULT: '#aec3b0', 100: '#1f2a20', 200: '#3e5441', 300: '#5e7f61', 400: '#83a386', 500: '#aec3b0', 600: '#bdcebf', 700: '#cedbcf', 800: '#dee7df', 900: '#eff3ef' },
+            'beige': { DEFAULT: '#eff6e0', 100: '#384915', 2  00: '#71912a', 300: '#a4cc4e', 400: '#c9e197', 500: '#eff6e0', 600: '#f2f8e6', 700: '#f5f9ec', 800: '#f8fbf2', 900: '#fcfdf9' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="text-rich_black">
+
+  <!-- Mobile-only Social strip -->
+  <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
+    <a href="/question" class="text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+    <div class="flex items-center space-x-4 space-x-reverse">
+      <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-facebook"></i></a>
+      <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition text-base"><i class="bi bi-twitter-x"></i></a>
+      <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition text-base"><i class="bi bi-youtube"></i></a>
+    </div>
+  </div>
+
+  <!-- Header (desktop) -->
+  <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-40 rounded-b-xl hidden md:block">
+    <div class="bg-rich_black text-air_force_blue-700 py-2">
+      <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
+        <a href="/question" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+        <div class="flex items-center space-x-4 space-x-reverse">
+          <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-facebook"></i></a>
+          <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+          <a href="http://youtube.com/c/AzharAlimi" class="hover:text-beige transition"><i class="bi bi-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <nav class="container mx-auto px-4 sm:px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="text-3xl font-bold text-midnight_green">
+          <a href="https://masailworld.com/" class="flex items-center space-x-reverse space-x-2">
+            <img src="https://alqalamarts.com/mw/masailworld.png" alt="Masail World Logo" class="h-10 w-10 circular-logo">
+            <span class="text-3xl font-bold text-midnight_green">مسائل ورلڈ</span>
+            <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
+          </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-reverse space-x-8">
+          <a href="/" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
+          <a href="/fatwa" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+          <a href="/about" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+          <a href="/articles" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+          <a href="/Categoryfatawa" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+          <a href="/book" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
+          <a href="/question" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Search hero -->
+  <section class="hero-section text-white">
+    <div class="container mx-auto px-6 py-16 md:py-24">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">تلاش کریں</h1>
+        <p class="text-air_force_blue-900 md:text-lg mb-8">
+          کتب، فتاویٰ اور مضامین میں اپنی مطلوبہ چیز ڈھونڈیں۔
+        </p>
+
+        <!-- SINGLE search form (drives Google Custom Search) -->
+        <form id="global-search-form" class="max-w-3xl mx-auto mb-8" onsubmit="return false;">
+          <div class="mw-search-wrap relative flex items-center overflow-hidden px-2">
+            <!-- right icon (RTL) -->
+            <span class="mw-icon-right"><i class="bi bi-search"></i></span>
+
+            <!-- INPUT ONLY -->
+            <input
+              id="q"
+              type="text"
+              class="mw-input w-full py-4 pr-12 pl-4 text-right text-gray-700 focus:outline-none"
+              placeholder="مثلاً: نکاح کے مسائل، زکوٰۃ، یا کسی کتاب کا نام…"
+              autocomplete="off"
+              value="<%= typeof initialQuery !== 'undefined' ? initialQuery : '' %>"
+              aria-label="تلاش کریں"
+            />
+
+            <!-- action button -->
+            <button
+              id="btn-search"
+              type="button"
+              class="mw-search-btn ms-2"
+              aria-label="تلاش"
+              title="تلاش"
+            >
+              <i class="bi bi-search text-lg"></i>
+              <span class="hidden sm:inline font-bold">تلاش</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Results container -->
+        <section id="results-section" class="mw-results-card p-3 md:p-6">
+          <header class="flex items-center justify-between gap-3 mb-3 md:mb-4">
+            <div class="flex items-center gap-2 text-midnight_green">
+              <i class="bi bi-list-check text-xl md:text-2xl"></i>
+              <h2 class="text-xl md:text-2xl font-bold">نتائج</h2>
+            </div>
+            <button id="btn-top-mini" class="hidden md:inline-flex items-center gap-2 text-sm px-3 py-2 rounded-full border border-ash_gray hover:bg-beige/60 transition" title="اوپر جائیں">
+              <i class="bi bi-arrow-up"></i><span>اوپر</span>
+            </button>
+          </header>
+
+          <div id="gcse-results" class="gcse-searchresults-only"></div>
+        </section>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Floating Back-to-Top (mobile+desktop) -->
+  <button id="fab-top" class="mw-top-btn bg-midnight_green text-white rounded-full shadow-xl px-4 py-3 flex items-center gap-2">
+    <i class="bi bi-arrow-up"></i><span class="hidden sm:inline">اوپر</span>
+  </button>
+
+  <!-- Footer (Desktop) -->
+  <footer id="qs-footer" class="bg-rich_black text-beige pt-16 rounded-t-2xl">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="col-span-1 md:col-span-2">
+          <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">
+            ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔
+          </p>
+          <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+            <a href="http://youtube.com/c/AzharAlimi" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
+          <ul class="space-y-3 text-lg">
+            <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+            <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+            <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+            <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
+          <ul class="space-y-3 text-lg text-air_force_blue-700">
+            <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
+            <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-2xl font-semibold mb-4">ہمارے بارے میں</h3>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">مسائل ورلڈ ایک آن لائن پلیٹ فارم ہے جو اہل سنت والجماعت کے مطابق شرعی رہنمائی فراہم کرتا ہے۔</p>
+          <a href="https://alqalamarts.com/" target="_blank" class="text-air_force_blue-700 hover:text-beige transition block mt-2 text-sm font-sans">
+            <button id="install-app-button" class="bg-air_force_blue-600 text-white font-bold py-2 px-6 rounded-full hover:bg-air_force_blue-400 transition text-sm sm:text-md shadow-md mt-4">
+              <i class="bi bi-plus-circle ml-2"></i> ایپ انسٹال کریں
+            </button>
+          </a>
+        </div>
+      </div>
+      <div class="mt-12 border-t border-midnight_green-400 pt-8 pb-8 text-center text-air_force_blue">
+        <p class="text-lg">© <%= new Date().getFullYear() %> AlQalamArts.com. All rights reserved. | © <%= new Date().getFullYear() %> مسائل ورلڈ۔ تمام حقوق محفوظ ہیں۔</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
+    <ul class="flex justify-around items-center h-16">
+      <li>
+        <a href="/" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-house-door-fill text-xl"></i>
+          <span class="text-sm">صفحہ اول</span>
+        </a>
+      </li>
+      <li>
+        <a href="/fatwa" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-file-text-fill text-xl"></i>
+          <span class="text-sm">فتاویٰ</span>
+        </a>
+      </li>
+      <li>
+        <a href="/book" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-book-fill text-xl"></i>
+          <span class="text-sm">اسلامی کتب</span>
+        </a>
+      </li>
+      <li>
+        <a href="/question" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100">
+          <i class="bi bi-chat-dots-fill text-xl"></i>
+          <span class="text-sm">سوال پوچھیں</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Google CSE script -->
+  <script async src="https://cse.google.com/cse.js?cx=a5ffd6671feaa4bb7"></script>
+
+  <!-- Behavior -->
+  <script>
+    (function () {
+      let cseReady = false;
+      let pendingQuery = null;
+
+      // Google CSE ready callback
+      window.__gcse = {
+        callback: function() {
+          cseReady = true;
+          if (pendingQuery) {
+            try {
+              const resultsEl = google.search.cse.element.getElement('searchresults-only0');
+              resultsEl && resultsEl.execute(pendingQuery);
+            } catch (e) {}
+            pendingQuery = null;
+          }
+        }
+      };
+
+      function executeSearch(q) {
+        if (!q) return;
+        try {
+          if (window.google && google.search && google.search.cse && cseReady) {
+            const res = google.search.cse.element.getElement('searchresults-only0');
+            if (res) {
+              res.execute(q);
+              return;
+            }
+          }
+          pendingQuery = q;
+        } catch (_) {
+          pendingQuery = q;
+        }
+      }
+
+      function scrollToResultsIfMobile() {
+        if (window.innerWidth < 768) { // only mobile/tablet
+          const box = document.getElementById('results-section');
+          box && box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // focus the input for quick new search
+        const input = document.getElementById('q');
+        setTimeout(() => input && input.focus(), 350);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('q');
+        const btn   = document.getElementById('btn-search');
+        const fab   = document.getElementById('fab-top');
+        const topMini = document.getElementById('btn-top-mini');
+
+        function handleSearch() {
+          const q = (input?.value || '').trim();
+          if (!q) { input?.focus(); return; }
+          executeSearch(q);
+          scrollToResultsIfMobile();
+        }
+
+        btn?.addEventListener('click', handleSearch);
+        input?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); handleSearch(); }
+        });
+
+        // Back to top
+        fab?.addEventListener('click', scrollToTop);
+        topMini?.addEventListener('click', scrollToTop);
+
+        // Show FAB after you scroll a bit
+        function onScroll() {
+          const y = window.scrollY || document.documentElement.scrollTop;
+          if (y > 300) fab?.classList.add('show'); else fab?.classList.remove('show');
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll(); // initialize
+
+        // Auto-execute if initialQuery provided
+        const initial = <%- JSON.stringify(typeof initialQuery !== 'undefined' ? initialQuery : '') %>;
+        if (initial) { input.value = initial; executeSearch(initial); }
+      });
+    })();
+  </script>
+</body>
+</html>

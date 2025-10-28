@@ -106,7 +106,7 @@
         #ticker-content span { display: block; opacity: 0; transition: opacity 0.5s ease-in-out; }
         #ticker-content span.active { opacity: 1; }
 
-        .horizontal-ticker { display: flex; align-items: center; height: 40px; overflow: hidden; position: relative; white-space: nowrap; }
+        .horizontal-ticker { display: flex; align-items: center; height: 40px; overflow: hidden; position: relative; white-space:nowrap; }
         .horizontal-ticker-item { animation: move-left 30s linear infinite; font-size: 1.1rem; padding-left: 20px; }
         @keyframes move-left { 0% { transform: translateX(100%);} 100% { transform: translateX(-100%);} }
 
@@ -204,17 +204,6 @@
           </div>
 
           <div class="flex flex-wrap justify-center gap-3">
-            <!-- Category dropdown (still available; independent of tags) -->
-            <!-- <select id="filterCategory" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green" aria-label="کیٹیگری منتخب کریں">
-              <option value="">تمام کیٹیگریز</option>
-              <option value="فقہ">فقہ</option>
-              <option value="حدیث">حدیث</option>
-              <option value="عقائد">عقائد</option>
-              <option value="سیرت">سیرت</option>
-              <option value="تصوف">تصوف</option>
-              <option value="متفرقات">متفرقات</option>
-            </select> -->
-
             <!-- Sort -->
             <select id="sortBooks" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green" aria-label="سورٹ کریں">
               <option value="new">تازہ ترین</option>
@@ -222,7 +211,7 @@
               <option value="most_downloaded">سب سے زیادہ ڈاؤن لوڈ شدہ</option>
             </select>
 
-            <!-- Tags dropdown (main tag filter) -->
+            <!-- Tags dropdown -->
             <select id="tagsSelect" class="bg-white text-rich_black border-2 border-ash_gray rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-midnight_green" aria-label="ٹیگ منتخب کریں">
               <option value="">تمام ٹیگز</option>
             </select>
@@ -235,7 +224,7 @@
         <p id="books-loading" class="col-span-full text-center text-air_force_blue">کتابیں لوڈ ہو رہی ہیں...</p>
       </div>
 
-      <!-- Book Categories (now also filter by TAG on click) -->
+      <!-- Book Categories -->
       <h2 class="text-3xl md:text-4xl font-bold text-center text-midnight_green mb-8">کتاب کیٹیگری</h2>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 text-center mb-12">
@@ -255,7 +244,7 @@
           <i class="bi bi-person-lines-fill text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">سیرت</h3>
         </button>
-        <button type="button" data-category-btn data-category="تصوف" class="block w-full bg-white p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <button type="button" data-category-btn data-category="تصوف" class="block w-full bg-white پ-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
           <i class="bi bi-moon-stars-fill text-4xl text-midnight_green mb-4 inline-block"></i>
           <h3 class="font-bold text-lg text-rich_black">تصوف</h3>
         </button>
@@ -356,12 +345,13 @@ function hideLoader() {
 }
 
 /* ---------- Config ---------- */
-const API_BASE = "https://dynamicmasailworld.onrender.com/api";
+const API_BASE = "https://masailworld.com/api";
+/* View counter endpoint base (as you asked): */
+const VIEW_API_BASE = "https://masailworld.com/api";
 
 /* ---------- DOM refs ---------- */
 const booksGrid = document.getElementById('booksGrid');
 const searchInput = document.getElementById('searchBooks');
-const filterCategory = document.getElementById('filterCategory');
 const sortBooks = document.getElementById('sortBooks');
 const tagsSelect = document.getElementById('tagsSelect');
 
@@ -371,50 +361,105 @@ let activeTag = ""; // selected tag from dropdown OR category tile
 
 /* ---------- Helpers ---------- */
 function abbreviateNumber(num) {
-  if (num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
-  if (num >= 1_000) return (num/1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
   return num.toString();
 }
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-    .replace(/'/g,'&#039;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 function normalizeTags(raw) {
   if (!raw) return [];
   if (Array.isArray(raw)) return raw.map(t => String(t).trim()).filter(Boolean);
-  // split on English comma, Urdu comma (،), pipe, or |
   return String(raw).split(/[,\|،]+/g).map(t => t.trim()).filter(Boolean);
+}
+
+/* ---------- View increment (fires on book click) ---------- */
+function incrementBookView(bookId, optimisticallyBumpEl) {
+  if (!bookId) return;
+
+  // Optimistic bump in UI (if a counter element was passed)
+  if (optimisticallyBumpEl) {
+    const current = Number(optimisticallyBumpEl.textContent.replace(/[^0-9]/g, '')) || 0;
+    // Only bump the raw number, not the abbreviated string
+    optimisticallyBumpEl.dataset._rawViews = String((Number(optimisticallyBumpEl.dataset._rawViews) || current) + 1);
+    const n = Number(optimisticallyBumpEl.dataset._rawViews);
+    optimisticallyBumpEl.textContent = abbreviateNumber(n);
+  }
+
+  const url = `${VIEW_API_BASE.replace(/\/$/, '')}/book/${encodeURIComponent(bookId)}/view`;
+
+  // Try GET with keepalive (works with GET route). If you only have POST, fallback to sendBeacon.
+  try {
+    fetch(url, { method: 'post', credentials: 'include', keepalive: true, mode: 'no-cors' })
+      .catch(() => {
+        // Fallback to POST via sendBeacon (server should accept POST)
+        if (navigator.sendBeacon) {
+          const blob = new Blob([], { type: 'text/plain' });
+          navigator.sendBeacon(url, blob);
+        }
+      });
+  } catch (_) {
+    if (navigator.sendBeacon) {
+      const blob = new Blob([], { type: 'text/plain' });
+      navigator.sendBeacon(url, blob);
+    }
+  }
 }
 
 /* ---------- Rendering ---------- */
 function createBookCard(book) {
-  const coverUrl = book.coverUrl || `${API_BASE}/book/${book.id}/cover` || 'https://placehold.co/150x200/598392/ffffff?text=No+Cover';
+  const coverUrl = book.coverUrl || `${API_BASE}/book/${book.id}/cover`;
   const title = escapeHtml(book.BookName || "نامعلوم کتاب");
   const writer = escapeHtml(book.BookWriter || "نامعلوم مصنف");
   const views = Number(book.Views || 0);
-  const downloads = Number(book.Downloads || 0);
-  const Redirecturl = `/book/${book.id}`;
+  const pdfUrl = `${API_BASE}/book/${book.id}/pdf`;
+  const redirectUrl = `/book/${book.id}`;
 
   const a = document.createElement('a');
-  a.href = Redirecturl;
+  a.href = redirectUrl;
   a.target = "_blank";
+  a.rel = "noopener";
   a.className = "block bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-ash_gray/50 hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300";
+  a.setAttribute('data-book-id', String(book.id));
 
   a.innerHTML = `
     <img src="${coverUrl}" alt="${title}" class="w-full h-48 object-cover rounded-md mb-2 shadow-md" />
     <h3 class="text-lg font-bold text-rich_black mb-1">${title}</h3>
     <p class="text-sm text-air_force_blue mb-2">${writer}</p>
     <div class="flex justify-center items-center gap-3 text-sm text-air_force_blue">
-      <div class="ltr-counter"><i class="bi bi-eye-fill"></i><span>${abbreviateNumber(views)}</span></div>
-      <div class="ltr-counter"><i class="bi bi-download"></i><span>${abbreviateNumber(downloads)}</span></div>
+      <div class="ltr-counter flex items-center gap-1">
+        <i class="bi bi-eye-fill"></i>
+        <span class="js-view-count" data-_raw-views="${views}">${abbreviateNumber(views)}</span>
+      </div>
+      <a href="${pdfUrl}" target="_blank" rel="noopener" class="js-download-link ltr-counter flex items-center gap-1 hover:text-midnight_green transition-colors" title="Download PDF">
+        <i class="bi bi-download"></i>
+        <span>Download</span>
+      </a>
     </div>
   `;
 
+  // Click handler to increment views BEFORE navigation
+  a.addEventListener('click', (ev) => {
+    // If the click came from the inner download link, ignore
+    const isDownload = ev.target.closest && ev.target.closest('.js-download-link');
+    if (isDownload) return; // don't count as a view
+
+    const counterEl = a.querySelector('.js-view-count');
+    incrementBookView(book.id, counterEl);
+    // let the navigation proceed naturally (new tab)
+  });
+
+  // Prevent the inner Download link from bubbling to the card
+  a.querySelector('.js-download-link')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
   a.dataset.title = (book.BookName || "").toString().toLowerCase();
-  a.dataset.category = (book.Category || "").toString();
   a.dataset.tags = JSON.stringify(book.Tags || []);
   return a;
 }
@@ -443,7 +488,6 @@ function populateTagsDropdown(uniqueTags) {
     opt.textContent = tag;
     tagsSelect.appendChild(opt);
   });
-  // keep previous selection if still present
   if (current && uniqueTags.includes(current)) {
     tagsSelect.value = current;
   } else if (activeTag) {
@@ -456,15 +500,9 @@ function populateTagsDropdown(uniqueTags) {
 /* ---------- Filtering & Sorting ---------- */
 function applyFiltersAndSort() {
   const q = (searchInput?.value || '').trim().toLowerCase();
-  const category = (filterCategory?.value || '').trim();
   const sortBy = sortBooks?.value || 'new';
 
   let filtered = allBooks.slice();
-
-  // Category dropdown filter (optional, independent of tags)
-  if (category) {
-    filtered = filtered.filter(b => (b.Category || '').toString() === category);
-  }
 
   // Search by title or writer
   if (q) {
@@ -475,22 +513,21 @@ function applyFiltersAndSort() {
     });
   }
 
-  // Tag filter (via dropdown or category tiles)
+  // Tag filter
   if (activeTag) {
     filtered = filtered.filter(b => (b.Tags || []).some(t => String(t) === activeTag));
   }
 
   // Sort
   if (sortBy === 'most_viewed') {
-    filtered.sort((a,b) => (Number(b.Views||0) - Number(a.Views||0)));
+    filtered.sort((a, b) => (Number(b.Views || 0) - Number(a.Views || 0)));
   } else if (sortBy === 'most_downloaded') {
-    filtered.sort((a,b) => (Number(b.Downloads||0) - Number(a.Downloads||0)));
+    filtered.sort((a, b) => (Number(b.Downloads || 0) - Number(a.Downloads || 0)));
   } else {
-    // "new" (prefer createdAt; fallback to id)
     if (filtered.some(x => x.createdAt)) {
-      filtered.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     } else {
-      filtered.sort((a,b) => (Number(b.id || 0) - Number(a.id || 0)));
+      filtered.sort((a, b) => (Number(b.id || 0) - Number(a.id || 0)));
     }
   }
 
@@ -520,7 +557,6 @@ async function loadBooksFromApi(limit = 100, offset = 0) {
         BookDescription: item.BookDescription ?? item.description ?? item.Description,
         Views: Number(item.Views ?? item.views ?? item.viewCount ?? 0),
         Downloads: Number(item.Downloads ?? item.downloads ?? item.downloadCount ?? 0),
-        Category: item.Category ?? item.category ?? item.categoryName ?? '',
         coverUrl: item.coverUrl ?? item.cover ?? item.image ?? null,
         pdfUrl: item.pdfUrl ?? item.pdf ?? item.file ?? null,
         createdAt: item.createdAt ?? item.created_at ?? item.CreatedAt ?? null,
@@ -547,31 +583,25 @@ document.addEventListener('DOMContentLoaded', () => {
   loadBooksFromApi(100, 0);
 
   searchInput && searchInput.addEventListener('input', applyFiltersAndSort);
-  filterCategory && filterCategory.addEventListener('change', applyFiltersAndSort);
   sortBooks && sortBooks.addEventListener('change', applyFiltersAndSort);
 
-  // Tags dropdown -> set activeTag + sort/filter
   tagsSelect && tagsSelect.addEventListener('change', (e) => {
     activeTag = e.target.value || "";
     applyFiltersAndSort();
     booksGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  // Category tiles -> act as TAG filters too (plus keep category dropdown optional)
   document.querySelectorAll('[data-category-btn]').forEach(btn => {
     btn.addEventListener('click', () => {
       const tag = btn.getAttribute('data-category') || '';
-      // Set the activeTag from tile label
       activeTag = tag;
-      // Reflect in tags dropdown UI
       if (tagsSelect) tagsSelect.value = tag;
-      // You can also optionally sync category dropdown to same value:
-      // filterCategory.value = tag; // uncomment if you want category=tag too
       applyFiltersAndSort();
       booksGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 });
-  </script>
+</script>
+
 </body>
 </html>

@@ -328,3 +328,214 @@ exports.getRecentlyViewedFatwa = async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to load recently viewed fatwa' });
   }
 };
+
+
+
+
+// 
+// Normalize Urdu/Arabic punctuation & whitespace for reliable matching
+function normalizeUrdu(input = '') {
+  let s = String(input);
+  try { s = s.normalize('NFC'); } catch (_) {}
+  // remove zero-width & bidi controls + tatweel
+  s = s.replace(/[\u200C\u200D\u200E\u200F\u202A-\u202E\u061C\u0640]/g, '');
+  // convert Arabic comma to ASCII comma and collapse spaces
+  s = s.replace(/،/g, ',').replace(/\s*,\s*/g, ',').trim();
+  return s;
+}
+
+// Inline SQL expression to normalize the tags field for token matching
+const SQL_TAG_FIELD = "CONCAT(',', REPLACE(REPLACE(IFNULL(tags,''),'،',','), ' ', ''), ',')";
+
+exports.getByTag = async (req, res) => {
+  try {
+    const rawTag   = req.query.tag || '';
+    const limit    = Math.max(1, Math.min(parseInt(req.query.limit || '50', 10), 800));
+    const offset   = Math.max(0, parseInt(req.query.offset || '0', 10));
+    const orderBy  = (req.query.orderBy || 'views').toLowerCase(); // 'views' | 'recent'
+    const statusQ  = (req.query.status || 'answered').toLowerCase(); // 'answered' | 'pending' | 'any'
+    const activeQ  = (req.query.isActive || '1').toLowerCase();      // '1' | '0' | 'any'
+    const looseQ   = req.query.loose === '1' || req.query.loose === 'true'; // force loose match
+
+    if (!rawTag.trim()) {
+      return res.status(400).json({ success: false, error: 'Missing required query param: tag' });
+    }
+
+    // Support CSV of tags: tag=فقه,متفرقات
+    const normalized = normalizeUrdu(rawTag);
+    const tokens = normalized.split(',').map(t => t.trim()).filter(Boolean);
+    if (tokens.length === 0) {
+      return res.status(400).json({ success: false, error: 'Tag is empty after normalization' });
+    }
+
+    // -------- Build WHERE (status / active) ----------
+    const whereParts = [];
+    const paramsBase = [];
+
+    // status
+    if (statusQ === 'any') {
+      // no status filter
+    } else if (statusQ === 'pending') {
+      whereParts.push("status = 'pending'");
+    } else {
+      // default: answered; also allow NULL to be permissive like your SQL tests
+      whereParts.push("(status = 'answered' OR status IS NULL)");
+    }
+
+    // isActive
+    if (activeQ === 'any') {
+      // no filter
+    } else if (activeQ === '0' || activeQ === 'false') {
+      whereParts.push("isActive = 0");
+    } else {
+      // default 1
+      whereParts.push("isActive = 1");
+    }
+
+    // -------- ORDER BY ----------
+    let orderSql = 'ORDER BY Views DESC';
+    if (orderBy === 'recent') orderSql = 'ORDER BY created_at DESC';
+
+    // -------- Exact token SQL (preferred) ----------
+    const tokenWheres = tokens.map(() => `${SQL_TAG_FIELD} LIKE ?`).join(' OR ');
+    const tokenParams = tokens.map(t => `%,${t},%`);
+    const whereExact  = whereParts.concat([`(${tokenWheres})`]).join(' AND ');
+    const sqlExact = `
+      SELECT
+        id, Title, slug, tags, tafseel, detailquestion, Answer, muftisahab,
+        questionername, questionaremail, status, isActive, created_at, updated_at, Likes, Views, Mozuwat
+      FROM fatawa
+      WHERE ${whereExact}
+      ${orderSql}
+      LIMIT ? OFFSET ?;
+    `;
+    const paramsExact = [...tokenParams, limit, offset];
+
+    // -------- Loose SQL fallback (LIKE %tag%) ----------
+    // This is what your manual SQL did and found rows.
+    const likeWheres = tokens.map(() => "tags LIKE ?").join(' OR ');
+    const likeParams = tokens.map(t => `%${t}%`);
+    const whereLoose = whereParts.concat([`(${likeWheres})`]).join(' AND ');
+    const sqlLoose = `
+      SELECT
+        id, Title, slug, tags, tafseel, detailquestion, Answer, muftisahab,
+        questionername, questionaremail, status, isActive, created_at, updated_at, Likes, Views, Mozuwat
+      FROM fatawa
+      WHERE ${whereLoose}
+      ${orderSql}
+      LIMIT ? OFFSET ?;
+    `;
+    const paramsLoose = [...likeParams, limit, offset];
+
+    // -------- Execute (exact first, then fallback) ----------
+    let rows = [];
+    if (!looseQ) {
+      const [r] = await db.query(sqlExact, paramsExact);
+      rows = r;
+      if (!rows || rows.length === 0) {
+        const [r2] = await db.query(sqlLoose, paramsLoose);
+        rows = r2;
+      }
+    } else {
+      const [r2] = await db.query(sqlLoose, paramsLoose);
+      rows = r2;
+    }
+
+    // -------- Count (for pagination UI) ----------
+    // Do count against whichever query actually produced results.
+    let count = 0;
+    if (rows && rows.length) {
+      const countSql = `
+        SELECT COUNT(*) AS total
+        FROM fatawa
+        WHERE ${rows === undefined || rows === null || rows.length === 0 ? whereLoose : (looseQ ? whereLoose : whereExact)};
+      `;
+      const countParams = rows === undefined || rows === null || rows.length === 0
+        ? likeParams
+        : (looseQ ? likeParams : tokenParams);
+      const [c] = await db.query(countSql, countParams);
+      count = c?.[0]?.total || 0;
+    } else {
+      // no results at all, count with loose to be safe
+      const countSql = `SELECT COUNT(*) AS total FROM fatawa WHERE ${whereLoose};`;
+      const [c] = await db.query(countSql, likeParams);
+      count = c?.[0]?.total || 0;
+    }
+
+    return res.json({
+      success: true,
+      tag: rawTag,
+      normalizedTag: normalized,
+      count: rows.length,
+      total: count,
+      limit,
+      offset,
+      orderBy,
+      filters: { status: statusQ, isActive: activeQ, mode: looseQ ? 'loose' : 'exact→fallback' },
+      data: rows
+    });
+  } catch (err) {
+    console.error('❌ getByTag error:', err);
+    return res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+
+
+
+// Helper to normalize mysql2/db wrappers
+function first(x) {
+  if (Array.isArray(x)) return x[0]; // mysql2: [rows, fields]
+  return x;                           // custom wrapper: rows directly
+}
+
+const FATAWA_TABLE = 'fatawa'; // ← change if your exact table name differs
+
+/**
+ * POST /api/fatwa/:id/view
+ * PUT  /api/fatwa/:id/view
+ * Increments Views by +1 and returns { id, Views }.
+ */
+exports.incrementFatwaView = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, error: 'Fatwa ID required' });
+    }
+
+    // 1) Increment (Views is INT; COALESCE for safety)
+    const updateRes = first(await db.query(
+      `
+      UPDATE ${FATAWA_TABLE}
+      SET Views = COALESCE(Views, 0) + 1
+      WHERE id = ?
+      `,
+      [id]
+    ));
+
+    const affected =
+      updateRes?.affectedRows ??
+      updateRes?.rowCount ??
+      0;
+
+    if (!affected) {
+      return res.status(404).json({ success: false, error: 'Fatwa not found' });
+    }
+
+    // 2) Read back current count
+    const rows = first(await db.query(
+      `SELECT id, Views FROM ${FATAWA_TABLE} WHERE id = ?`,
+      [id]
+    ));
+    const row = Array.isArray(rows) ? rows[0] : rows;
+
+    return res.json({
+      success: true,
+      message: 'Fatwa view count incremented',
+      data: row
+    });
+  } catch (err) {
+    console.error('Error incrementing fatwa view:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
+  }
+};

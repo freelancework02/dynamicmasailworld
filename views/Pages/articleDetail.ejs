@@ -132,7 +132,7 @@
 
   <!-- Mobile-only header bar -->
   <div class="fixed top-0 left-0 right-0 md:hidden bg-rich_black text-white flex justify-between items-center py-2 px-4 z-50">
-    <a href="/Pages/Question.html" class="text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+    <a href="/question" class="text-sm text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
     <div class="flex items-center space-x-4 space-x-reverse">
       <a id="sm-fb-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
       <a id="sm-wa-mobile" href="#" class="hover:text-beige transition text-base" aria-label="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
@@ -145,7 +145,7 @@
   <header id="qs-header" class="bg-beige/90 backdrop-blur-md shadow-lg sticky top-0 z-50 rounded-b-xl hidden md:block">
     <div class="bg-rich_black text-air_force_blue-700 py-2">
       <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
-        <a href="/Pages/Question.html" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
+        <a href="/question" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
         <div class="flex items-center space-x-4 space-x-reverse">
           <a id="sm-fb-desktop" href="#" class="hover:text-beige transition" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
           <a id="sm-wa-desktop" href="#" class="hover:text-beige transition" aria-label="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
@@ -168,7 +168,7 @@
           <a href="/" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
           <a href="/fatwa" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
           <a href="/about" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
-          <a href="/article" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+          <a href="/articles" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
           <a href="/Categoryfatawa" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
           <a href="/book" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
           <a href="/question" class="text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
@@ -180,7 +180,7 @@
   <!-- Article Detail -->
   <main class="pt-20 md:pt-8">
     <div class="container mx-auto px-6 max-w-4xl py-12">
-      <a href="https://masailworld.com/Pages/articles.html" class="inline-block text-midnight_green hover:underline mb-6">&larr; واپس تمام مضامین پر</a>
+      <a href="/articles" class="inline-block text-midnight_green hover:underline mb-6">&larr; واپس تمام مضامین پر</a>
 
       <article id="article-root" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-[rgba(174,195,176,0.35)]">
         <!-- Article header -->
@@ -259,9 +259,9 @@
   <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-beige shadow-top-lg border-t border-ash_gray/50 z-50 rounded-t-xl">
     <ul class="flex justify-around items-center h-16">
       <li><a href="/" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-house-door-fill text-xl"></i><span class="text-sm">صفحہ اول</span></a></li>
-      <li><a href="https://masailworld.com/Pages/fatawa.html" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-file-text-fill text-xl"></i><span class="text-sm">فتاویٰ</span></a></li>
-      <li><a href="https://masailworld.com/Pages/book.html" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-book-fill text-xl"></i><span class="text-sm">اسلامی کتب</span></a></li>
-      <li><a href="/Pages/Question.html" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-chat-dots-fill text-xl"></i><span class="text-sm">سوال پوچھیں</span></a></li>
+      <li><a href="/fatwa" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-file-text-fill text-xl"></i><span class="text-sm">فتاویٰ</span></a></li>
+      <li><a href="/book" class="flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-book-fill text-xl"></i><span class="text-sm">اسلامی کتب</span></a></li>
+      <li><a href="/question" class="nav-link flex flex-col items-center justify-center text-midnight_green hover:text-midnight_green-600 transition transform hover:scale-110 active:scale-100"><i class="bi bi-chat-dots-fill text-xl"></i><span class="text-sm">سوال پوچھیں</span></a></li>
     </ul>
   </nav>
 
@@ -282,10 +282,10 @@
         <div>
           <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
           <ul class="space-y-3 text-lg">
-            <li><a href="https://masailworld.com/Pages/fatawa.html" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
-            <li><a href="https://masailworld.com/Pages/articles.html" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
-            <li><a href="/Pages/Question.html" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
-            <li><a href="https://masailworld.com#about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+            <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+            <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+            <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+            <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
           </ul>
         </div>
         <div>
@@ -401,37 +401,70 @@
       if (ahShareBtn) ahShareBtn.addEventListener('click', openShare);
     }
 
-    // Views logic
+    // -------- Views: self-contained here (articledetaile.js no longer needed) --------
+    const VIEW_API_BASE = '/api/article'; // same-origin to avoid CORS/mixed-content
+    function bumpView(id) {
+      if (!id) return;
+      const url = `${VIEW_API_BASE}/${encodeURIComponent(id)}/view`;
+
+      // Try sendBeacon (POST). Simple type avoids preflight.
+      try {
+        if (navigator.sendBeacon) {
+          const blob = new Blob(['1'], { type: 'text/plain' });
+          if (navigator.sendBeacon(url, blob)) return;
+        }
+      } catch {}
+
+      // Fallback: fetch POST with keepalive + simple content-type
+      try {
+        fetch(url, {
+          method: 'POST',
+          keepalive: true,
+          credentials: 'include',
+          headers: { 'Content-Type': 'text/plain' },
+          body: '1'
+        }).catch(() => {});
+      } catch {}
+    }
+
     function sendViewOnceVisible(id, viewCountEl) {
       if (!id) return;
       const target = document.getElementById('article-root');
       if (!target) return;
-      let counted = false, timer = null;
-      const fire = async () => {
-        if (counted) return;
-        counted = true;
-        try {
-          const res = await fetch(`https://dynamicmasailworld.onrender.com/api/article/${encodeURIComponent(id)}/view`, {
-            method: 'POST', credentials: 'include'
-          });
-          if (res.ok) {
-            const data = await res.json().catch(() => ({}));
-            if (data && data.counted && viewCountEl) {
-              const cur = parseInt(viewCountEl.textContent || '0', 10) || 0;
-              viewCountEl.textContent = String(cur + 1);
-            }
-          }
-        } catch {}
+
+      let fired = false, timer = null;
+
+      const fire = () => {
+        if (fired) return;
+        fired = true;
+        bumpView(id);
+        // optimistic UI tick
+        if (viewCountEl) {
+          const cur = parseInt(viewCountEl.textContent || '0', 10) || 0;
+          viewCountEl.textContent = String(cur + 1);
+        }
       };
-      if (!('IntersectionObserver' in window)) { setTimeout(fire, 3000); return; }
+
+      if (!('IntersectionObserver' in window)) {
+        // no IO: delay a bit, then fire once
+        setTimeout(fire, 3000);
+        return;
+      }
+
       const io = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) { timer = setTimeout(fire, 3000); }
-          else if (timer) { clearTimeout(timer); }
-        });
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            timer = setTimeout(fire, 3000); // stay visible ~3s
+          } else if (timer) {
+            clearTimeout(timer);
+            timer = null;
+          }
+        }
       }, { threshold: 0.5 });
+
       io.observe(target);
     }
+    // -------- End Views --------
 
     // INIT
     document.addEventListener("DOMContentLoaded", () => {

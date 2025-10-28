@@ -43,7 +43,7 @@ exports.getAllBooks = async (req, res) => {
     const offset = parseInt(req.query.offset) || 0;
 
     const sql = `
-      SELECT id, BookName, BookWriter, BookDescription, Tags, isActive
+      SELECT id, BookName, BookWriter, BookDescription, Tags, InsertedDate, views, isActive
       FROM Books
       WHERE isActive = 1
       LIMIT ? OFFSET ?
@@ -63,7 +63,7 @@ exports.getBookById = async (req, res) => {
     const { id } = req.params;
 
     const sql = `
-      SELECT id, BookName, BookWriter, BookDescription, Tags, isActive
+      SELECT id, BookName, BookWriter, BookDescription, Tags, InsertedDate, views, isActive
       FROM Books
       WHERE id = ? AND isActive = 1
     `;
@@ -144,63 +144,64 @@ exports.getBookPdfById = async (req, res) => {
 };
 
 // ✅ Update book (with optional new cover/pdf)
+
+
+
 exports.updateBook = async (req, res) => {
   try {
     const { id } = req.params;
-    const { BookName, BookWriter, BookDescription } = req.body;
 
-    const coverFile = req.files?.["BookCoverImg"]?.[0] || null;
-    const pdfFile = req.files?.["BookPDF"]?.[0] || null;
+    const {
+      BookName = undefined,
+      BookWriter = undefined,
+      BookDescription = undefined,
+      Tags = undefined,
+    } = req.body || {};
 
-    const coverBuffer = coverFile ? coverFile.buffer : null;
-    const pdfBuffer = pdfFile ? pdfFile.buffer : null;
-    const coverType = coverFile ? coverFile.mimetype : null;
+    const coverFile = req.files?.BookCoverImg?.[0];
+    const pdfFile   = req.files?.BookPDF?.[0];
 
-    let sql = "";
-    let params = [];
+    const setParts = [];
+    const params = [];
 
-    if (coverBuffer && pdfBuffer) {
-      sql = `
-        UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookCoverImg = ?, BookCoverType = ?, BookPDF = ?, Tags = ?
-        WHERE id = ? AND isActive = 1
-      `;
-      params = [BookName, BookWriter, BookDescription, coverBuffer, coverType, pdfBuffer, Tags, id];
-    } else if (coverBuffer) {
-      sql = `
-        UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookCoverImg = ?, BookCoverType = ?, Tags = ?
-        WHERE id = ? AND isActive = 1
-      `;
-      params = [BookName, BookWriter, BookDescription, coverBuffer, coverType, Tags, id];
-    } else if (pdfBuffer) {
-      sql = `
-        UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?, BookPDF = ?, Tags = ?
-        WHERE id = ? AND isActive = 1
-      `;
-      params = [BookName, BookWriter, BookDescription, pdfBuffer, id];
-    } else {
-      sql = `
-        UPDATE Books
-        SET BookName = ?, BookWriter = ?, BookDescription = ?, Tags = ?
-        WHERE id = ? AND isActive = 1
-      `;
-      params = [BookName, BookWriter, BookDescription, id];
+    if (typeof BookName !== 'undefined')        { setParts.push('BookName = ?');        params.push(BookName); }
+    if (typeof BookWriter !== 'undefined')      { setParts.push('BookWriter = ?');      params.push(BookWriter); }
+    if (typeof BookDescription !== 'undefined') { setParts.push('BookDescription = ?'); params.push(BookDescription); }
+    if (typeof Tags !== 'undefined')            { setParts.push('Tags = ?');            params.push(Tags); }
+
+    if (coverFile) {
+      setParts.push('BookCoverImg = ?');
+      params.push(coverFile.buffer);
+    }
+    if (pdfFile) {
+      setParts.push('BookPDF = ?');
+      params.push(pdfFile.buffer);
     }
 
-    const [result] = await db.query(sql, params);
+    if (setParts.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
 
-    res.json({
-      message: "✅ Book updated successfully",
-      affectedRows: result.affectedRows,
-    });
+    const sql = `
+      UPDATE Books
+      SET ${setParts.join(', ')}
+      WHERE id = ? AND isActive = 1
+    `;
+    params.push(id);
+
+    const [result] = await db.query(sql, params);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Book not found or inactive' });
+    }
+
+    res.json({ success: true, message: '✅ Book updated successfully', affectedRows: result.affectedRows });
   } catch (error) {
-    console.error("❌ Error updating book:", error);
-    res.status(500).json({ error: "Failed to update book" });
+    console.error('❌ Error updating book:', error);
+    res.status(500).json({ error: 'Failed to update book' });
   }
 };
 
+ 
 // ✅ Soft delete book
 exports.deleteBook = async (req, res) => {
   try {
@@ -225,33 +226,28 @@ exports.deleteBook = async (req, res) => {
 exports.incrementBookView = async (req, res) => {
   try {
     const bookId = req.params.id;
-
     if (!bookId) {
       return res.status(400).json({ message: 'Book ID is required' });
     }
 
-    // Ensure a session object exists (requires express-session or similar middleware)
-    if (!req.session) {
-      return res.status(500).json({ message: 'Session not initialized' });
+    // Increment safely even if Views is NULL
+    const [result] = await db.query(
+      'UPDATE Books SET Views = COALESCE(Views, 0) + 1 WHERE id = ? AND isActive = 1',
+      [bookId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Book not found or inactive' });
     }
 
-    // Track views per session to avoid duplicate counts
-    if (!req.session.viewedBooks) req.session.viewedBooks = [];
+    // Optional: return the new count
+    const [rows] = await db.query('SELECT Views FROM Books WHERE id = ?', [bookId]);
+    const views = rows?.[0]?.Views ?? null;
 
-    if (req.session.viewedBooks.includes(bookId)) {
-      return res.status(200).json({ message: 'View already counted for this session' });
-    }
-
-    // Increment the view count in the database
-    await db.query('UPDATE Book SET views = views + 1 WHERE id = ?', [bookId]);
-
-    // Mark this book as viewed for this session
-    req.session.viewedBooks.push(bookId);
-
-    res.status(200).json({ message: 'View count incremented successfully' });
-
+    return res.status(200).json({ message: 'View count incremented', views });
   } catch (error) {
     console.error('Error updating book view count:', error);
-    res.status(500).json({ message: 'Server error', error });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
+

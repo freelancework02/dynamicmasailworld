@@ -335,111 +335,164 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+// Homepage book section
+
 const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://dynamicmasailworld.onrender.com/api/book';
-  const BOOK_COVER_URL = (id) => `https://dynamicmasailworld.onrender.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
+const BOOK_COVER_URL = (id) => `https://dynamicmasailworld.onrender.com/api/book/${encodeURIComponent(id)}/cover`; // per your pattern
 
-  // --- helpers ---
+/* --- NEW: views endpoint base --- */
+const VIEW_API = (window.__MW__ && window.__MW__.VIEW_API) || 'http://localhost:5000/api/book';
+
+/* --- helpers --- */
+
+/* simple HTML escaper (used by render) */
 
 
-  // keep only plain text for the one-liner
-  function plainOneLine(s, max = 110) {
-    if (!s) return '';
-    const text = String(s).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-    return text.length > max ? text.slice(0, max - 1) + '…' : text;
+/* keep only plain text for the one-liner */
+function plainOneLine(s, max = 110) {
+  if (!s) return '';
+  const text = String(s).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  return text.length > max ? text.slice(0, max - 1) + '…' : text;
+}
+
+/* --- NEW: increment views without blocking navigation --- */
+function incrementBookView(id) {
+  if (!id) return;
+  const url = `${VIEW_API.replace(/\/$/, '')}/${encodeURIComponent(id)}/view`;
+
+  // Try GET with keepalive, no-cors (works if you exposed GET route)
+  try {
+    fetch(url, { method: 'post', credentials: 'include', keepalive: true, mode: 'no-cors'})
+      .catch(() => {
+        // Fallback to POST (works if you only exposed POST)
+        if (navigator.sendBeacon) {
+          const blob = new Blob([], { type: 'text/plain' });
+          navigator.sendBeacon(url, blob);
+        } else {
+          fetch(url, { method: 'POST', keepalive: true, mode: 'no-cors', credentials: 'include', body: '' })
+            .catch(() => {/* ignore */});
+        }
+      });
+  } catch (_) {
+    // Final fallback
+    if (navigator.sendBeacon) {
+      const blob = new Blob([], { type: 'text/plain' });
+      navigator.sendBeacon(url, blob);
+    }
+  }
+}
+
+/* -------- Card renderer -------- */
+function renderBookCard(b) {
+  const id =
+    b.id ?? b.ID ?? b.Id ?? b.bookId ?? b.BookID ?? b.BookId ?? b.BookID;
+
+  // If no id, skip rendering a clickable card
+  if (!id) {
+    return '';
   }
 
-  // -------- Card renderer --------
-  function renderBookCard(b) {
-    const id =
-      b.id ?? b.ID ?? b.Id ?? b.bookId ?? b.BookID ?? b.BookId ?? b.BookID;
+  const title = escapeText(b.BookName || b.title || b.Name || b.name || 'بلا عنوان');
+  const about = plainOneLine(b.BookDescription || b.about || b.details || b.Summary || b.summary || '');
 
-    // If no id, skip rendering a clickable card
-    if (!id) {
-      return '';
-    }
+  const imgSrc = BOOK_COVER_URL(id);
+  const fallback =
+    "this.onerror=null;this.src='https://dummyimage.com/640x900/eef2f7/8892a6.jpg&text=%DA%A9%D8%AA%D8%A7%D8%A8'";
 
-    const title = escapeText(b.BookName || b.title || b.Name || b.name || 'بلا عنوان');
-    const about = plainOneLine(b.BookDescription || b.about || b.details || b.Summary || b.summary || '');
+  // IMPORTANT: build the real detail link
+  const detailHref = `/book/${encodeURIComponent(id)}`;
 
-    const imgSrc = BOOK_COVER_URL(id);
-    const fallback =
-      "this.onerror=null;this.src='https://dummyimage.com/640x900/eef2f7/8892a6.jpg&text=%DA%A9%D8%AA%D8%A7%D8%A8'";
-
-    // IMPORTANT: build the real detail link
-    const detailHref = `/book/${encodeURIComponent(id)}`;
-
-    return `
-      <a href="${detailHref}" class="block group">
-        <div class="bg-white rounded-2xl shadow-lg border overflow-hidden h-full flex flex-col">
-          <div class="relative aspect-[3/4] overflow-hidden bg-[#f6f7fb]">
-            <img src="${imgSrc}" alt="${title}"
-                 class="w-full h-full object-cover group-hover:scale-[1.03] transition"
-                 loading="lazy" onerror="${fallback}">
-          </div>
-          <div class="p-4 flex flex-col gap-1">
-            <h3 class="text-rich_black text-lg font-bold line-clamp-2">${title}</h3>
-            <p class="text-gray-600 text-sm line-clamp-2">${escapeText(about)}</p>
-          </div>
+  return `
+    <a href="${detailHref}" class="block group js-book-card" data-book-id="${encodeURIComponent(id)}">
+      <div class="bg-white rounded-2xl shadow-lg border overflow-hidden h-full flex flex-col">
+        <div class="relative aspect-[3/4] overflow-hidden bg-[#f6f7fb]">
+          <img src="${imgSrc}" alt="${title}"
+               class="w-full h-full object-cover group-hover:scale-[1.03] transition"
+               loading="lazy" onerror="${fallback}">
         </div>
-      </a>
-    `;
-  }
+        <div class="p-4 flex flex-col gap-1">
+          <h3 class="text-rich_black text-lg font-bold line-clamp-2">${title}</h3>
+          <p class="text-gray-600 text-sm line-clamp-2">${escapeText(about)}</p>
+        </div>
+      </div>
+    </a>
+  `;
+}
 
-  // -------- Main loader --------
-  async function loadKitabe(limit = 4) {
-    const grid = document.getElementById('kitabe-grid');
-    const loader = document.getElementById('kitabe-loader');
-    if (!grid) return;
+/* -------- Main loader -------- */
+async function loadKitabe(limit = 4) {
+  const grid = document.getElementById('kitabe-grid');
+  const loader = document.getElementById('kitabe-loader');
+  if (!grid) return;
 
-    try {
-      loader && loader.classList.remove('hidden');
+  try {
+    loader && loader.classList.remove('hidden');
 
-      const res = await fetch(BOOKS_API, { credentials: 'include' });
-      const payload = await res.json();
+    const res = await fetch(BOOKS_API, { credentials: 'include' });
+    const payload = await res.json();
 
-      // accept either raw array or {data:[...]}
-      const books = Array.isArray(payload) ? payload
-                   : (Array.isArray(payload?.data) ? payload.data : []);
+    // accept either raw array or {data:[...]}
+    const books = Array.isArray(payload) ? payload
+                 : (Array.isArray(payload?.data) ? payload.data : []);
 
-      const items = books.slice(0, limit);
-      if (!items.length) {
-        grid.innerHTML = `<div class="col-span-full text-center text-gray-600">کوئی کتاب دستیاب نہیں۔</div>`;
-        return;
-      }
-
-      const html = items.map(renderBookCard).filter(Boolean).join('');
-      grid.innerHTML = html || `<div class="col-span-full text-center text-gray-600">کوئی کتاب دستیاب نہیں۔</div>`;
-    } catch (err) {
-      console.error('loadKitabe error:', err);
-      if (grid) grid.innerHTML = `<div class="col-span-full text-center text-red-600">کتابیں لوڈ کرنے میں مسئلہ ہوا۔</div>`;
-    } finally {
-      loader && loader.classList.add('hidden');
+    const items = books.slice(0, limit);
+    if (!items.length) {
+      grid.innerHTML = `<div class="col-span-full text-center text-gray-600">کوئی کتاب دستیاب نہیں۔</div>`;
+      return;
     }
+
+    const html = items.map(renderBookCard).filter(Boolean).join('');
+    grid.innerHTML = html || `<div class="col-span-full text-center text-gray-600">کوئی کتاب دستیاب نہیں۔</div>`;
+
+    /* --- NEW: wire clicks to increment views (event delegation) --- */
+    grid.addEventListener('click', function (e) {
+      const a = e.target.closest('.js-book-card');
+      if (!a || !grid.contains(a)) return;
+      const id = a.getAttribute('data-book-id');
+      if (!id) return;
+      // fire-and-forget
+      incrementBookView(id);
+      // allow navigation to proceed naturally
+    }, { passive: true });
+
+  } catch (err) {
+    console.error('loadKitabe error:', err);
+    if (grid) grid.innerHTML = `<div class="col-span-full text-center text-red-600">کتابیں لوڈ کرنے میں مسئلہ ہوا۔</div>`;
+  } finally {
+    loader && loader.classList.add('hidden');
   }
+}
 
-  // Tailwind line-clamp fallback (in case plugin isn't active)
-  (function ensureClamp() {
-    if (!document.getElementById('ms-lineclamp')) {
-      const style = document.createElement('style');
-      style.id = 'ms-lineclamp';
-      style.textContent = `
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }`;
-      document.head.appendChild(style);
-    }
-  })();
+/* Tailwind line-clamp fallback (in case plugin isn't active) */
+(function ensureClamp() {
+  if (!document.getElementById('ms-lineclamp')) {
+    const style = document.createElement('style');
+    style.id = 'ms-lineclamp';
+    style.textContent = `
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }`;
+    document.head.appendChild(style);
+  }
+})();
 
-  // Auto-init on ready (safe repeat)
-  document.addEventListener('DOMContentLoaded', () => {
-    loadKitabe(4);
-  });
+/* Auto-init on ready (safe repeat) */
+document.addEventListener('DOMContentLoaded', () => {
+  loadKitabe(4);
+});
 
 
 
+
+
+
+
+
+// fatawa section
 
   (function () {
     const FATAWA_API_BASE =
@@ -508,7 +561,7 @@ const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://dynamic
       const title = escapeText(row.Title || "بلا عنوان");
       const desc = escapeText(stripHtmlToOneLine(row.detailquestion || ""));
       const views = `${numLabel(row.Views)} مشاہدات`;
-      const likes = `${numLabel(row.Likes)} پسند`;
+      // const likes = `${numLabel(row.Likes)} پسند`;
       const when = timeAgo(row.created_at);
 
       return `
@@ -528,9 +581,7 @@ const BOOKS_API = (window.__MW__ && window.__MW__.BOOKS_API) || 'https://dynamic
             <span class="inline-flex items-center gap-2">
               <i class="bi bi-eye"></i>${views}
             </span>
-            <span class="inline-flex items-center gap-2">
-              <i class="bi bi-hand-thumbs-up"></i>${likes}
-            </span>
+           
           </div>
           <div class="mt-3 text-xs text-air_force_blue/80 flex items-center gap-2">
             <i class="bi bi-clock-history"></i>${escapeText(when)}

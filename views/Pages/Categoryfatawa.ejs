@@ -24,15 +24,10 @@
       padding-top: 56px;
     }
     @media (min-width: 768px) { body { padding-top: 0; } }
-    .page { display: none; }
-    .page.active { display: block; }
     .circular-logo { border-radius: 50%; }
-
-    /* prevent inline editing */
     [contenteditable="false"] { -webkit-user-modify: read-only; user-select: text; }
-    .card-text, .card-title { outline: none; }
-
     .shadow-top-lg { box-shadow: 0 -6px 16px rgba(0,0,0,.08); }
+    .hidden-important { display: none !important; }
   </style>
 
   <script>
@@ -53,7 +48,7 @@
 </head>
 <body>
 
-  <!-- ✅ Fullscreen Loader -->
+  <!-- Loader -->
   <div id="loader" class="fixed inset-0 flex items-center justify-center bg-beige z-50">
     <span class="text-3xl md:text-5xl font-bold text-midnight_green animate-pulse">
       صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمْ
@@ -91,15 +86,15 @@
             <span class="text-xl font-normal block">دار الافتاء اہل سنت</span>
           </a>
         </div>
-       <div class="hidden md:flex items-center space-x-reverse space-x-8">
-                    <a href="/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
-                    <a href="/fatwa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
-                    <a href="/about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
-                    <a href="/articles" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
-                    <a href="/fatwa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
-                    <a href="/book" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
-                    <a href="/question" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
-                </div>
+        <div class="hidden md:flex items-center space-x-reverse space-x-8">
+          <a href="/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
+          <a href="/fatwa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+          <a href="/about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+          <a href="/articles" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+          <a href="/Categoryfatawa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+          <a href="/book" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
+          <a href="/question" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
+        </div>
       </div>
     </nav>
   </header>
@@ -110,7 +105,7 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-2 mb-4">
       <h1 class="text-4xl font-bold">موضوعات کے فتاویٰ</h1>
 
-      <!-- Active Tag Chip (auto from ?tag=) -->
+      <!-- Active Tag Chip -->
       <div id="activeTagWrap" class="hidden">
         <span class="inline-flex items-center gap-2 bg-beige border border-ash_gray px-4 py-2 rounded-full text-midnight_green">
           <i class="bi bi-tag-fill"></i>
@@ -122,15 +117,36 @@
       </div>
     </div>
 
-    <!-- Search + Tag Dropdown -->
+    <!-- Search + Tag Combobox -->
     <div class="max-w-3xl mx-auto mb-8 flex flex-col md:flex-row md:space-x-reverse md:space-x-4 space-y-3 md:space-y-0">
       <div class="relative flex-grow">
         <input id="searchInput" type="text" placeholder="فتویٰ یا مضمون تلاش کریں..." class="w-full p-4 pr-12 rounded-full border border-black focus:outline-none focus:ring-2" />
         <span class="absolute top-1/2 -translate-y-1/2 left-4 text-gray-500"><i class="bi bi-search"></i></span>
       </div>
-      <select id="tagDropdown" class="p-4 rounded-full border border-black bg-white focus:outline-none focus:ring-2 w-full md:w-56 text-right">
-        <option value="">تمام ٹیگز</option>
-      </select>
+
+      <!-- Combobox -->
+      <div id="tagComboWrap" class="relative w-full md:w-56">
+        <input
+          id="tagComboInput"
+          type="text"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="tagComboList"
+          aria-autocomplete="list"
+          placeholder="تمام ٹیگز"
+          class="w-full p-4 pr-12 rounded-full border border-black bg-white focus:outline-none focus:ring-2 text-right"
+        />
+        <button id="tagComboToggle" type="button"
+          class="absolute top-1/2 -translate-y-1/2 left-3 p-1 rounded-md hover:bg-ash_gray/30"
+          aria-label="ٹیگ فہرست کھولیں/بند کریں">
+          <i class="bi bi-chevron-down"></i>
+        </button>
+        <ul id="tagComboList"
+            role="listbox"
+            class="hidden absolute right-0 left-0 mt-2 max-h-60 overflow-auto bg-white border border-black/20 rounded-2xl shadow-lg z-50">
+        </ul>
+        <div id="tagHint" class="text-xs text-gray-500 mt-1 pr-2">200 ٹیگز دستیاب — تلاش کرنے کے لیے ٹائپ کریں</div>
+      </div>
     </div>
 
     <div id="list" class="space-y-6"></div>
@@ -181,7 +197,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
         <div class="col-span-1 md:col-span-2">
           <h3 class="text-3xl font-bold mb-4">مسائل ورلڈ</h3>
-          <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔</p>
+          <p class="text-air_force_blue-700 text-lg leading-relaxed">ایک آن لائن پلیٹ فارم ہے جو قرآن و سنت کی روشنی میں آپ کے مسائل کا حل پیش کرتا ہے۔ ہمارا مقصد مستند علمی تحقیق اور اہلسنت والجماعت کے مطابق رہنمائی کو عام کرنا ہے۔</p>
           <div class="flex space-x-5 space-x-reverse text-3xl mt-6">
             <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="text-air_force_blue-700 hover:text-beige transition"><i class="bi bi-facebook"></i></a>
             <a href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
@@ -190,12 +206,12 @@
         </div>
         <div>
           <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
-         <ul class="space-y-3 text-lg">
-                        <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
-                        <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
-                        <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
-                        <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
-                    </ul>
+          <ul class="space-y-3 text-lg">
+            <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+            <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+            <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+            <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+          </ul>
         </div>
         <div>
           <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
@@ -220,8 +236,13 @@
     </div>
   </footer>
 
-  <script>
-/* ---------- Guard against edit modes ---------- */
+ <script>
+/* ---------- Constants ---------- */
+const API_BASE = 'http://localhost:5000/api'; // switch to https:// if your server uses HTTPS
+/* NEW: same-origin view API (prevents CORS/mixed-content) */
+const VIEW_API_BASE = '/api/fatwa';
+
+/* ---------- Guard ---------- */
 try { document.designMode = 'off'; } catch (e) {}
 document.body.setAttribute('contenteditable', 'false');
 document.querySelectorAll('input, textarea').forEach(el => el.spellcheck = false);
@@ -232,29 +253,201 @@ const searchInput = document.getElementById('searchInput');
 const loader = document.getElementById('loader');
 const inlineLoader = document.getElementById('inlineLoader');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
-const tagDropdown = document.getElementById('tagDropdown');
+
 const activeTagWrap = document.getElementById('activeTagWrap');
 const activeTagNameEl = document.getElementById('activeTagName');
 const clearTagBtn = document.getElementById('clearTagBtn');
 
+/* Combobox DOM */
+const tagComboWrap  = document.getElementById('tagComboWrap');
+const tagComboInput = document.getElementById('tagComboInput');
+const tagComboList  = document.getElementById('tagComboList');
+const tagComboToggle= document.getElementById('tagComboToggle');
+const tagHint = document.getElementById('tagHint');
+
 /* ---------- Vars ---------- */
 let fatawaData = [];
+let mode = 'all';         // 'all' | 'tag'
+let currentTag = '';
 let offset = 0;
-const limit = 50;
+let limit = 50;
 let isLoading = false;
 let allLoaded = false;
 
-/* Tag handling */
-let selectedTagName = '';        // Urdu display name (used inside f.tags)
-let initialTagSlug = '';         // slug from ?tag=
-let tagsIndexBySlug = new Map(); // slug -> Name
-let tagsIndexByName = new Map(); // Name -> slug
+let tagsList = [];        // [{Name}]
+let filteredTagItems = [];
+let activeListIndex = -1;
+
+/* ---------- Config ---------- */
+const TAGS_SCAN_LIMIT = 1000;
+const FETCH_TIMEOUT_MS = 12000;
 
 /* ---------- Helpers ---------- */
 function norm(v){ return (v ?? '').toString().trim(); }
 function getParam(name){ return new URLSearchParams(location.search).get(name) || ''; }
+function openCombo(){ tagComboList.classList.remove('hidden'); tagComboInput.setAttribute('aria-expanded','true'); }
+function closeCombo(){ tagComboList.classList.add('hidden'); tagComboInput.setAttribute('aria-expanded','false'); activeListIndex=-1; highlightActiveItem(); }
 
-/* ---------- Sanitize HTML from Quill / unsafe input ---------- */
+function normalizeUrdu(s){
+  if (s == null) return '';
+  let out = String(s);
+  try{ out = out.normalize('NFC'); }catch(e){}
+  out = out.replace(/[\u200C\u200D\u200E\u200F\u202A-\u202E\u061C\u0640]/g,'');
+  out = out.replace(/،/g, ',').replace(/\s*,\s*/g, ',').trim();
+  return out;
+}
+
+function tokenizeTags(val){
+  const clean = normalizeUrdu(val);
+  if (!clean) return [];
+  return clean.split(',').map(t=>t.trim()).filter(Boolean);
+}
+
+async function fetchJson(url, fallback){
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), FETCH_TIMEOUT_MS);
+  try{
+    const res = await fetch(url, { signal: ctrl.signal, headers: { 'Accept': 'application/json' }});
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    clearTimeout(timer);
+    return json;
+  }catch(err){
+    console.warn('fetchJson failed:', err, 'URL:', url);
+    clearTimeout(timer);
+    return typeof fallback !== 'undefined' ? fallback : null;
+  }
+}
+
+/* ---------- Build tags list: try /api/tags (200), fallback to scan ---------- */
+async function fetchTagsIndex(){
+  // 1) Preferred: dedicated tags endpoint (returns array of objects or strings)
+  const endpoint = `${API_BASE}/tags?limit=200`;
+  let raw = await fetchJson(endpoint, null);
+  if (raw && typeof raw === 'object' && raw.success && Array.isArray(raw.data)) {
+    raw = raw.data;
+  }
+  if (Array.isArray(raw) && raw.length) {
+    tagsList = raw
+      .map(x => {
+        if (typeof x === 'string') return { Name: normalizeUrdu(x) };
+        if (x && (x.Name || x.name)) return { Name: normalizeUrdu(x.Name || x.name) };
+        if (x && x.slug) return { Name: normalizeUrdu(x.slug) };
+        return null;
+      })
+      .filter(Boolean)
+      .reduce((acc, t)=>{ if (t.Name) acc.add(t.Name); return acc; }, new Set());
+    tagsList = Array.from(tagsList).sort((a,b)=> a.localeCompare(b, 'ur')).map(Name => ({ Name }));
+    tagHint.textContent = `${tagsList.length} ٹیگز لوڈ ہوئے — تلاش کرنے کے لیے ٹائپ کریں`;
+    populateTagCombo();
+    return;
+  }
+
+  // 2) Fallback: scan first N fatawa to build unique tags
+  const url = `${API_BASE}/fatwa?limit=${TAGS_SCAN_LIMIT}&offset=0`;
+  const rows = await fetchJson(url, []);
+  const set = new Set();
+  (rows || []).forEach(r=>{
+    tokenizeTags(r.tags || '').forEach(t => set.add(t));
+  });
+  tagsList = Array.from(set).sort((a,b)=> a.localeCompare(b, 'ur')).map(Name => ({ Name }));
+  tagHint.textContent = `${tagsList.length} ٹیگز (fallback) — تلاش کرنے کے لیے ٹائپ کریں`;
+  populateTagCombo();
+}
+
+/* ---------- Combobox ---------- */
+function populateTagCombo(filterText = '') {
+  const q = normalizeUrdu(filterText).toLowerCase();
+  const items = tagsList
+    .filter(t => !q || normalizeUrdu(t.Name).toLowerCase().includes(q))
+    .sort((a,b)=> (a.Name || '').localeCompare((b.Name || ''), 'ur'));
+
+  filteredTagItems = items;
+  tagComboList.innerHTML = '';
+
+  // "تمام ٹیگز"
+  const liAll = document.createElement('li');
+  liAll.role = 'option';
+  liAll.dataset.name = '';
+  liAll.className = 'cursor-pointer px-3 py-2 hover:bg-beige rounded-t-2xl';
+  liAll.innerHTML = 'تمام ٹیگز';
+  liAll.addEventListener('click', () => selectTagFromCombo(''));
+  tagComboList.appendChild(liAll);
+
+  items.forEach((t) => {
+    const li = document.createElement('li');
+    li.role = 'option';
+    li.dataset.name = t.Name;
+    li.className = 'cursor-pointer px-3 py-2 hover:bg-beige';
+    li.textContent = t.Name;
+    li.addEventListener('click', () => selectTagFromCombo(t.Name));
+    tagComboList.appendChild(li);
+  });
+
+  activeListIndex = -1;
+  highlightActiveItem();
+}
+
+function highlightActiveItem() {
+  const options = Array.from(tagComboList.querySelectorAll('li[role="option"]'));
+  options.forEach((el, idx) => {
+    if (idx === activeListIndex) {
+      el.classList.add('bg-ash_gray/40');
+      el.scrollIntoView({ block: 'nearest' });
+    } else {
+      el.classList.remove('bg-ash_gray/40');
+    }
+  });
+}
+
+/* ---------- Selecting a tag (uses local /by-tag API) ---------- */
+function selectTagFromCombo(name) {
+  const newTag = norm(name);
+
+  if (!newTag) {
+    // Clear back to "all"
+    currentTag = '';
+    mode = 'all';
+    tagComboInput.value = '';
+    tagComboInput.placeholder = 'تمام ٹیگز';
+    activeTagWrap.classList.add('hidden');
+
+    limit = 50;
+    offset = 0;
+    fatawaData = [];
+    allLoaded = false;
+    loadMoreBtn.style.display = '';
+    const url = new URL(window.location.href);
+    url.searchParams.delete('tag');
+    window.history.replaceState({}, '', url.toString());
+    fetchFatawa(true);
+    closeCombo();
+    return;
+  }
+
+  // Tag mode
+  currentTag = newTag;
+  mode = 'tag';
+  tagComboInput.value = currentTag;
+  activeTagNameEl.textContent = currentTag;
+  activeTagWrap.classList.remove('hidden');
+
+  // Update URL
+  const url = new URL(window.location.href);
+  url.searchParams.set('tag', currentTag);
+  window.history.replaceState({}, '', url.toString());
+
+  // Reset paging and fetch via /by-tag
+  offset = 0;
+  limit = 50;
+  fatawaData = [];
+  allLoaded = false;
+  loadMoreBtn.style.display = '';
+  fetchFatawa(true);
+  closeCombo();
+}
+
+/* ---------- Render ---------- */
 function sanitizeHtml(unsafeHtml) {
   if (!unsafeHtml) return '';
   const tpl = document.createElement('template');
@@ -274,7 +467,6 @@ function sanitizeHtml(unsafeHtml) {
   return wrapper ? wrapper.innerHTML : tpl.innerHTML;
 }
 
-/* ---------- Safe text escape ---------- */
 function escapeText(s) {
   if (s === null || s === undefined) return '';
   return String(s)
@@ -285,58 +477,41 @@ function escapeText(s) {
     .replaceAll("'", '&#039;');
 }
 
-/* ---------- Sorting (Views desc, then Title) ---------- */
+/* Your sorting: Views DESC, then Title (Urdu) */
 function sortFatawa(arr){
   return arr.slice().sort((a,b)=>{
     const av = Number(a.Views || 0);
     const bv = Number(b.Views || 0);
     if (bv !== av) return bv - av;
-    const at = norm(a.Title).toLowerCase();
-    const bt = norm(b.Title).toLowerCase();
+    const at = (''+ (a.Title||'')).toLowerCase();
+    const bt = (''+ (b.Title||'')).toLowerCase();
     return at.localeCompare(bt, 'ur');
   });
 }
 
-/* ---------- Fetch tags (build slug<->name map) ---------- */
-async function fetchTagsIndex(){
-  try{
-    const res = await fetch('https://dynamicmasailworld.onrender.com/api/tags?limit=148', { headers: { 'Accept':'application/json' }});
-    const json = await res.json();
-    const tags = Array.isArray(json) ? json
-               : Array.isArray(json?.data) ? json.data
-               : Array.isArray(json?.items) ? json.items
-               : Array.isArray(json?.tags) ? json.tags
-               : [];
-    tagsIndexBySlug.clear();
-    tagsIndexByName.clear();
-    tags.forEach(t=>{
-      const name = norm(t.Name);
-      const slug = norm(t.slug);
-      if (slug) tagsIndexBySlug.set(slug, name || slug);
-      if (name) tagsIndexByName.set(name, slug || name);
-    });
-  }catch(e){
-    console.warn('Tags index fetch failed; will fall back to name-only matching.', e);
-  }
-}
+/* NEW: bump view for a fatwa id (POST; survives navigation) */
+function bumpFatwaView(id){
+  if (!id) return;
+  const url = `${VIEW_API_BASE}/${encodeURIComponent(id)}/view`;
 
-/* ---------- Populate tag dropdown (from loaded fatawa) ---------- */
-function populateTagsFromFatawa() {
-  const names = new Set();
-  fatawaData.forEach(f=>{
-    if (f.tags) {
-      String(f.tags).split(',').forEach(t=>{ const n = norm(t); if(n) names.add(n); });
+  try {
+    if (navigator.sendBeacon) {
+      const blob = new Blob(['1'], { type: 'text/plain' });
+      if (navigator.sendBeacon(url, blob)) return;
     }
-  });
-  const opts = ['<option value="">تمام ٹیگز</option>'];
-  Array.from(names).sort((a,b)=>a.localeCompare(b,'ur')).forEach(n=>{
-    const sel = (n === selectedTagName) ? ' selected' : '';
-    opts.push(`<option value="${escapeText(n)}"${sel}>${escapeText(n)}</option>`);
-  });
-  tagDropdown.innerHTML = opts.join('');
+  } catch {}
+
+  try {
+    fetch(url, {
+      method: 'POST',
+      keepalive: true,
+      credentials: 'include',
+      headers: { 'Content-Type': 'text/plain' },
+      body: '1'
+    }).catch(()=>{});
+  } catch {}
 }
 
-/* ---------- Render list ---------- */
 function renderList(data) {
   listEl.innerHTML = '';
   if (!data.length) {
@@ -351,6 +526,9 @@ function renderList(data) {
     a.href = `/fatwa/${encodeURIComponent(f.id)}`;
     a.className = 'block bg-white p-6 rounded-2xl shadow-lg border border-gray-200 transition-all duration-200 card-link';
     a.setAttribute('contenteditable', 'false');
+
+    /* NEW: bump views on click (non-blocking) */
+    a.addEventListener('click', () => { bumpFatwaView(f.id); }, { passive: true });
 
     const title = `<h3 class="text-xl font-semibold mb-2" contenteditable="false">${escapeText(f.Title || f.question || 'بلا عنوان')}</h3>`;
     const detail = sanitizeHtml(String(f.detailquestion || f.details || ''));
@@ -374,54 +552,81 @@ function renderList(data) {
   });
 }
 
-/* ---------- Filters ---------- */
+/* ---------- Apply search filter client-side ---------- */
 function applyFilters() {
   const q = norm(searchInput.value).toLowerCase();
 
-  const filtered = fatawaData.filter(f=>{
-    const byTag = !selectedTagName
-      ? true
-      : (f.tags && (','+String(f.tags)+',').includes(','+selectedTagName+',')); // exact-ish contains
-
-    const bySearch = !q ? true : (
-      (f.Title && f.Title.toLowerCase().includes(q)) ||
-      (f.detailquestion && f.detailquestion.toLowerCase().includes(q)) ||
-      (f.details && f.details.toLowerCase().includes(q))
+  let working = fatawaData.filter(f=>{
+    if (!q) return true;
+    return (
+      (f.Title && String(f.Title).toLowerCase().includes(q)) ||
+      (f.detailquestion && String(f.detailquestion).toLowerCase().includes(q)) ||
+      (f.details && String(f.details).toLowerCase().includes(q))
     );
-    return byTag && bySearch;
   });
 
-  renderList(filtered);
-
-  // Active tag chip UI
-  if (selectedTagName) {
-    activeTagNameEl.textContent = selectedTagName;
-    activeTagWrap.classList.remove('hidden');
-  } else {
-    activeTagWrap.classList.add('hidden');
-  }
+  renderList(working);
 }
 
-/* ---------- Fetch fatawa (paginated) ---------- */
-async function fetchFatawa() {
+/* ---------- Fetch fatawa (all mode or tag mode) ---------- */
+async function fetchFatawa(forceClearBefore = false) {
   if (isLoading || allLoaded) return;
   isLoading = true;
 
-  if (offset === 0) loader.style.display = 'flex';
-  else { inlineLoader.classList.remove('hidden'); loadMoreBtn.disabled = true; }
+  if (forceClearBefore) {
+    inlineLoader.classList.remove('hidden');
+    loadMoreBtn.disabled = true;
+    listEl.innerHTML = '';
+  } else if (offset === 0) {
+    loader.style.display = 'flex';
+  } else {
+    inlineLoader.classList.remove('hidden');
+    loadMoreBtn.disabled = true;
+  }
 
   try {
-    const res = await fetch(`https://dynamicmasailworld.onrender.com/api/fatwa?limit=${limit}&offset=${offset}`);
-    const chunk = await res.json();
+    if (mode === 'tag' && currentTag) {
+      const params = new URLSearchParams({
+        tag: currentTag,
+        status: 'any',
+        isActive: 'any',
+        orderBy: 'recent',
+        limit: String(limit),
+        offset: String(offset)
+      });
+      const url = `${API_BASE}/fatwa/by-tag?${params.toString()}`;
+      const resp = await fetchJson(url, { data: [] });
+      const rows = Array.isArray(resp?.data) ? resp.data : [];
 
-    if (!Array.isArray(chunk) || chunk.length === 0) {
-      allLoaded = true;
-      loadMoreBtn.style.display = 'none';
+      if (!rows.length) {
+        if (offset === 0) {
+          fatawaData = [];
+          renderList([]);
+        }
+        allLoaded = true;
+        loadMoreBtn.style.display = 'none';
+      } else {
+        fatawaData = fatawaData.concat(rows);
+        applyFilters();
+        offset += limit;
+        if (rows.length < limit) {
+          allLoaded = true;
+          loadMoreBtn.style.display = 'none';
+        } else {
+          loadMoreBtn.style.display = '';
+        }
+      }
     } else {
-      fatawaData = fatawaData.concat(chunk);
-      populateTagsFromFatawa();  // fill dropdown with names present in data
-      applyFilters();
-      offset += limit;
+      const url = `${API_BASE}/fatwa?limit=${limit}&offset=${offset}`;
+      const rows = await fetchJson(url, []);
+      if (!Array.isArray(rows) || rows.length === 0) {
+        allLoaded = true;
+        loadMoreBtn.style.display = 'none';
+      } else {
+        fatawaData = fatawaData.concat(rows);
+        applyFilters();
+        offset += limit;
+      }
     }
   } catch (err) {
     console.error('Failed to fetch fatawa:', err);
@@ -434,65 +639,121 @@ async function fetchFatawa() {
   }
 }
 
-/* ---------- Initial boot: read ?tag=, map slug->name, then load ---------- */
+/* ---------- Initial boot ---------- */
 (async function init(){
-  // 1) get ?tag={slug or name}
-  initialTagSlug = decodeURIComponent(getParam('tag') || '').trim();
-
-  // 2) build tags index to translate slug -> Name
+  // Load tags (200) from local /api/tags if available; fallback to scan
   await fetchTagsIndex();
 
-  // If URL had a tag, prefer resolving via slug; if not found, treat it as Name
-  if (initialTagSlug) {
-    const maybeName = tagsIndexBySlug.get(initialTagSlug);
-    selectedTagName = maybeName || initialTagSlug; // fallback: use given value as Name
+  // Read ?tag=
+  const fromQS = norm(getParam('tag'));
+  if (fromQS) {
+    currentTag = fromQS;
+    mode = 'tag';
+    tagComboInput.value = currentTag;
+    activeTagNameEl.textContent = currentTag;
+    activeTagWrap.classList.remove('hidden');
   }
 
-  // 3) start loading data
+  // Initial fetch
   await fetchFatawa();
 
-  // 4) if we have a selectedTagName and it exists in dropdown, select it
-  if (selectedTagName) {
-    // ensure dropdown shows the selected tag if present
-    const options = Array.from(tagDropdown.options).map(o=>o.value);
-    if (options.includes(selectedTagName)) {
-      tagDropdown.value = selectedTagName;
-    }
-    applyFilters();
-  }
+  // Render
+  applyFilters();
 })();
 
 /* ---------- Events ---------- */
-tagDropdown.addEventListener('change', e => {
-  selectedTagName = norm(e.target.value);
-  applyFilters();
+// Debounced search
+let searchDebounce;
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(applyFilters, 200);
 });
 
-searchInput.addEventListener('input', applyFilters);
+// Pagination
 loadMoreBtn.addEventListener('click', fetchFatawa);
 
+// Clear tag
 clearTagBtn.addEventListener('click', () => {
-  selectedTagName = '';
-  tagDropdown.value = '';
-  // also clear ?tag= from URL without reload
+  currentTag = '';
+  mode = 'all';
+  tagComboInput.value = '';
+  tagComboInput.placeholder = 'تمام ٹیگز';
+  activeTagWrap.classList.add('hidden');
+
+  limit = 50;
+  offset = 0;
+  fatawaData = [];
+  allLoaded = false;
+  loadMoreBtn.style.display = '';
+
   const url = new URL(window.location.href);
   url.searchParams.delete('tag');
   window.history.replaceState({}, '', url.toString());
-  applyFilters();
+
+  fetchFatawa(true);
 });
 
-/* ---------- UX guard: prevent caret editing ---------- */
-document.addEventListener('dblclick', function(e) {
-  let el = e.target;
-  while (el && el !== document.body) {
-    if (el.classList && el.classList.contains('card-link')) {
-      el.focus();
-      e.preventDefault();
-      return;
-    }
-    el = el.parentElement;
+/* Combobox interactions */
+tagComboToggle.addEventListener('click', (e) => {
+  e.preventDefault();
+  const isHidden = tagComboList.classList.contains('hidden');
+  if (isHidden) {
+    populateTagCombo(tagComboInput.value || '');
+    openCombo();
+    tagComboInput.focus();
+  } else {
+    closeCombo();
   }
-}, true);
-  </script>
+});
+
+tagComboInput.addEventListener('input', (e) => {
+  populateTagCombo(e.target.value);
+  openCombo();
+});
+
+// Press Enter to select the highlighted/first match
+tagComboInput.addEventListener('keydown', (e) => {
+  const options = Array.from(tagComboList.querySelectorAll('li[role="option"]'));
+  const max = options.length - 1;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    openCombo();
+    activeListIndex = Math.min(max, activeListIndex + 1);
+    highlightActiveItem();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    openCombo();
+    activeListIndex = Math.max(0, activeListIndex - 1);
+    highlightActiveItem();
+  } else if (e.key === 'Enter') {
+    if (!tagComboList.classList.contains('hidden')) {
+      e.preventDefault();
+      const idx = activeListIndex >= 0 ? activeListIndex : 0;
+      const opt = options[idx];
+      if (opt) selectTagFromCombo(opt.dataset.name ?? '');
+    } else {
+      const typed = norm(tagComboInput.value);
+      const exists = tagsList.some(t => norm(t.Name) === typed);
+      selectTagFromCombo(exists ? typed : '');
+    }
+  } else if (e.key === 'Escape') {
+    closeCombo();
+  }
+});
+
+tagComboInput.addEventListener('focus', () => {
+  populateTagCombo(tagComboInput.value || '');
+  openCombo();
+});
+
+// Click outside closes the combo
+document.addEventListener('click', (e) => {
+  if (!tagComboWrap.contains(e.target)) {
+    closeCombo();
+  }
+});
+</script>
+
 </body>
 </html>

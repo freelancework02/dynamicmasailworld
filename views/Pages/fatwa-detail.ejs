@@ -141,7 +141,7 @@
   <!-- Values for client JS -->
   <script>
     window.__MW__ = {
-      API_BASE: "<%= (typeof API_BASE !== 'undefined' && API_BASE) ? API_BASE : 'https://dynamicmasailworld.onrender.com/api/fatwa' %>",
+      API_BASE: "<%= (typeof API_BASE !== 'undefined' && API_BASE) ? API_BASE : 'https://masailworld.com/api/fatwa' %>",
       fatwaId: "<%= _fatwaId %>",
       requestUrl: "<%= String(pageUrl).replace(/\"/g, '\\\"') %>"
     };
@@ -203,7 +203,7 @@
 
   <!-- Main -->
   <main class="container mx-auto px-6 py-12 max-w-5xl">
-    <a href="/Pages/fatawa.html" class="text-midnight_green font-semibold text-xl">&larr; واپس تمام فتاویٰ</a>
+    <a href="/fatwa" class="text-midnight_green font-semibold text-xl">&larr; واپس تمام فتاویٰ</a>
 
     <!-- Dynamic Fatwa Detail -->
     <div id="fatwa-container" class="bg-white border mt-6 p-8 rounded-2xl shadow" contenteditable="false"></div>
@@ -389,8 +389,8 @@
 
     const API_BASE = (window.__MW__ && window.__MW__.API_BASE) ||
       ((location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'https://dynamicmasailworld.onrender.com/api/fatwa'
-        : 'https://dynamicmasailworld.onrender.com/api/fatwa');
+        ? 'https://masailworld.com/api/fatwa'
+        : 'https://masailworld.com/api/fatwa');
 
     function sendViewOnceVisible(fatwaId) {
       const target = document.getElementById('fatwa-container');
@@ -402,7 +402,7 @@
         if (counted) return;
         counted = true;
         try {
-          const res = await fetch(`https://dynamicmasailworld.onrender.com/api/fatwa/${encodeURIComponent(fatwaId)}/view`, {
+          const res = await fetch(`https://masailworld.com/api/fatwa/${encodeURIComponent(fatwaId)}/view`, {
             method: 'POST',
             credentials: 'include'
           });

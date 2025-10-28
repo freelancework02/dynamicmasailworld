@@ -22,8 +22,8 @@
       font-size: 80%;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      padding-bottom: 70px; /* Space for the bottom navigation bar */
-      padding-top: 56px; /* Space for the new mobile header */
+      padding-bottom: 70px;
+      padding-top: 56px;
       background-color: #eff6e0;
     }
     @media (min-width: 768px) {
@@ -36,21 +36,12 @@
     }
     .page { display: none; }
     .page.active { display: block; }
-
-    /* Custom scrollbar */
     #searchDropdown::-webkit-scrollbar,
-    #related-fatawa-list::-webkit-scrollbar {
-      width: 8px;
-    }
+    #related-fatawa-list::-webkit-scrollbar { width: 8px; }
     #searchDropdown::-webkit-scrollbar-thumb,
-    #related-fatawa-list::-webkit-scrollbar-thumb {
-      background-color: #598392;
-      border-radius: 4px;
-    }
+    #related-fatawa-list::-webkit-scrollbar-thumb { background-color: #598392; border-radius: 4px; }
     #searchDropdown::-webkit-scrollbar-track,
-    #related-fatawa-list::-webkit-scrollbar-track {
-      background: #eff6e0;
-    }
+    #related-fatawa-list::-webkit-scrollbar-track { background: #eff6e0; }
     .circular-logo { border-radius: 50%; }
   </style>
 
@@ -111,14 +102,14 @@
           </a>
         </div>
          <div class="hidden md:flex items-center space-x-reverse space-x-8">
-                    <a href="/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
-                    <a href="/fatwa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
-                    <a href="/about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
-                    <a href="/articles" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
-                    <a href="/Categoryfatawa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
-                    <a href="/book" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
-                    <a href="/question" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
-                </div> 
+            <a href="/" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">صفحہ اول</a>
+            <a href="/fatwa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">فتاویٰ</a>
+            <a href="/about" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">تعارف</a>
+            <a href="/articles" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">مضامین</a>
+            <a href="/Categoryfatawa" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">موضوعات</a>
+            <a href="/book" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">اسلامی کتب</a>
+            <a href="/question" class=" text-midnight_green hover:text-midnight_green-600 transition text-lg font-semibold">سوال پوچھیں</a>
+         </div>
       </div>
     </nav>
   </header>
@@ -203,17 +194,16 @@
         <div>
           <h3 class="text-2xl font-semibold mb-4">فوری لنکس</h3>
           <ul class="space-y-3 text-lg">
-                        <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
-                        <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
-                        <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
-                        <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
-                    </ul>
+            <li><a href="/fatwa" class="text-air_force_blue-700 hover:text-beige transition">فتاویٰ</a></li>
+            <li><a href="/articles" class="text-air_force_blue-700 hover:text-beige transition">مضامین</a></li>
+            <li><a href="/question" class="nav-link text-air_force_blue-700 hover:text-beige transition">سوال پوچھیں</a></li>
+            <li><a href="/about" class="nav-link text-air_force-blue-700 hover:text-beige transition">ہمارے بارے میں</a></li>
+          </ul>
         </div>
         <div>
           <h3 class="text-2xl font-semibold mb-4">ہم سے رابطہ کریں</h3>
           <ul class="space-y-3 text-lg text-air_force_blue-700">
             <li><i class="bi bi-envelope ml-2"></i>azharalimi95@gmail.com</li>
-            <!-- <li><i class="bi bi-telephone ml-2"></i>+92 300 1234567</li> -->
             <li><i class="bi bi-geo-alt ml-2"></i>Jamia Quadria Alimia Taloja Phase 1 New Mumbai</li>
           </ul>
         </div>
@@ -234,59 +224,87 @@
   </footer>
 
   <!-- Articles: Search + Listing dropdown -->
- <script>
-  // Make the page non-editable if possible
+  <script>
   try { document.designMode = 'off'; } catch (e) {}
   try { document.body.setAttribute('contenteditable','false'); } catch(e){}
 
-  // Elements (guarded)
   const loader = document.getElementById('loader');
   const inlineLoader = document.getElementById('inlineLoader');
   const listEl = document.getElementById('articles-list');
   const searchInput = document.getElementById('articleSearchInput');
   const limitDropdown = document.getElementById('limitDropdown');
 
-  // If a critical element is missing, stop early (avoid runtime errors)
-  if (!listEl) {
-    console.error('articles-list element not found — script stopped.');
-  }
+  if (!listEl) console.error('articles-list element not found — script stopped.');
 
-  // State
-  const API_BASE = 'https://masailworld.onrender.com/api/article';
-  let fullSet = [];      // fetched set (size = limit)
-  let limit = 50;        // default
+  // --- API bases ---
+  // Prefer production API; fall back to same-origin proxy if you host it
+  const API_BASE =
+    (window.__MW__ && window.__MW__.ARTICLE_API) ||
+    'https://dynamicmasailworld.onrender.com/api/article';
+
+  // Use the same host for view increment to avoid mixed content / localhost
+  const VIEW_API = API_BASE; // critical fix
+
+  let fullSet = [];
+  let limit = 50;
   let isLoading = false;
 
-  // Utils
   function stripHtml(html){
     if (!html) return '';
     const div = document.createElement('div');
-    // Use textContent for safety
     div.innerHTML = html;
     return (div.textContent || div.innerText || '').trim();
   }
+  function safeArray(v){ return Array.isArray(v) ? v : []; }
+  function pickId(obj) { return obj?.id ?? obj?.ID ?? obj?.Id ?? obj?.articleId ?? obj?.ArticleID; }
 
-  function safeArray(v){
-    return Array.isArray(v) ? v : [];
+  // ---- New: POST-first bump compatible with sendBeacon and simple CORS ----
+  function incrementArticleView(id) {
+    if (!id) return;
+    const url = `${VIEW_API.replace(/\/$/, '')}/${encodeURIComponent(id)}/view`;
+
+    // 1) Try sendBeacon (POST). It survives navigation and is CORS-friendly.
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob(['1'], { type: 'text/plain' }); // simple type => simple request
+        if (navigator.sendBeacon(url, blob)) return; // success path
+      }
+    } catch (_) {}
+
+    // 2) Fallback: fetch POST with keepalive and simple content-type (no preflight)
+    try {
+      fetch(url, {
+        method: 'POST',
+        keepalive: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'text/plain' },
+        body: '1'
+      }).catch(() => { /* ignore */ });
+    } catch (_) { /* ignore */ }
   }
 
-  // Create DOM card (safer than concatenating HTML strings)
   function createCard(article){
     const container = document.createElement('div');
     container.className = "cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 border border-[rgba(174,195,176,0.35)]";
-    container.tabIndex = 0; // make focusable
-    // navigate on click or Enter
-    function goToDetail(){ window.location.href = `/article/${encodeURIComponent(article.id)}`; }
+    container.tabIndex = 0;
+
+    function goToDetail(){
+      const id = pickId(article);
+      incrementArticleView(id);
+      // Zero-delay is fine; keepalive/beacon will handle navigation
+      setTimeout(() => {
+        window.location.href = `/article/${encodeURIComponent(id)}`;
+      }, 0);
+    }
 
     container.addEventListener('click', goToDetail);
-    container.addEventListener('keypress', (e) => { if (e.key === 'Enter') goToDetail(); });
+    container.addEventListener('keydown', (e) => { if (e.key === 'Enter') goToDetail(); });
 
-    // Image
     const img = document.createElement('img');
     img.className = "w-full h-56 object-cover";
     img.alt = article.Title || '';
-    img.src = `${API_BASE}/${article.id}/image`;
-    // fallback if image fails
+    const idForImg = pickId(article);
+    img.src = `${API_BASE.replace(/\/$/, '')}/${idForImg}/image`;
     img.addEventListener('error', () => {
       img.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400">
@@ -296,7 +314,6 @@
       );
     });
 
-    // Body
     const body = document.createElement('div');
     body.className = "p-6";
 
@@ -323,7 +340,6 @@
     return container;
   }
 
-  // Render list (safe)
   function render(list){
     if (!listEl) return;
     const arr = safeArray(list);
@@ -331,18 +347,12 @@
       listEl.innerHTML = '<p class="text-center text-air_force_blue">فی الحال کوئی مضمون دستیاب نہیں ہے۔</p>';
       return;
     }
-
-    // Clear and append nodes
     listEl.innerHTML = '';
     const frag = document.createDocumentFragment();
-    arr.forEach(item => {
-      const cardEl = createCard(item);
-      frag.appendChild(cardEl);
-    });
+    arr.forEach(item => { frag.appendChild(createCard(item)); });
     listEl.appendChild(frag);
   }
 
-  // Search (case-insensitive)
   function applySearch(){
     if (!searchInput) { render(fullSet); return; }
     const q = (searchInput.value || '').trim().toLowerCase();
@@ -355,7 +365,6 @@
     render(filtered);
   }
 
-  // Fetch articles from API with robust parsing
   async function fetchArticles(newLimit){
     if (isLoading) return;
     isLoading = true;
@@ -366,11 +375,11 @@
     }
 
     try {
-      const url = `${API_BASE}?limit=${encodeURIComponent(newLimit)}&offset=0`;
+      const url = `${API_BASE.replace(/\/$/, '')}?limit=${encodeURIComponent(newLimit)}&offset=0`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to load articles: ${res.status} ${res.statusText}`);
       const payload = await res.json();
-      // payload could be an array, or { data: [...] }, or {results: [...] }, so try a few shapes
+
       if (Array.isArray(payload)) {
         fullSet = payload;
       } else if (Array.isArray(payload.data)) {
@@ -380,10 +389,9 @@
       } else if (Array.isArray(payload.items)) {
         fullSet = payload.items;
       } else {
-        // if API returns an object representing a single article, wrap it in array
         fullSet = payload ? (typeof payload === 'object' ? [payload] : []) : [];
       }
-      applySearch(); // render with current search term (if any)
+      applySearch();
     } catch (err) {
       console.error('❌ Error loading articles:', err);
       if (listEl) listEl.innerHTML = '<p class="text-center text-air_force_blue">مضامین لوڈ کرنے میں مسئلہ آیا۔</p>';
@@ -394,35 +402,26 @@
     }
   }
 
-  // Events (guard existence)
-  if (searchInput) {
-    searchInput.addEventListener('input', applySearch);
-  }
+  if (searchInput) searchInput.addEventListener('input', applySearch);
 
   if (limitDropdown) {
     limitDropdown.addEventListener('change', async () => {
       limit = Number(limitDropdown.value || '50');
       await fetchArticles(limit);
-      // scroll to list start after refetch (guard)
-      if (document.getElementById('articles-list')) {
-        const top = document.getElementById('articles-list').getBoundingClientRect().top + window.scrollY - 100;
-        // use instant scroll if smooth not supported
-        try {
-          window.scrollTo({ top, behavior: 'smooth' });
-        } catch (e) {
-          window.scrollTo(0, top);
-        }
+      const list = document.getElementById('articles-list');
+      if (list) {
+        const top = list.getBoundingClientRect().top + window.scrollY - 100;
+        try { window.scrollTo({ top, behavior: 'smooth' }); }
+        catch { window.scrollTo(0, top); }
       }
     });
   }
 
-  // Init
   (async function init(){
     if (limitDropdown) limitDropdown.value = String(limit);
     await fetchArticles(limit);
   })();
-</script>
-
+  </script>
 
 </body>
 </html>

@@ -370,3 +370,62 @@ exports.myLikeStatus = async (req, res) => {
     return res.status(500).json({ success: false, error: 'Failed to check like status' });
   }
 };
+
+
+
+// views
+function first(x) {
+  // Normalize whatever db.query returns into the "first" piece (rows/result)
+  if (Array.isArray(x)) return x[0];   // mysql2: [rows, fields]
+  return x;                             // custom wrapper: rows/result directly
+}
+
+const TABLE = 'Article'; // ← change to your exact table name if different (Article/Articles)
+
+/**
+ * PUT /api/article/:id/view
+ * Bumps Views by +1 (Views is varchar in your schema, so we CAST safely).
+ */
+exports.incrementArticleView = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ success: false, error: 'Article ID required' });
+
+    // 1) Increment
+    const updateRes = first(await db.query(
+      `
+      UPDATE ${TABLE}
+      SET Views = COALESCE(CAST(Views AS UNSIGNED), 0) + 1
+      WHERE id = ?
+      `,
+      [id]
+    ));
+
+    const affected =
+      updateRes?.affectedRows ??
+      updateRes?.rowCount ?? // some drivers use rowCount
+      0;
+
+    if (!affected) {
+      return res.status(404).json({ success: false, error: 'Article not found' });
+    }
+
+    // 2) Read back new count
+    const rows = first(await db.query(
+      `SELECT id, Views FROM ${TABLE} WHERE id = ?`,
+      [id]
+    ));
+
+    // rows might be an array of rows or a single row
+    const row = Array.isArray(rows) ? rows[0] : rows;
+
+    return res.json({
+      success: true,
+      message: 'View count incremented',
+      data: row
+    });
+  } catch (err) {
+    console.error('Error incrementing article view:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
+  }
+};

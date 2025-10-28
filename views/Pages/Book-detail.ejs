@@ -102,20 +102,15 @@
     /* Responsive cover (no cropping on odd images), keeps 3:4 feel */
     .book-cover {
       width: 100%;
-      max-width: 16rem;          /* ~256px on phones */
+      max-width: 16rem;
       aspect-ratio: 3 / 4;
-      object-fit: contain;       /* no crop */
+      object-fit: contain;
       background: #fff;
     }
-    @media (min-width: 640px) { .book-cover { max-width: 18rem; } } /* sm */
-    @media (min-width: 768px) { .book-cover { max-width: 20rem; } } /* md */
-    @media (min-width: 1024px){ .book-cover { max-width: 22rem; } } /* lg */
+    @media (min-width: 640px) { .book-cover { max-width: 18rem; } }
+    @media (min-width: 768px) { .book-cover { max-width: 20rem; } }
+    @media (min-width: 1024px){ .book-cover { max-width: 22rem; } }
 
-    /* Keep container styles unchanged below */
-    .hero-section {
-      background-image: linear-gradient(rgba(1,22,30,.7), rgba(1,22,30,.7)), url('https://img.freepik.com/free-photo/close-up-islamic-new-year-concept-with-misbaha_23-2148611691.jpg');
-      background-size: cover; background-position: center;
-    }
     .page { display: none; } .page.active { display: block; }
     #searchDropdown::-webkit-scrollbar, #related-fatawa-list::-webkit-scrollbar { width: 8px; }
     #searchDropdown::-webkit-scrollbar-thumb, #related-fatawa-list::-webkit-scrollbar-thumb { background-color: #598392; border-radius: 4px; }
@@ -264,11 +259,17 @@
             ? tagsRaw
             : String(tagsRaw || '').split(',').map(t => t.trim()).filter(Boolean);
 
-          const views = b.Views || b.views || b.ViewCount || b.viewCount || 0;
+          const views = b.views || b.views || b.ViewCount || b.viewCount || 0;
           const idVal = _id;
           const coverUrl = (m && m.image) ? m.image : (idVal ? ('/book/' + encodeURIComponent(idVal) + '/cover') : '');
           const pageUrl2 = (m && m.url) || '';
-          const publishedLabel = (m && m.publishedDateLabel) || '';
+          const publishedLabel = (m && m.InsertedDate) || '';
+
+          // -------- Download URL (kept separate and pure) --------
+          const downloadUrl = idVal
+            ? ('https://masailworld.com/api/book/' + encodeURIComponent(idVal) + '/pdf')
+            : '';
+          const downloadFileName = (String(title || 'book').trim() || 'book') + '.pdf';
         %>
 
         <!-- Top: Title + Views + Share -->
@@ -290,8 +291,18 @@
             </div>
           </div>
 
-          <!-- Share Buttons -->
+          <!-- Actions: Download + Share -->
           <div class="flex items-center gap-3">
+            <% if (downloadUrl) { %>
+              <a href="<%= downloadUrl %>"
+                 class="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-midnight_green text-white hover:bg-midnight_green-400 transition shadow-md"
+                 download="<%= downloadFileName %>" target="_blank" rel="noopener"
+                 aria-label="کتاب ڈاؤن لوڈ کریں">
+                <i class="bi bi-download"></i>
+                <span class="font-bold">ڈاؤن لوڈ</span>
+              </a>
+            <% } %>
+
             <a class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-beige hover:bg-ash_gray transition"
                aria-label="WhatsApp"
                href="https://wa.me/?text=<%= encodeURIComponent(title + ' — ' + pageUrl2) %>" target="_blank" rel="noopener">
@@ -317,7 +328,7 @@
         <!-- Main Grid: Cover + Facts + Description -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
           <!-- Cover -->
-          <div class="md:col-span-1 flex justify-center">
+          <div class="md:col-span-1 flex flex-col items-center">
             <% if (coverUrl) { %>
               <img src="<%= coverUrl %>"
                    alt="<%= title %> — سرورق"
@@ -326,6 +337,17 @@
               <div class="book-cover rounded-xl shadow-md border border-ash_gray/60 bg-beige flex items-center justify-center text-air_force_blue">
                 No Cover
               </div>
+            <% } %>
+
+            <!-- Secondary Download CTA under cover -->
+            <% if (downloadUrl) { %>
+              <a href="<%= downloadUrl %>"
+                 class="mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-beige text-midnight_green hover:bg-ash_gray transition border border-ash_gray/60 shadow-sm"
+                 download="<%= downloadFileName %>" target="_blank" rel="noopener"
+                 aria-label="پی ڈی ایف ڈاؤن لوڈ کریں">
+                <i class="bi bi-filetype-pdf text-lg"></i>
+                <span class="font-bold">پی ڈی ایف ڈاؤن لوڈ</span>
+              </a>
             <% } %>
           </div>
 

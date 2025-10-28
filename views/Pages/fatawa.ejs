@@ -151,9 +151,9 @@
       <div class="container2 mx-auto px-4 sm:px-6 flex justify-between items-center space-x-reverse text-lg">
         <a href="/question" class="nav-link text-beige hover:text-ash_gray transition">سوال پوچھیں</a>
         <div class="flex items-center space-x-4 space-x-reverse">
-          <a  href="https://www.facebook.com/share/1PhWgmvP2g/" class="hover:text-beige transition"><i class="bi bi-facebook"></i></a>
-          <a href="https://www.facebook.com/share/1PhWgmvP2g/"  class="hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
-          <a  href="http://youtube.com/c/AzharAlimi"  class="hover:text-beige transition"><i class="bi bi-youtube"></i></a>
+          <a  href="https://www.facebook.com/share/1PhWgmvP2g/" class="text-ash_gray hover: text-beige transition "><i class="bi bi-facebook"></i></a>
+          <a href="https://www.facebook.com/share/1PhWgmvP2g/"  class="text-ash_gray hover:text-beige transition"><i class="bi bi-twitter-x"></i></a>
+          <a  href="http://youtube.com/c/AzharAlimi"  class=" text-ash_gray hover:text-beige transition"><i class="bi bi-youtube"></i></a>
         </div>
       </div>
     </div>
@@ -338,6 +338,34 @@ const tagOptionsRoot = document.getElementById('tagOptions');
 const API_BASE = (window.__MW__ && window.__MW__.FATWA_API_BASE) || 'https://dynamicmasailworld.onrender.com/api/fatwa';
 const TAGS_API = (window.__MW__ && window.__MW__.FATWA_TAGS_API) || 'https://dynamicmasailworld.onrender.com/api/tags';
 const DETAIL_BASE = (window.__MW__ && window.__MW__.FATWA_DETAIL_BASE) || '/fatwa';
+
+/* ----------- NEW: same-origin view API for bumps ----------- */
+const VIEW_API_BASE = 'http://localhost:5000/api/fatwa'; // avoid CORS/mixed-content
+
+/* send a POST that survives navigation */
+function bumpFatwaView(id) {
+  if (!id) return;
+  const url = `${VIEW_API_BASE}/${encodeURIComponent(id)}/view`;
+
+  // Prefer sendBeacon (POST). Simple type => no CORS preflight.
+  try {
+    if (navigator.sendBeacon) {
+      const blob = new Blob(['1'], { type: 'text/plain' });
+      if (navigator.sendBeacon(url, blob)) return;
+    }
+  } catch {}
+
+  // Fallback: fetch POST with keepalive
+  try {
+    fetch(url, {
+      method: 'POST',
+      keepalive: true,
+      credentials: 'include',
+      headers: { 'Content-Type': 'text/plain' },
+      body: '1'
+    }).catch(() => {});
+  } catch {}
+}
 
 /* ---------- Variables ---------- */
 let fatawaDataPages = [];   // array of pages, each page = items[]
@@ -616,6 +644,13 @@ function buildCard(f, idx){
   a.href = makeDetailHref(f.id);
   a.className = 'block bg-white p-6 rounded-2xl shadow-lg border card-link';
   a.setAttribute('contenteditable', 'false');
+
+  /* NEW: bump views on click (don’t block navigation) */
+  a.addEventListener('click', () => {
+    bumpFatwaView(f.id);
+    // Let the browser follow the link normally.
+  }, { passive: true });
+
   const title = `<h3 class="text-xl font-semibold mb-2" contenteditable="false">${escapeText(f.Title || f.question || 'بلا عنوان')}</h3>`;
   const detail = sanitizeHtml(String(f.detailquestion || f.details || ''));
   a.innerHTML = `
