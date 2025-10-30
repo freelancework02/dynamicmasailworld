@@ -1,44 +1,86 @@
 // controllers/articleController.js
-const db = require('../db'); // your mysql2 / db wrapper
+const db = require('../db'); // your mysql / mysql2 wrapper
 const crypto = require('crypto');
 
-/**
- * Helper: normalize db.query results into rows array.
- * Supports:
- *  - mysql2: [rows, fields]
- *  - wrapper that returns rows array directly
- *  - pg-style: { rows: [...] }
- */
+/* ------------------------------------
+   Helpers: DB result normalization
+------------------------------------ */
 function rowsFromDbResult(result) {
   if (!result) return [];
-  // mysql2: [rows, fields]
-  if (Array.isArray(result) && Array.isArray(result[0])) return result[0];
-  // wrapper that returns rows array
-  if (Array.isArray(result)) {
-    // Could be rows itself
-    // If items look like objects, return as rows
-    return result;
-  }
-  // object with .rows
-  if (result && Array.isArray(result.rows)) return result.rows;
-  // unknown shape — return empty
+  if (Array.isArray(result) && Array.isArray(result[0])) return result[0]; // mysql2 [rows, fields]
+  if (Array.isArray(result)) return result;                                 // wrapper returns rows
+  if (result && Array.isArray(result.rows)) return result.rows;             // pg-style
   return [];
 }
+function first(x) { return Array.isArray(x) ? x[0] : x; }
 
-/* ------------------------------
-   anon cookie helper
-   ------------------------------ */
+/* ------------------------------------
+   Slug helpers
+------------------------------------ */
+
+/** Collapse whitespace to '-', collapse repeats, trim hyphens, cap 255. */
+function normalizeSlug(input) {
+  const s = String(input || '')
+    .trim()
+    .replace(/\s+/g, '-')     // spaces -> -
+    .replace(/-+/g, '-')      // collapse ----
+    .replace(/^[-]+|[-]+$/g, ''); // trim - at ends
+  // MySQL varchar(255) cap
+  return s.slice(0, 255);
+}
+
 /**
- * Returns existing anon id from cookie or sets a new one in response.
- * cookie name: anon_id
+ * Get a unique slug. If base is free -> return base.
+ * Otherwise return base-2, base-3, ... skipping current id if provided.
  */
+async function nextUniqueSlug(baseSlug, ignoreId = null) {
+  const base = normalizeSlug(baseSlug) || crypto.randomBytes(6).toString('hex');
+
+  // Fetch all conflicting slugs once
+  const params = ignoreId == null ? [base, base] : [base, base, ignoreId];
+  const q = `
+    SELECT slug
+    FROM \`Article\`
+    WHERE (slug = ? OR slug LIKE CONCAT(?, '-%'))
+      ${ignoreId == null ? '' : 'AND id <> ?'}
+  `;
+  const res = await db.query(q, params);
+  const rows = rowsFromDbResult(res);
+
+  if (!rows.length) return base;
+
+  const taken = new Set(rows.map(r => String(r.slug)));
+  if (!taken.has(base)) return base;
+
+  // Find max numeric suffix
+  let max = 1;
+  for (const val of taken) {
+    const m = val.match(/-(\d+)$/);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    }
+  }
+
+  // Try next couple numbers
+  for (let n = 2; n <= max + 2; n++) {
+    const candidate = normalizeSlug(`${base}-${n}`);
+    if (!taken.has(candidate)) return candidate;
+  }
+
+  // Fallback
+  return normalizeSlug(`${base}-${Date.now()}`);
+}
+
+/* ------------------------------------
+   anon cookie helper (unchanged)
+------------------------------------ */
 function getOrSetAnonId(req, res) {
   try {
     const cookieName = 'anon_id';
     let anon = req.cookies && req.cookies[cookieName];
     if (anon && typeof anon === 'string' && anon.length >= 16) return anon;
 
-    // create random token (hex 64)
     anon = crypto.randomBytes(32).toString('hex');
     const isProd = process.env.NODE_ENV === 'production';
     res.cookie(cookieName, anon, {
@@ -49,18 +91,17 @@ function getOrSetAnonId(req, res) {
       path: '/',
     });
     return anon;
-  } catch (err) {
-    // fallback: create non-persistent id
-    return crypto.createHash('sha256').update(String(Math.random()) + Date.now()).digest('hex');
+  } catch {
+    return crypto.createHash('sha256')
+      .update(String(Math.random()) + Date.now())
+      .digest('hex');
   }
 }
 
-/* ------------------------------
-   Denormalized counters helper
-   Recomputes likes/views from join tables and writes back to Article
-   ------------------------------ */
+/* ------------------------------------
+   Denormalized counters (unchanged)
+------------------------------------ */
 async function recomputeDenormCounts(articleId) {
-  // likes
   const likeRes = await db.query(
     'SELECT COUNT(*) AS c FROM article_likes WHERE article_id = ?',
     [articleId]
@@ -68,7 +109,6 @@ async function recomputeDenormCounts(articleId) {
   const likeRows = rowsFromDbResult(likeRes);
   const likeCount = (likeRows[0] && likeRows[0].c) ? Number(likeRows[0].c) : 0;
 
-  // views
   const viewRes = await db.query(
     'SELECT COUNT(*) AS c FROM article_views WHERE article_id = ?',
     [articleId]
@@ -76,7 +116,6 @@ async function recomputeDenormCounts(articleId) {
   const viewRows = rowsFromDbResult(viewRes);
   const viewCount = (viewRows[0] && viewRows[0].c) ? Number(viewRows[0].c) : 0;
 
-  // update Article table (Likes and Views are varchar in your schema; store as string)
   await db.query(
     'UPDATE `Article` SET Likes = ?, Views = ? WHERE id = ? AND isActive = 1',
     [String(likeCount), String(viewCount), articleId]
@@ -85,40 +124,65 @@ async function recomputeDenormCounts(articleId) {
   return { likeCount, viewCount };
 }
 
-/* ------------------------------
-   CRUD: create / read / update / delete
-   (kept as in your original code, but defensive with rowsFromDbResult)
-   ------------------------------ */
+/* ------------------------------------
+   CRUD
+------------------------------------ */
 
 // Create a new article with optional cover image
 exports.createArticle = async (req, res) => {
   try {
-    const { Title, slug, tags, seo, writer, ArticleText } = req.body;
+    let { Title, slug, tags, seo, writer, ArticleText } = req.body;
     const coverImage = req.file ? req.file.buffer : null;
 
+    // Always derive a safe base and make it unique
+    const base = normalizeSlug(slug || Title);
+    let uniqueSlug = await nextUniqueSlug(base);
+
+    // Insert; if a race causes ER_DUP_ENTRY, retry with a new unique slug
     const sql = `
       INSERT INTO \`Article\` (Title, slug, tags, seo, writer, ArticleText, coverImage, isActive)
       VALUES (?, ?, ?, ?, ?, ?, ?, 1)
     `;
 
-    const result = await db.query(sql, [
-      Title,
-      slug,
-      tags || null,
-      seo || null,
-      writer || null,
-      ArticleText || null,
-      coverImage,
-    ]);
+    let result;
+    try {
+      result = first(await db.query(sql, [
+        Title,
+        uniqueSlug,
+        tags || null,
+        seo || null,
+        writer || null,
+        ArticleText || null,
+        coverImage,
+      ]));
+    } catch (e) {
+      // Race: someone inserted same slug after our check
+      if (e && (e.code === 'ER_DUP_ENTRY' || e.errno === 1062)) {
+        uniqueSlug = await nextUniqueSlug(uniqueSlug);
+        result = first(await db.query(sql, [
+          Title,
+          uniqueSlug,
+          tags || null,
+          seo || null,
+          writer || null,
+          ArticleText || null,
+          coverImage,
+        ]));
+      } else {
+        throw e;
+      }
+    }
 
-    // result may be [okPacket] or okPacket
-    const rows = rowsFromDbResult(result);
-    const insertId = (result && result.insertId) ? result.insertId : (rows && rows.insertId) ? rows.insertId : (result && result[0] && result[0].insertId) ? result[0].insertId : undefined;
-
-    res.status(201).json({ success: true, message: "Article created successfully", id: insertId });
+    const insertId = result?.insertId;
+    return res.status(201).json({
+      success: true,
+      message: 'Article created successfully',
+      id: insertId,
+      slug: uniqueSlug,
+    });
   } catch (error) {
     console.error('❌ createArticle error:', error);
-    res.status(500).json({ success: false, error: "Failed to create article" });
+    return res.status(500).json({ success: false, error: 'Failed to create article' });
   }
 };
 
@@ -135,13 +199,12 @@ exports.getAllArticles = async (req, res) => {
       ORDER BY id DESC
       LIMIT ? OFFSET ?
     `;
-
     const qres = await db.query(sql, [limit, offset]);
     const rows = rowsFromDbResult(qres);
-    res.json({ success: true, data: rows });
+    return res.json({ success: true, data: rows });
   } catch (error) {
     console.error('❌ getAllArticles error:', error);
-    res.status(500).json({ success: false, error: "Failed to fetch articles" });
+    return res.status(500).json({ success: false, error: 'Failed to fetch articles' });
   }
 };
 
@@ -149,25 +212,21 @@ exports.getAllArticles = async (req, res) => {
 exports.getArticleById = async (req, res) => {
   try {
     const { id } = req.params;
-
     const sql = `
       SELECT id, Title, slug, tags, seo, writer, ArticleText, isActive, Likes, Views
       FROM \`Article\`
       WHERE id = ? AND isActive = 1
     `;
-
     const qres = await db.query(sql, [id]);
     const rows = rowsFromDbResult(qres);
 
     if (!rows || rows.length === 0) {
-      return res.status(404).json({ success: false, error: "Article not found" });
+      return res.status(404).json({ success: false, error: 'Article not found' });
     }
-
-    // return plain object in data
-    res.json({ success: true, data: rows[0] });
+    return res.json({ success: true, data: rows[0] });
   } catch (error) {
     console.error('❌ getArticleById error:', error);
-    res.status(500).json({ success: false, error: "Failed to fetch article" });
+    return res.status(500).json({ success: false, error: 'Failed to fetch article' });
   }
 };
 
@@ -175,60 +234,70 @@ exports.getArticleById = async (req, res) => {
 exports.getArticleImage = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const qres = await db.query('SELECT coverImage FROM `Article` WHERE id = ? AND isActive = 1', [id]);
+    const qres = await db.query(
+      'SELECT coverImage FROM `Article` WHERE id = ? AND isActive = 1',
+      [id]
+    );
     const rows = rowsFromDbResult(qres);
-
     if (!rows || rows.length === 0 || !rows[0].coverImage) {
-      return res.status(404).json({ success: false, error: "Image not found" });
+      return res.status(404).json({ success: false, error: 'Image not found' });
     }
-
-    // If you know image mime type, set it; otherwise use jpeg
-    res.setHeader("Content-Type", "image/jpeg");
-    res.send(rows[0].coverImage);
+    res.setHeader('Content-Type', 'image/jpeg'); // set real mime if stored
+    return res.send(rows[0].coverImage);
   } catch (error) {
     console.error('❌ getArticleImage error:', error);
-    res.status(500).json({ success: false, error: "Failed to fetch image" });
+    return res.status(500).json({ success: false, error: 'Failed to fetch image' });
   }
 };
 
-// Update article (partial update, optional cover image)
+// Update article (partial); if slug provided, ensure uniqueness (excluding this id)
 exports.updateArticle = async (req, res) => {
   try {
     const { id } = req.params;
-    const { Title, tags, seo, writer, ArticleText } = req.body;
+    let { Title, tags, seo, writer, ArticleText, slug } = req.body;
     const coverImage = req.file ? req.file.buffer : null;
 
     const fields = [];
     const values = [];
 
-    if (Title !== undefined) { fields.push('Title = ?'); values.push(Title); }
-    if (tags !== undefined) { fields.push('tags = ?'); values.push(tags); }
-    if (seo !== undefined) { fields.push('seo = ?'); values.push(seo); }
-    if (writer !== undefined) { fields.push('writer = ?'); values.push(writer); }
+    if (Title !== undefined)       { fields.push('Title = ?');       values.push(Title); }
+    if (tags !== undefined)        { fields.push('tags = ?');        values.push(tags); }
+    if (seo !== undefined)         { fields.push('seo = ?');         values.push(seo); }
+    if (writer !== undefined)      { fields.push('writer = ?');      values.push(writer); }
     if (ArticleText !== undefined) { fields.push('ArticleText = ?'); values.push(ArticleText); }
-    if (coverImage) { fields.push('coverImage = ?'); values.push(coverImage); }
+    if (coverImage)                { fields.push('coverImage = ?');  values.push(coverImage); }
+
+    if (slug !== undefined) {
+      const base = normalizeSlug(slug || Title);
+      const unique = await nextUniqueSlug(base, id);
+      fields.push('slug = ?');
+      values.push(unique);
+    }
 
     if (fields.length === 0) {
-      return res.status(400).json({ success: false, error: "No fields provided to update" });
+      return res.status(400).json({ success: false, error: 'No fields provided to update' });
     }
 
     values.push(id);
 
     const sql = `UPDATE \`Article\` SET ${fields.join(', ')} WHERE id = ? AND isActive = 1`;
-    const result = await db.query(sql, values);
-    // handle shape
-    const rows = rowsFromDbResult(result);
-    const affected = (result && result.affectedRows) ? result.affectedRows : ((rows && rows.affectedRows) ? rows.affectedRows : (result && result[0] && result[0].affectedRows) ? result[0].affectedRows : undefined);
+    const result = first(await db.query(sql, values));
+    const affected = result?.affectedRows ?? result?.rowCount ?? 0;
 
-    if (typeof affected === 'number' && affected === 0) {
-      return res.status(404).json({ success: false, error: "Article not found or inactive" });
+    if (!affected) {
+      return res.status(404).json({ success: false, error: 'Article not found or inactive' });
     }
-
-    res.json({ success: true, message: "Article updated successfully" });
+    return res.json({ success: true, message: 'Article updated successfully' });
   } catch (error) {
+    // If a race still happens on update
+    if (error && (error.code === 'ER_DUP_ENTRY' || error.errno === 1062)) {
+      return res.status(409).json({
+        success: false,
+        error: 'Slug already exists; try again.'
+      });
+    }
     console.error('❌ updateArticle error:', error);
-    res.status(500).json({ success: false, error: "Failed to update article" });
+    return res.status(500).json({ success: false, error: 'Failed to update article' });
   }
 };
 
@@ -236,31 +305,27 @@ exports.updateArticle = async (req, res) => {
 exports.deleteArticle = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db.query('UPDATE `Article` SET isActive = 0 WHERE id = ?', [id]);
+    const result = first(await db.query(
+      'UPDATE `Article` SET isActive = 0 WHERE id = ?',
+      [id]
+    ));
+    const affected = result?.affectedRows ?? result?.rowCount ?? 0;
 
-    // check affectedRows robustly
-    const rows = rowsFromDbResult(result);
-    const affected = (result && result.affectedRows) ? result.affectedRows : ((rows && rows.affectedRows) ? rows.affectedRows : (result && result[0] && result[0].affectedRows) ? result[0].affectedRows : undefined);
-
-    if (typeof affected === 'number' && affected === 0) {
-      return res.status(404).json({ success: false, error: "Article not found or already deleted" });
+    if (!affected) {
+      return res.status(404).json({ success: false, error: 'Article not found or already deleted' });
     }
-
-    res.json({ success: true, message: "Article soft deleted successfully" });
+    return res.json({ success: true, message: 'Article soft deleted successfully' });
   } catch (error) {
     console.error('❌ deleteArticle error:', error);
-    res.status(500).json({ success: false, error: "Failed to delete article" });
+    return res.status(500).json({ success: false, error: 'Failed to delete article' });
   }
 };
 
-/* ------------------------------
-   NEW: views / likes endpoints
-   - addView: unique per anon per day
-   - likeArticle / unlikeArticle: idempotent
-   - myLikeStatus: whether current anon has liked
-   Note: these rely on tables article_views(article_id, anon_id, view_date)
-         and article_likes(article_id, anon_id). See earlier SQL example.
-   ------------------------------ */
+/* ------------------------------------
+   Views / Likes (unchanged logic)
+------------------------------------ */
+
+const TABLE = 'Article';
 
 // Unique view per anon per day
 exports.addView = async (req, res) => {
@@ -271,33 +336,21 @@ exports.addView = async (req, res) => {
     }
 
     const anon = getOrSetAnonId(req, res);
-
-    // Using view_date for per-day uniqueness (YYYY-MM-DD)
     const today = new Date();
     const yyyy = today.getUTCFullYear();
     const mm = String(today.getUTCMonth() + 1).padStart(2, '0');
     const dd = String(today.getUTCDate()).padStart(2, '0');
     const viewDate = `${yyyy}-${mm}-${dd}`;
 
-    // INSERT IGNORE will only insert if unique constraint exists on (article_id, anon_id, view_date).
-    // If you don't have that unique index, consider adding one for the semantics you want.
-    const insRes = await db.query(
+    const insRes = first(await db.query(
       'INSERT IGNORE INTO article_views (article_id, anon_id, view_date, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)',
       [articleId, anon, viewDate]
-    );
-
-    // inspect affectedRows safely
-    let affected = 0;
-    if (insRes && typeof insRes.affectedRows === 'number') {
-      affected = insRes.affectedRows;
-    } else if (Array.isArray(insRes) && insRes[0] && typeof insRes[0].affectedRows === 'number') {
-      affected = insRes[0].affectedRows;
-    }
+    ));
+    const affected = insRes?.affectedRows ?? 0;
 
     let counted = false;
     if (affected === 1) {
       counted = true;
-      // recompute denorm counts and write back
       await recomputeDenormCounts(articleId);
     }
 
@@ -317,9 +370,10 @@ exports.likeArticle = async (req, res) => {
     }
 
     const anon = getOrSetAnonId(req, res);
-
-    // Insert ignore if already exists (requires PK or unique on article_id+anon_id)
-    await db.query('INSERT IGNORE INTO article_likes (article_id, anon_id, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)', [articleId, anon]);
+    await db.query(
+      'INSERT IGNORE INTO article_likes (article_id, anon_id, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)',
+      [articleId, anon]
+    );
 
     const counts = await recomputeDenormCounts(articleId);
     return res.json({ success: true, liked: true, likes: counts.likeCount });
@@ -338,10 +392,11 @@ exports.unlikeArticle = async (req, res) => {
     }
 
     const anon = getOrSetAnonId(req, res);
+    await db.query(
+      'DELETE FROM article_likes WHERE article_id = ? AND anon_id = ?',
+      [articleId, anon]
+    );
 
-    const delRes = await db.query('DELETE FROM article_likes WHERE article_id = ? AND anon_id = ?', [articleId, anon]);
-
-    // compute counts and update Article
     const counts = await recomputeDenormCounts(articleId);
     return res.json({ success: true, liked: false, likes: counts.likeCount });
   } catch (error) {
@@ -359,8 +414,10 @@ exports.myLikeStatus = async (req, res) => {
     }
 
     const anon = getOrSetAnonId(req, res);
-
-    const qres = await db.query('SELECT 1 FROM article_likes WHERE article_id = ? AND anon_id = ? LIMIT 1', [articleId, anon]);
+    const qres = await db.query(
+      'SELECT 1 FROM article_likes WHERE article_id = ? AND anon_id = ? LIMIT 1',
+      [articleId, anon]
+    );
     const rows = rowsFromDbResult(qres);
     const liked = rows.length > 0;
 
@@ -371,53 +428,31 @@ exports.myLikeStatus = async (req, res) => {
   }
 };
 
-
-
-// views
-function first(x) {
-  // Normalize whatever db.query returns into the "first" piece (rows/result)
-  if (Array.isArray(x)) return x[0];   // mysql2: [rows, fields]
-  return x;                             // custom wrapper: rows/result directly
-}
-
-const TABLE = 'Article'; // ← change to your exact table name if different (Article/Articles)
-
 /**
- * PUT /api/article/:id/view
- * Bumps Views by +1 (Views is varchar in your schema, so we CAST safely).
+ * POST/PUT /api/article/:id/view – bump Views by +1
+ * (Views column is varchar in your schema, so CAST safely).
  */
 exports.incrementArticleView = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) return res.status(400).json({ success: false, error: 'Article ID required' });
 
-    // 1) Increment
     const updateRes = first(await db.query(
-      `
-      UPDATE ${TABLE}
-      SET Views = COALESCE(CAST(Views AS UNSIGNED), 0) + 1
-      WHERE id = ?
-      `,
+      `UPDATE ${TABLE}
+       SET Views = COALESCE(CAST(Views AS UNSIGNED), 0) + 1
+       WHERE id = ?`,
       [id]
     ));
-
-    const affected =
-      updateRes?.affectedRows ??
-      updateRes?.rowCount ?? // some drivers use rowCount
-      0;
-
+    const affected = updateRes?.affectedRows ?? updateRes?.rowCount ?? 0;
     if (!affected) {
       return res.status(404).json({ success: false, error: 'Article not found' });
     }
 
-    // 2) Read back new count
-    const rows = first(await db.query(
+    const rows = rowsFromDbResult(await db.query(
       `SELECT id, Views FROM ${TABLE} WHERE id = ?`,
       [id]
     ));
-
-    // rows might be an array of rows or a single row
-    const row = Array.isArray(rows) ? rows[0] : rows;
+    const row = rows?.[0];
 
     return res.json({
       success: true,
